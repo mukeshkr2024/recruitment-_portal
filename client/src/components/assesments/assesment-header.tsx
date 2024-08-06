@@ -1,0 +1,12 @@
+import { Card } from "../ui/card"
+
+export const AssessmentHeader = () => {
+    return (
+        <Card className="flex max-w-7xl mx-auto items-center py-5 px-6 shadow-md justify-between">
+            <h2 class="text-[#000000] font-semibold text-3xl">Internal Assessment: UI/UX Designer</h2>
+            <div>
+                <span className="text-3xl font-semibold text-[#ED4338]">30:00</span>
+            </div>
+        </Card>
+    )
+}

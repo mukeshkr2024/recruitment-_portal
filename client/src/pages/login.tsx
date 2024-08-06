@@ -12,6 +12,7 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { useNavigate } from "react-router-dom";
 
 const formSchema = z.object({
     email: z.string().email(),
@@ -24,6 +25,7 @@ const formSchema = z.object({
 
 export const LoginPage = () => {
 
+    const navigate = useNavigate()
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -35,7 +37,7 @@ export const LoginPage = () => {
 
     function onSubmit(values: z.infer<typeof formSchema>) {
         console.log(values)
-
+        navigate("/assesment");
     }
 
     return (

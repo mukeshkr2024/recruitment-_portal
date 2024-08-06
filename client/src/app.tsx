@@ -1,14 +1,20 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { HomePage } from "./pages/home"
 import { LoginPage } from "./pages/login"
+import { AssessmentPage } from "./pages/assesment"
+import { InstructionPage } from "./pages/instructions"
 
 export const App = () => {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
-      </Routes>
-    </BrowserRouter>
+    <div className="font-hanken-grotesk">
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/instructions" element={<InstructionPage />} />
+          <Route path="/assesments" element={<AssessmentPage />} />
+        </Routes>
+      </BrowserRouter>
+    </div>
   )
 }
