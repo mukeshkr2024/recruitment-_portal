@@ -1,6 +1,8 @@
 import { AssessmentFooter } from "@/components/assesments/assement-footer";
 import { AssessmentHeader } from "@/components/assesments/assesment-header"
+import { ConfirmSubmit } from "@/components/assesments/confirm-submit";
 import { useState } from "preact/hooks";
+import { useNavigate } from "react-router-dom";
 
 const questions = [
     {
@@ -120,16 +122,17 @@ export const AssessmentPage = () => {
     const [selectedOptionId, setSelectedOptionId] = useState<number | null>(null);
     const [answers, setAnswers] = useState<(number | null)[]>(Array(questions.length).fill(null));
     const [submitted, setSubmitted] = useState<boolean>(false);
+    const [isSubmitClicked, setisSubmitClicked] = useState(false)
+
+    const navigate = useNavigate()
 
     const handleOptionChange = (event: any) => {
         const newOptionId = parseInt(event.target.value, 10);
 
-        // Update answers state
         const updatedAnswers = [...answers];
         updatedAnswers[currentQuestionIndex] = newOptionId;
         setAnswers(updatedAnswers);
 
-        // Update selected option
         setSelectedOptionId(newOptionId);
     };
 
@@ -150,6 +153,11 @@ export const AssessmentPage = () => {
         }
     };
 
+
+    const handleIsSubmitClicked = () => {
+        setisSubmitClicked(!isSubmitClicked)
+    }
+
     const handleSubmit = () => {
         if (selectedOptionId !== null) {
             const updatedAnswers = [...answers];
@@ -164,6 +172,8 @@ export const AssessmentPage = () => {
         }));
 
         console.log(result);
+
+        navigate("/submitted")
     };
 
     const currentQuestion = questions[currentQuestionIndex];
@@ -172,46 +182,56 @@ export const AssessmentPage = () => {
     const isPrevDisabled = currentQuestionIndex === 0;
     const isNextDisabled = currentQuestionIndex === totalQuestions - 1;
 
-    // Update answered count based on answers state
     const answered = answers.filter(answer => answer !== null).length;
 
     return (
-        <div className="py-4">
-            <AssessmentHeader />
-            <section className="max-w-6xl mx-auto pt-40">
-                <div className="text-2xl flex items-center gap-x-1.5 font-semibold">
-                    <span>{currentQuestionIndex + 1}.</span>
-                    <p>{currentQuestion.question}</p>
-                </div>
-                <div className="mt-4 ml-4 flex flex-col gap-y-2">
-                    {currentQuestion.options.map(option => (
-                        <div key={option.id} className="flex gap-x-2.5">
-                            <input
-                                type="radio"
-                                value={option.id}
-                                id={`option-${option.id}`}
-                                name="options"
-                                checked={selectedOptionId === option.id}
-                                onChange={handleOptionChange}
-                                disabled={submitted}
-                                className="transform scale-125"
-                            />
-                            <label htmlFor={`option-${option.id}`} className="text-lg text-[#404040]">
-                                {String.fromCharCode(97 + option.id - 1)}). {option.text}
-                            </label>
-                        </div>
-                    ))}
-                </div>
-            </section>
-            <AssessmentFooter
-                totalQuestions={totalQuestions}
-                handleBack={handlePrevious}
-                handleNext={handleNext}
-                handleSubmit={handleSubmit}
-                isPrevDisabled={isPrevDisabled}
-                isNextDisabled={isNextDisabled}
-                answered={answered}
-            />
-        </div>
+        <>
+
+            {
+                isSubmitClicked ? <ConfirmSubmit
+                    handleSubmit={handleSubmit}
+                    handleIsSubmitClicked={handleIsSubmitClicked}
+                /> : (
+                    <div className="py-4">
+                        <AssessmentHeader />
+                        <section className="max-w-6xl mx-auto pt-40">
+                            <div className="text-2xl flex items-center gap-x-1.5 font-semibold">
+                                <span>{currentQuestionIndex + 1}.</span>
+                                <p>{currentQuestion.question}</p>
+                            </div>
+                            <div className="mt-4 ml-4 flex flex-col gap-y-2">
+                                {currentQuestion.options.map(option => (
+                                    <div key={option.id} className="flex gap-x-2.5">
+                                        <input
+                                            type="radio"
+                                            value={option.id}
+                                            id={`option-${option.id}`}
+                                            name="options"
+                                            checked={selectedOptionId === option.id}
+                                            onChange={handleOptionChange}
+                                            disabled={submitted}
+                                            className="transform scale-125"
+                                        />
+                                        <label htmlFor={`option-${option.id}`} className="text-lg text-[#404040]">
+                                            {String.fromCharCode(97 + option.id - 1)}). {option.text}
+                                        </label>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                        <AssessmentFooter
+                            totalQuestions={totalQuestions}
+                            handleBack={handlePrevious}
+                            handleNext={handleNext}
+                            handleIsSubmitClicked={handleIsSubmitClicked}
+                            isPrevDisabled={isPrevDisabled}
+                            isNextDisabled={isNextDisabled}
+                            answered={answered}
+                        />
+                    </div>
+                )
+            }
+        </>
+
     );
 };
