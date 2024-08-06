@@ -1,0 +1,1 @@
+ALTER TABLE "option" ADD COLUMN "is_correct" boolean;

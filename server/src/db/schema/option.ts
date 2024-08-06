@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgTable, text } from "drizzle-orm/pg-core";
+import { boolean, pgTable, text } from "drizzle-orm/pg-core";
 import { question } from "./question";
 
 export const option = pgTable("option", {
@@ -9,7 +9,8 @@ export const option = pgTable("option", {
     questionId: text("question_id").references(() => question.id, {
         onDelete: "cascade"
     }),
-    optionText: text("option_text").notNull()
+    optionText: text("option_text").notNull(),
+    isCorrect: boolean("is_correct")
 });
 
 
