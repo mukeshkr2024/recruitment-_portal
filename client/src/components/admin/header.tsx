@@ -1,5 +1,5 @@
 export const Header = () => {
     return (
-        <div>Header</div>
+        <div className="h-20">Header</div>
     )
 }

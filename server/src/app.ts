@@ -1,6 +1,8 @@
 import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
 import morgan from "morgan";
+import { createPosition, getPostions } from "./controllers/position.controller";
+import { createQuestion, deleteQuestion, getQuestion, getQuestionsByPostionId, updateQuestion } from "./controllers/question.controller";
 
 export const app = express()
 
@@ -13,6 +15,7 @@ app.use(express.json({ limit: "50mb" }))
 // cors
 app.use(cors());
 
+// Routes 
 
 // test routes
 app.get("/api/v1/test", (req: Request, res: Response) => {
@@ -20,6 +23,15 @@ app.get("/api/v1/test", (req: Request, res: Response) => {
         message: "Api is working"
     })
 })
+
+app.get("/api/v1/positions", getPostions)
+app.post("/api/v1/positions", createPosition)
+app.get("/api/v1/questions/:positionId", getQuestionsByPostionId)
+app.post("/api/v1/questions/:positionId", createQuestion)
+app.delete("/api/v1/questions/:questionId", deleteQuestion)
+app.get("/api/v1/question/:questionId", getQuestion)
+app.put("/api/v1/question/:questionId", updateQuestion)
+
 
 // unknown api request
 app.all("*", (req: Request, res: Response, next: NextFunction) => {

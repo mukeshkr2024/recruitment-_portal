@@ -171,8 +171,6 @@ export const AssessmentPage = () => {
             selectedOptionId: answers[index] || null
         }));
 
-        console.log(result);
-
         navigate("/submitted")
     };
 

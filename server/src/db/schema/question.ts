@@ -9,7 +9,7 @@ export const question = pgTable("question", {
         .$defaultFn(() => crypto.randomUUID()),
     positionId: text("position_id").references(() => position.id, {
         onDelete: "cascade"
-    }),
+    }).notNull(),
     questionText: text("question_text").notNull(),
 });
 

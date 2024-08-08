@@ -8,7 +8,9 @@ export const position = pgTable("position", {
         .primaryKey()
         .$defaultFn(() => crypto.randomUUID()),
     positionName: text("position_name").notNull(),
-    createdBy: text("created_by").references(() => user.id),
+    createdBy: text("created_by").references(() => user.id, {
+        onDelete: "cascade"
+    }),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 })
