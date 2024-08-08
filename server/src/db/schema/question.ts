@@ -1,4 +1,4 @@
-import { pgTable, text } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { position } from "./postition";
 import { relations } from "drizzle-orm";
 import { option } from "./option";
@@ -11,6 +11,8 @@ export const question = pgTable("question", {
         onDelete: "cascade"
     }).notNull(),
     questionText: text("question_text").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 export const questionRelations = relations(question, ({ one, many }) => ({

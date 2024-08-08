@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { asc, desc, eq } from "drizzle-orm";
 import { Request, Response } from "express";
 import db from "../db";
 import { option, position, question, } from "../db/schema";
@@ -18,8 +18,8 @@ export const getQuestionsByPostionId = async (req: Request, res: Response) => {
 
         const questions = await db.query.question.findMany({
             where: eq(question.positionId, jobPositon.id),
+            orderBy: asc(question.createdAt)
         })
-
 
         return res.status(200).json(questions)
     } catch (error) {
@@ -103,8 +103,10 @@ export const getQuestion = async (req: Request, res: Response) => {
         const response = await db.query.question.findFirst({
             where: eq(question.id, questionId),
             with: {
-                options: true
-            }
+                options: {
+                    orderBy: asc(option.createdAt)
+                }
+            },
         })
 
         if (!response) {
