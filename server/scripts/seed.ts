@@ -1,5 +1,5 @@
 import db from "../src/db";
-import { user, position, question, option } from "../src/db/schema";
+import { user, position, question, option, applicant } from "../src/db/schema";
 
 const seed = async () => {
     try {
@@ -8,6 +8,8 @@ const seed = async () => {
         await db.delete(position);
         await db.delete(user);
         await db.delete(question);
+        await db.delete(option);
+        await db.delete(applicant);
 
         // Create users 
         const userCreated = await db.insert(user).values([{
@@ -21,6 +23,7 @@ const seed = async () => {
         console.log(userCreated);
 
         const userId = userCreated[0].id;
+
 
         // Create job positions
         const jobPositions = await db.insert(position).values([
@@ -95,8 +98,14 @@ const seed = async () => {
             { questionId: questionIds[5], optionText: "Option 4 for question 6", isCorrect: false }
         ])
 
-        console.log(options);
+        await db.insert(applicant).values({
+            firstName: "John",
+            lastName: "Doe",
+            email: "john@gmail.com",
+            phone: "1234567890",
+        })
 
+        console.log(options);
         console.log(questions);
 
         console.log("Job Positions created:", jobPositions);

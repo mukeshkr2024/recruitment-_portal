@@ -1,7 +1,5 @@
-import { PgTable, pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import crypto from "crypto";
-import { relations } from "drizzle-orm";
-
 
 export const applicant = pgTable("applicant", {
     id: text("id")

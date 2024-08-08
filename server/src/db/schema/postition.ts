@@ -2,6 +2,7 @@ import { relations } from "drizzle-orm";
 import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { user } from "./user";
 import { question } from "./question";
+import { result } from "./result";
 
 export const position = pgTable("position", {
     id: text("id")
@@ -20,5 +21,6 @@ export const positionRelatios = relations(position, ({ many, one }) => ({
         fields: [position.createdBy],
         references: [user.id]
     }),
-    questions: many(question)
+    questions: many(question),
+    results: many(result)
 }))
