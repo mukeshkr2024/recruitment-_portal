@@ -8,7 +8,7 @@ export const InstructionPage = () => {
     const navigate = useNavigate();
 
     const handleClick = () => {
-        navigate("/assesments?question=1")
+        navigate("/assesments")
     }
 
     return (

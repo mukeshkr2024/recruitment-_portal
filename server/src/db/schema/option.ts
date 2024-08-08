@@ -10,7 +10,7 @@ export const option = pgTable("option", {
         onDelete: "cascade"
     }),
     optionText: text("option_text").notNull(),
-    isCorrect: boolean("is_correct"),
+    isCorrect: boolean("is_correct").notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

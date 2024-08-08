@@ -1,8 +1,10 @@
+import { useDeletePosition } from "@/api/positions/use-delete-positions";
 import { useGetPositions } from "@/api/positions/use-get-positions";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 import { CreatePositions } from "@/components/job-position/create-postions";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatDate } from "@/utils";
-import { Pencil } from "lucide-react";
+import { Pencil, Trash } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface Position {
@@ -13,11 +15,19 @@ interface Position {
 
 // Define the component
 export const PositionPage = () => {
-    const { data: positions, error, isLoading, isError } = useGetPositions();
+    const { data: positions, isLoading } = useGetPositions();
+
+    const deleteMutation = useDeletePosition()
 
 
     if (isLoading) {
         return <div>Loading...</div>;
+    }
+
+    const onDelete = (positionId: string) => {
+        console.log("Deleting");
+        console.log(positionId);
+        deleteMutation.mutate(positionId)
     }
 
     return (
@@ -54,10 +64,13 @@ export const PositionPage = () => {
                                     <TableCell>{position.positionName}</TableCell>
                                     <TableCell>{formatDate(position.createdAt)}</TableCell>
                                     <TableCell>
-                                        <div>
+                                        <div className="flex gap-x-5">
                                             <Link to={`/positions/${position.id}`}>
-                                                <Pencil />
+                                                <Pencil size={18} />
                                             </Link>
+                                            <ConfirmDialog onConfirm={() => onDelete(position.id)}>
+                                                <Trash size={18} className="text-red-500 cursor-pointer" />
+                                            </ConfirmDialog>
                                         </div>
                                     </TableCell>
                                 </TableRow>

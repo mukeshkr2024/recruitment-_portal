@@ -1,8 +1,9 @@
 import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
 import morgan from "morgan";
-import { createPosition, getPostions } from "./controllers/position.controller";
+import { createPosition, deletePosition, getPostions } from "./controllers/position.controller";
 import { createQuestion, deleteQuestion, getQuestion, getQuestionsByPostionId, updateQuestion } from "./controllers/question.controller";
+import { applicantRouter } from "./routes/applicant.routes";
 
 export const app = express()
 
@@ -26,12 +27,15 @@ app.get("/api/v1/test", (req: Request, res: Response) => {
 
 app.get("/api/v1/positions", getPostions)
 app.post("/api/v1/positions", createPosition)
+app.delete("/api/v1/positions/:positionId", deletePosition)
 app.get("/api/v1/questions/:positionId", getQuestionsByPostionId)
 app.post("/api/v1/questions/:positionId", createQuestion)
 app.delete("/api/v1/questions/:questionId", deleteQuestion)
 app.get("/api/v1/question/:questionId", getQuestion)
 app.put("/api/v1/question/:questionId", updateQuestion)
 
+// applicants 
+app.use("/api/v1/applicants", applicantRouter)
 
 // unknown api request
 app.all("*", (req: Request, res: Response, next: NextFunction) => {

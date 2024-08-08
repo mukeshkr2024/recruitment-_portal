@@ -46,3 +46,22 @@ export const createPosition = async (req: Request, res: Response) => {
         console.log(error);
     }
 }
+
+export const deletePosition = async (req: Request, res: Response) => {
+    try {
+        console.log("deletePosition");
+        const { positionId } = req.params;
+
+        const deletePosition = await db.delete(position).where(
+            eq(position.id, positionId)
+        ).returning()
+
+        if (!deletePosition) {
+            throw new Error("Position not found")
+        }
+
+        return res.status(200).json(deletePosition[0]);
+    } catch (error) {
+        console.log(error);
+    }
+}

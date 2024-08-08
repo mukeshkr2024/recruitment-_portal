@@ -64,35 +64,35 @@ const seed = async () => {
         const questionIds = questions.map(q => q.id);
 
         const options = await db.insert(option).values([
-            { questionId: questionIds[0], optionText: "Option 1 for question 1" },
-            { questionId: questionIds[0], optionText: "Option 2 for question 1" },
-            { questionId: questionIds[0], optionText: "Option 3 for question 1" },
-            { questionId: questionIds[0], optionText: "Option 4 for question 1" },
+            { questionId: questionIds[0], optionText: "Option 1 for question 1", isCorrect: true },
+            { questionId: questionIds[0], optionText: "Option 2 for question 1", isCorrect: false },
+            { questionId: questionIds[0], optionText: "Option 3 for question 1", isCorrect: false },
+            { questionId: questionIds[0], optionText: "Option 4 for question 1", isCorrect: false },
 
-            { questionId: questionIds[1], optionText: "Option 1 for question 2" },
-            { questionId: questionIds[1], optionText: "Option 2 for question 2" },
-            { questionId: questionIds[1], optionText: "Option 3 for question 2" },
-            { questionId: questionIds[1], optionText: "Option 4 for question 2" },
+            { questionId: questionIds[1], optionText: "Option 1 for question 2", isCorrect: true },
+            { questionId: questionIds[1], optionText: "Option 2 for question 2", isCorrect: false },
+            { questionId: questionIds[1], optionText: "Option 3 for question 2", isCorrect: false },
+            { questionId: questionIds[1], optionText: "Option 4 for question 2", isCorrect: false },
 
-            { questionId: questionIds[2], optionText: "Option 1 for question 3" },
-            { questionId: questionIds[2], optionText: "Option 2 for question 3" },
-            { questionId: questionIds[2], optionText: "Option 3 for question 3" },
-            { questionId: questionIds[2], optionText: "Option 4 for question 3" },
+            { questionId: questionIds[2], optionText: "Option 1 for question 3", isCorrect: true },
+            { questionId: questionIds[2], optionText: "Option 2 for question 3", isCorrect: false },
+            { questionId: questionIds[2], optionText: "Option 3 for question 3", isCorrect: false },
+            { questionId: questionIds[2], optionText: "Option 4 for question 3", isCorrect: false },
 
-            { questionId: questionIds[3], optionText: "Option 1 for question 4" },
-            { questionId: questionIds[3], optionText: "Option 2 for question 4" },
-            { questionId: questionIds[3], optionText: "Option 3 for question 4" },
-            { questionId: questionIds[3], optionText: "Option 4 for question 4" },
+            { questionId: questionIds[3], optionText: "Option 1 for question 4", isCorrect: true },
+            { questionId: questionIds[3], optionText: "Option 2 for question 4", isCorrect: false },
+            { questionId: questionIds[3], optionText: "Option 3 for question 4", isCorrect: false },
+            { questionId: questionIds[3], optionText: "Option 4 for question 4", isCorrect: false },
 
-            { questionId: questionIds[4], optionText: "Option 1 for question 5" },
-            { questionId: questionIds[4], optionText: "Option 2 for question 5" },
-            { questionId: questionIds[4], optionText: "Option 3 for question 5" },
-            { questionId: questionIds[4], optionText: "Option 4 for question 5" },
+            { questionId: questionIds[4], optionText: "Option 1 for question 5", isCorrect: true },
+            { questionId: questionIds[4], optionText: "Option 2 for question 5", isCorrect: false },
+            { questionId: questionIds[4], optionText: "Option 3 for question 5", isCorrect: false },
+            { questionId: questionIds[4], optionText: "Option 4 for question 5", isCorrect: false },
 
-            { questionId: questionIds[5], optionText: "Option 1 for question 6" },
-            { questionId: questionIds[5], optionText: "Option 2 for question 6" },
-            { questionId: questionIds[5], optionText: "Option 3 for question 6" },
-            { questionId: questionIds[5], optionText: "Option 4 for question 6" }
+            { questionId: questionIds[5], optionText: "Option 1 for question 6", isCorrect: true },
+            { questionId: questionIds[5], optionText: "Option 2 for question 6", isCorrect: false },
+            { questionId: questionIds[5], optionText: "Option 3 for question 6", isCorrect: false },
+            { questionId: questionIds[5], optionText: "Option 4 for question 6", isCorrect: false }
         ])
 
         console.log(options);
