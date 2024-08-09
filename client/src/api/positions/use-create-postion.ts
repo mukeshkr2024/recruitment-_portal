@@ -1,12 +1,12 @@
 import { useMutation, useQueryClient } from "react-query"
-import axios from "axios"
+import { apiClient } from "../api-client"
 
 export const useCreatePosition = () => {
     const queryClient = useQueryClient()
 
     return useMutation({
         mutationFn: async (positionData) => {
-            await axios.post("http://localhost:8080/api/v1/positions", positionData)
+            await apiClient.post("/positions", positionData)
         },
         onSuccess: () => {
             queryClient.invalidateQueries('todos')

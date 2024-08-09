@@ -1,5 +1,5 @@
-import axios from "axios";
-import { useQuery } from "react-query"
+import { useQuery } from "react-query";
+import { apiClient } from "../api-client";
 
 
 export const useGetApplicantQuestions = () => {
@@ -7,8 +7,7 @@ export const useGetApplicantQuestions = () => {
         queryKey: ["applicantQuestions"],
         queryFn: async () => {
             try {
-                const { data } = await axios.get("http://localhost:8080/api/v1/applicants/assesment-questions")
-                console.log(data);
+                const { data } = await apiClient.get("/applicants/assesment-questions")
                 return data;
             } catch (error) {
                 console.error("Error fetching applicant questions:", error);

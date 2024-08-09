@@ -96,7 +96,6 @@ export const deleteQuestion = async (req: Request, res: Response) => {
 
 export const getQuestion = async (req: Request, res: Response) => {
     try {
-        console.log("Called getQuestion");
 
         const { questionId } = req.params;
 
@@ -161,12 +160,6 @@ export const updateQuestion = async (req: Request, res: Response) => {
                 }
             }
         }
-
-
-        console.log(req.body);
-
-
-        console.log(questionId);
 
         res.status(200).json(
             {

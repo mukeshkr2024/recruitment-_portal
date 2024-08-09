@@ -1,12 +1,12 @@
-import axios from "axios";
 import { useQuery } from "react-query";
+import { apiClient } from "../api-client";
 
 export const useGetQuestions = (positionId: string) => {
     return useQuery({
         queryKey: ["questions", positionId],
         queryFn: async () => {
             try {
-                const { data } = await axios.get(`http://localhost:8080/api/v1/questions/${positionId}`);
+                const { data } = await apiClient.get(`/questions/${positionId}`);
                 return data;
             } catch (error) {
                 console.error("Error fetching questions:", error);

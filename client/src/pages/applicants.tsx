@@ -1,11 +1,10 @@
 import { useGetApplicants } from "@/api/applicants/use-get-applicants";
 import { useDeletePosition } from "@/api/positions/use-delete-positions";
+import { CreateApplicant } from "@/components/applicant/create-applicant";
 import { ConfirmDialog } from "@/components/confirm-dialog";
-import { CreatePositions } from "@/components/job-position/create-postions";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatDate } from "@/utils";
-import { Pencil, Trash } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Trash } from "lucide-react";
 
 interface Applicant {
     id: string;
@@ -45,7 +44,7 @@ export const ApplicantsPage = () => {
             <div className="flex w-full justify-between">
                 <h2 className="text-2xl font-semibold">Job Applicants</h2>
                 <div>
-                    <CreatePositions />
+                    <CreateApplicant />
                 </div>
             </div>
             <div className="mt-6">

@@ -13,8 +13,9 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useNavigate } from "react-router-dom";
+import { useApplicantLogin } from "@/api/applicants/use-applicant-login";
 
-const formSchema = z.object({
+export const loginSchema = z.object({
     email: z.string().email(),
     access_code: z.string().min(4, {
         message: "Invalid access code"
@@ -24,20 +25,25 @@ const formSchema = z.object({
 })
 
 export const LoginPage = () => {
-
     const navigate = useNavigate()
+    const loginMutation = useApplicantLogin();
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<z.infer<typeof loginSchema>>({
+        resolver: zodResolver(loginSchema),
         defaultValues: {
             email: "",
             access_code: ""
         },
     })
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
+    function onSubmit(values: z.infer<typeof loginSchema>) {
         console.log(values)
-        navigate("/assesment");
+        // navigate("/assesment");
+        loginMutation.mutate(values)
+        if (loginMutation.isSuccess) {
+            console.log("new login");
+
+        }
     }
 
     return (

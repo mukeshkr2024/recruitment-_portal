@@ -49,7 +49,6 @@ export const createPosition = async (req: Request, res: Response) => {
 
 export const deletePosition = async (req: Request, res: Response) => {
     try {
-        console.log("deletePosition");
         const { positionId } = req.params;
 
         const deletePosition = await db.delete(position).where(

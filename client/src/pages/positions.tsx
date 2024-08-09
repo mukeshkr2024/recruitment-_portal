@@ -26,7 +26,6 @@ export const PositionPage = () => {
 
     const onDelete = (positionId: string) => {
         console.log("Deleting");
-        console.log(positionId);
         deleteMutation.mutate(positionId)
     }
 

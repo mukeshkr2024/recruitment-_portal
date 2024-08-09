@@ -21,7 +21,6 @@ const seed = async () => {
             role: "admin",
         }]).returning();
 
-        console.log(userCreated);
 
         const userId = userCreated[0].id;
 
@@ -112,8 +111,6 @@ const seed = async () => {
             { firstName: "Hank", lastName: "Hall", email: "hank@gmail.com", phone: "8899001122", accessCode: "2n22f112", positionId: positionId },
         ]);
 
-        console.log(options);
-        console.log(questions);
 
         console.log("Job Positions created:", jobPositions);
         console.log("Seeding finished...");

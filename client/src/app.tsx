@@ -10,6 +10,7 @@ import { PositionPage } from "./pages/positions"
 import { ApplicantsPage } from "./pages/applicants"
 import { QueryClient, QueryClientProvider } from "react-query"
 import { PositionDetailPage } from "./pages/postion-detail"
+import { ApplicantProtectLayout } from "./components/layouts/applicant-protect-layout"
 
 const queryClient = new QueryClient()
 
@@ -20,10 +21,12 @@ export const App = () => {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/instructions" element={<InstructionPage />} />
-            <Route path="/assesments" element={<AssessmentPage />} />
-            <Route path="/submitted" element={<SubmittedPage />} />
+            <Route path="/applicant-login" element={<LoginPage />} />
+            <Route element={<ApplicantProtectLayout />}>
+              <Route path="/instructions" element={<InstructionPage />} />
+              <Route path="/assesments" element={<AssessmentPage />} />
+              <Route path="/submitted" element={<SubmittedPage />} />
+            </Route>
 
             {/* Addmin Routes  */}
             <Route element={<AdminDashboardLayout />}>

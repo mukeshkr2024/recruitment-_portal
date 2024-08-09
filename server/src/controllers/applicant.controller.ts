@@ -1,21 +1,28 @@
 import { Request, Response } from "express";
 import db from "../db";
 import { and, eq } from "drizzle-orm";
-import { applicant, option, position, question, } from "../db/schema";
+import { option, question, } from "../db/schema";
 
 export const getApplicantsAssessmentQuestions = async (req: Request, res: Response) => {
     try {
-        // get the assesment if of applicants and send the questions
 
         const positions = await db.query.position.findMany({})
 
-        console.log("positions", positions);
-
-
         const questions = await db.query.question.findMany({
+            columns: {
+                id: true,
+                questionText: true
+            },
+
             where: eq(question.positionId, positions[0].id),
             with: {
-                options: true
+                options: {
+                    columns: {
+                        id: true,
+                        optionText: true
+                    }
+                }
+
             }
         });
 
