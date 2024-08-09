@@ -7,6 +7,7 @@ import { applicantRouter } from "./routes/applicant.routes";
 import { authRouter } from "./routes/auth.routes";
 import cookieParser from "cookie-parser"
 import { isAdminAuthenticated } from "./middleware/auth";
+import { getAnalytics } from "./controllers/analytics.controoler";
 
 export const app = express()
 
@@ -44,6 +45,8 @@ app.post("/api/v1/questions/:positionId", createQuestion)
 app.delete("/api/v1/questions/:questionId", deleteQuestion)
 app.get("/api/v1/question/:questionId", getQuestion)
 app.put("/api/v1/question/:questionId", updateQuestion)
+
+app.get("/api/v1/analytics", getAnalytics)
 
 // applicants 
 app.use("/api/v1/applicants", applicantRouter)

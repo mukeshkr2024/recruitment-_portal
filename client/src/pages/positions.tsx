@@ -19,7 +19,6 @@ export const PositionPage = () => {
 
     const deleteMutation = useDeletePosition()
 
-
     if (isLoading) {
         return <div>Loading...</div>;
     }
@@ -30,27 +29,30 @@ export const PositionPage = () => {
     }
 
     return (
-        <div className="p-6">
+        <div className="p-6 bg-gray-100">
             <div className="flex w-full justify-between">
-                <h2 className="text-2xl font-semibold">Job Positions</h2>
+                <h2 className="text-3xl font-bold text-blue-900">
+                    Job Positions
+                </h2>
+
                 <div>
                     <CreatePositions />
                 </div>
             </div>
-            <div className="mt-6">
+            <div className="mt-2">
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>
+                            <TableHead className="text-gray-700 font-semibold bg-gray-200">
                                 Id
                             </TableHead>
-                            <TableHead>
+                            <TableHead className="text-gray-700 font-semibold bg-gray-200">
                                 Position
                             </TableHead>
-                            <TableHead>
+                            <TableHead className="text-gray-700 font-semibold bg-gray-200">
                                 CreatedAt
                             </TableHead>
-                            <TableHead>
+                            <TableHead className="text-gray-700 font-semibold bg-gray-200">
                                 Actions
                             </TableHead>
                         </TableRow>
@@ -58,17 +60,17 @@ export const PositionPage = () => {
                     <TableBody>
                         {positions?.length ? (
                             positions.map((position: Position, idx: number) => (
-                                <TableRow key={position.id}>
-                                    <TableCell>{idx + 1}</TableCell>
-                                    <TableCell>{position.positionName}</TableCell>
-                                    <TableCell>{formatDate(position.createdAt)}</TableCell>
+                                <TableRow key={position.id} className="hover:bg-gray-100">
+                                    <TableCell className="text-gray-600">{idx + 1}</TableCell>
+                                    <TableCell className="text-gray-800">{position.positionName}</TableCell>
+                                    <TableCell className="text-gray-600">{formatDate(position.createdAt)}</TableCell>
                                     <TableCell>
                                         <div className="flex gap-x-5">
-                                            <Link to={`/positions/${position.id}`}>
+                                            <Link to={`/positions/${position.id}`} className="text-blue-500 hover:text-blue-700">
                                                 <Pencil size={18} />
                                             </Link>
                                             <ConfirmDialog onConfirm={() => onDelete(position.id)}>
-                                                <Trash size={18} className="text-red-500 cursor-pointer" />
+                                                <Trash size={18} className="text-red-500 cursor-pointer hover:text-red-700" />
                                             </ConfirmDialog>
                                         </div>
                                     </TableCell>
@@ -76,7 +78,7 @@ export const PositionPage = () => {
                             ))
                         ) : (
                             <TableRow>
-                                <TableCell colSpan={3}>No positions available</TableCell>
+                                <TableCell colSpan={4} className="text-gray-500 text-center">No positions available</TableCell>
                             </TableRow>
                         )}
                     </TableBody>

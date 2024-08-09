@@ -42,54 +42,55 @@ export const ApplicantsPage = () => {
     return (
         <div className="p-6">
             <div className="flex w-full justify-between">
-                <h2 className="text-2xl font-semibold">Job Applicants</h2>
+                <h2 className="text-3xl font-bold text-blue-900">Job Applicants</h2>
                 <div>
                     <CreateApplicant />
                 </div>
             </div>
-            <div className="mt-6">
+            <div className="mt-2">
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>
+                            <TableHead className="text-gray-700 font-semibold bg-gray-200">
                                 No
                             </TableHead>
-                            <TableHead>
+                            <TableHead className="text-gray-700 font-semibold bg-gray-200">
                                 Name
                             </TableHead>
-                            <TableHead>
+                            <TableHead className="text-gray-700 font-semibold bg-gray-200">
                                 Email
                             </TableHead>
-                            <TableHead>
+                            <TableHead className="text-gray-700 font-semibold bg-gray-200">
                                 Phone
                             </TableHead>
-                            <TableHead>
+                            <TableHead className="text-gray-700 font-semibold bg-gray-200">
                                 Applied For
                             </TableHead>
-                            <TableHead>
+                            <TableHead className="text-gray-700 font-semibold bg-gray-200">
                                 Status
                             </TableHead>
-                            <TableHead>
+                            <TableHead className="text-gray-700 font-semibold bg-gray-200">
                                 Applied On
                             </TableHead>
-                            <TableHead>Score</TableHead>
-                            <TableHead>Aceess code</TableHead>
+                            <TableHead className="text-gray-700 font-semibold bg-gray-200">Score</TableHead>
+                            <TableHead className="text-gray-700 font-semibold bg-gray-200">Aceess code</TableHead>
+                            <TableHead className="text-gray-700 font-semibold bg-gray-200">Actions</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {applicants?.length ? (
                             applicants.map((applicant: Applicant, idx: number) => (
                                 <TableRow key={applicant.id}>
-                                    <TableCell>{idx + 1}</TableCell>
-                                    <TableCell>{applicant.firstName}{" "}{applicant.lastName}</TableCell>
-                                    <TableCell>{applicant.email}</TableCell>
-                                    <TableCell>{applicant.phone}</TableCell>
-                                    <TableCell>{applicant.position.positionName}</TableCell>
-                                    <TableCell>Not Completed</TableCell>
-                                    <TableCell>{formatDate(applicant.createdAt)}</TableCell>
-                                    <TableCell>Null</TableCell>
-                                    <TableCell>{applicant.accessCode}</TableCell>
-                                    <TableCell>
+                                    <TableCell className="text-gray-600">{idx + 1}</TableCell>
+                                    <TableCell className="text-gray-600">{applicant.firstName}{" "}{applicant.lastName}</TableCell>
+                                    <TableCell className="text-gray-600">{applicant.email}</TableCell>
+                                    <TableCell className="text-gray-600">{applicant.phone}</TableCell>
+                                    <TableCell className="text-gray-600">{applicant.position.positionName}</TableCell>
+                                    <TableCell className="text-gray-600">Not Completed</TableCell>
+                                    <TableCell className="text-gray-600">{formatDate(applicant.createdAt)}</TableCell>
+                                    <TableCell className="text-gray-600">Null</TableCell>
+                                    <TableCell className="text-gray-600">{applicant.accessCode}</TableCell>
+                                    <TableCell className="text-gray-600">
                                         <div className="flex gap-x-5">
                                             {/* <Link to={`/applicants/${applicant.id}`}>
                                                 <Pencil size={18} />

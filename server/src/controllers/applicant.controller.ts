@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import db from "../db";
 import { and, eq } from "drizzle-orm";
-import { option, question, } from "../db/schema";
+import { applicant, option, question, } from "../db/schema";
 
 export const getApplicantsAssessmentQuestions = async (req: Request, res: Response) => {
     try {
@@ -111,3 +111,24 @@ export const getApplicants = async (req: Request, res: Response) => {
         return res.status(500).json({ error: "Failed to fetch applicants." });
     }
 };
+
+export const getApplicantsByPositon = async (req: Request, res: Response) => {
+    try {
+        console.log("getApplicantsByPositon");
+
+        const { positionId } = req.params
+
+        const applicants = await db.query.applicant.findMany({
+            where: eq(applicant.positionId, positionId),
+            limit: 4,
+            offset: 1,
+        })
+
+        console.log(positionId);
+
+        return res.status(200).json(applicants)
+    } catch (error) {
+        console.log(error);
+
+    }
+}

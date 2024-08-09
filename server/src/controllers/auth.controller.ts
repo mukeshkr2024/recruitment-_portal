@@ -28,7 +28,7 @@ export const applicantLogin = async (req: Request, res: Response) => {
         const access_token = generateToken(isUserFound.id);
 
         res.cookie("access_token", access_token, {
-            httpOnly: true,
+            // httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "strict",
             maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -93,7 +93,7 @@ export const userLogin = async (req: Request, res: Response) => {
         const access_token = generateToken(isUserFound.id);
 
         res.cookie("access_token", access_token, {
-            httpOnly: true,
+            // httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "strict",
             maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -146,6 +146,7 @@ export const logout = (req: Request, res: Response, next: NextFunction) => {
             secure: process.env.NODE_ENV === "production",
             sameSite: "strict",
         });
+
 
         return res.status(200).json({
             success: true,
