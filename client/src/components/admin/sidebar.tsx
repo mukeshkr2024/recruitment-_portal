@@ -5,6 +5,7 @@ import { TbUsers } from "react-icons/tb";
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from "../ui/button";
 import { LogOut } from "lucide-react";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 
 interface SidebarLink {
     id: number;
@@ -21,6 +22,13 @@ const SIDEBAR_LINKS: SidebarLink[] = [
 ]
 
 export const Sidebar = () => {
+
+    const { logout } = useAdminAuth();
+
+    const handleLogout = () => {
+        logout();
+        window.location.href = '/';
+    }
 
     const { pathname } = useLocation()
 
@@ -52,7 +60,7 @@ export const Sidebar = () => {
             </ul>
 
             <div className="w-full absolute bottom-5 left-0 px-4 py-2 cursor-pointer text-center">
-                <Button style={{ width: '100%' }} className="flex items-center px-4 rounded-3xl" variant="outline">
+                <Button style={{ width: '100%' }} className="flex items-center px-4 rounded-3xl" variant="outline" onClick={handleLogout}>
                     <LogOut size={18} />
                     <span className="ml-2">Logout</span>
                 </Button>

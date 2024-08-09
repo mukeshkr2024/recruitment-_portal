@@ -11,6 +11,7 @@ import { ApplicantsPage } from "./pages/applicants"
 import { QueryClient, QueryClientProvider } from "react-query"
 import { PositionDetailPage } from "./pages/postion-detail"
 import { ApplicantProtectLayout } from "./components/layouts/applicant-protect-layout"
+import { AdminLoginPage } from "./pages/admin-login"
 
 const queryClient = new QueryClient()
 
@@ -20,7 +21,7 @@ export const App = () => {
       <div className="font-hanken-grotesk">
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<HomePage />} />
+            <Route path="/" element={<AdminLoginPage />} />
             <Route path="/applicant-login" element={<LoginPage />} />
             <Route element={<ApplicantProtectLayout />}>
               <Route path="/instructions" element={<InstructionPage />} />

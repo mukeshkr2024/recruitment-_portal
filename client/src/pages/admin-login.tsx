@@ -12,22 +12,23 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Navigate, useNavigate } from "react-router-dom";
-import { useApplicantLogin } from "@/api/applicants/use-applicant-login";
+import { Link, Navigate } from "react-router-dom";
 import { useEffect } from "preact/hooks";
 import { useApplicantAuth } from "@/hooks/useApplicantAuth";
+import { useAdminLogin } from "@/api/admin/use-admin-login";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 
-export const loginSchema = z.object({
+export const adminloginSchema = z.object({
     email: z.string().email(),
-    access_code: z.string().min(4, {
-        message: "Invalid access code"
-    }).max(8, {
-        message: 'Invalid access code'
+    password: z.string().min(4, {
+        message: "Invalid password"
+    }).max(12, {
+        message: 'Invalid password'
     })
 })
 
-export const LoginPage = () => {
-    const { applicant, loading, checkAuth } = useApplicantAuth();
+export const AdminLoginPage = () => {
+    const { admin, loading, checkAuth } = useAdminAuth();
 
     useEffect(() => {
         checkAuth();
@@ -35,25 +36,22 @@ export const LoginPage = () => {
 
     if (loading) return <div>Loading...</div>;
 
-    if (applicant) return <Navigate to="/assesments" />
+    if (admin) return <Navigate to="/dashboard" />
 
-    const loginMutation = useApplicantLogin();
+    const loginMutation = useAdminLogin();
 
-    const form = useForm<z.infer<typeof loginSchema>>({
-        resolver: zodResolver(loginSchema),
+    const form = useForm<z.infer<typeof adminloginSchema>>({
+        resolver: zodResolver(adminloginSchema),
         defaultValues: {
             email: "",
-            access_code: ""
+            password: ""
         },
     })
 
-    function onSubmit(values: z.infer<typeof loginSchema>) {
-        console.log(values)
-        // navigate("/assesment");
+    function onSubmit(values: z.infer<typeof adminloginSchema>) {
         loginMutation.mutate(values)
         if (loginMutation.isSuccess) {
             console.log("new login");
-
         }
     }
 
@@ -98,20 +96,18 @@ bg-[url('/bg_1.png')] bg-cover">
 
                                     <FormField
                                         control={form.control}
-                                        name="access_code"
+                                        name="password"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel className="font-normal">Enter access code</FormLabel>
+                                                <FormLabel className="font-normal">Password</FormLabel>
                                                 <FormControl>
-                                                    <Input placeholder="Access code" {...field} />
+                                                    <Input placeholder="Password" {...field} />
                                                 </FormControl>
                                                 <FormMessage className="text-xs font-normal" />
                                             </FormItem>
                                         )}
                                     />
-                                    <p className="text-sm text-[#007AFF]">Check your email for access code</p>
                                 </div>
-
                                 <div className="">
                                     <Button type="submit" className="w-full bg-[#5138ED]  hover:bg-[#5138ED]">Get Started</Button>
                                 </div>
@@ -122,8 +118,7 @@ bg-[url('/bg_1.png')] bg-cover">
                     <div className="w-full bg-[#E5E5E5] h-[1px]"></div>
 
                     <div className="flex text-center items-center justify-center gap-x-3 text-sm font-normal">
-                        <p>Didn’t recieved an access?</p>
-                        <span className="text-[#007AFF]">Raise issue</span>
+                        <Link to="/applicant-login" className="text-[#007AFF] font-medium">Applicant Login</Link>
                     </div>
                 </div>
             </div>

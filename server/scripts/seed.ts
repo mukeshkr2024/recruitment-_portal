@@ -16,8 +16,8 @@ const seed = async () => {
         const userCreated = await db.insert(user).values([{
             firstName: "Mukesh",
             lastName: "Kumar",
-            email: "mukesh@gmail.com",
-            password: "hashedPassword",
+            email: "admin@gmail.com",
+            password: "password",
             role: "admin",
         }]).returning();
 

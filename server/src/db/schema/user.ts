@@ -13,7 +13,7 @@ export const user = pgTable("user", {
     password: text("password").notNull(),
     role: text("role",).notNull().default("user"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
-    updateAt: timestamp("update_at").notNull().defaultNow(),
+    updatedAt: timestamp("update_at").notNull().defaultNow(),
 })
 
 export const userRelations = relations(user, ({ one, many }) => ({

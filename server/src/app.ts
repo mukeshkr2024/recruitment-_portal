@@ -6,6 +6,7 @@ import { createQuestion, deleteQuestion, getQuestion, getQuestionsByPostionId, u
 import { applicantRouter } from "./routes/applicant.routes";
 import { authRouter } from "./routes/auth.routes";
 import cookieParser from "cookie-parser"
+import { isAdminAuthenticated } from "./middleware/auth";
 
 export const app = express()
 
@@ -35,7 +36,7 @@ app.get("/api/v1/test", (req: Request, res: Response) => {
     })
 })
 
-app.get("/api/v1/positions", getPostions)
+app.get("/api/v1/positions", isAdminAuthenticated, getPostions)
 app.post("/api/v1/positions", createPosition)
 app.delete("/api/v1/positions/:positionId", deletePosition)
 app.get("/api/v1/questions/:positionId", getQuestionsByPostionId)
