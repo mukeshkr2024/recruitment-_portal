@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import db from "../db";
 import { and, eq } from "drizzle-orm";
-import { option, position, question, result } from "../db/schema";
+import { applicant, option, position, question, result } from "../db/schema";
 
 export const getApplicantsAssessmentQuestions = async (req: Request, res: Response) => {
     try {
@@ -81,3 +81,25 @@ export const submitAssessment = async (req: Request, res: Response) => {
         return res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
+
+export const getApplicants = async (Req: Request, res: Response) => {
+    try {
+
+        // const applicants = await db.query.applicant.findMany({
+
+        // }).
+
+        const applicants = await db.select(
+            {
+
+            }
+        ).from(applicant)
+            .leftJoin(position, eq(position.id, applicant.appliedFor));
+
+        return res.status(200).json(applicants)
+    } catch (error) {
+        console.log(error);
+
+    }
+}

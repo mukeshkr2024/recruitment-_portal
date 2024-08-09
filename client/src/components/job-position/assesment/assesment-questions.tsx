@@ -5,6 +5,7 @@ import { CreateQuestion } from './create-question-dialog';
 import { useDeleteQuestion } from '@/api/questions/use-delete-question';
 import { useState } from 'preact/hooks';
 import { EditQuestion } from './edit-questions';
+import { ConfirmDialog } from '@/components/confirm-dialog';
 
 type Question = {
     id: string,
@@ -39,7 +40,9 @@ export const AssesmentQuestions = ({ positionId }: { positionId: string }) => {
                                     </div>
                                     <div className="flex gap-x-2.5">
                                         <Pencil size={18} className="cursor-pointer" onClick={() => setQuestionToEdit(question.id)} />
-                                        <Trash size={18} className="text-red-500 cursor-pointer" onClick={() => handleDelete(question.id)} />
+                                        <ConfirmDialog onConfirm={() => handleDelete(question.id)}>
+                                            <Trash size={18} className="text-red-500 cursor-pointer" />
+                                        </ConfirmDialog>
                                     </div>
                                 </div>
                             ))

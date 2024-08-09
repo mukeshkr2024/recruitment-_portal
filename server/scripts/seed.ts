@@ -1,15 +1,16 @@
 import db from "../src/db";
-import { user, position, question, option, applicant } from "../src/db/schema";
+import { user, position, question, option, applicant, result } from "../src/db/schema";
 
 const seed = async () => {
     try {
         console.log("Seeding started...");
 
-        await db.delete(position);
-        await db.delete(user);
+        await db.delete(result);
+        await db.delete(applicant);
         await db.delete(question);
         await db.delete(option);
-        await db.delete(applicant);
+        await db.delete(position);
+        await db.delete(user);
 
         // Create users 
         const userCreated = await db.insert(user).values([{
@@ -98,12 +99,18 @@ const seed = async () => {
             { questionId: questionIds[5], optionText: "Option 4 for question 6", isCorrect: false }
         ])
 
-        await db.insert(applicant).values({
-            firstName: "John",
-            lastName: "Doe",
-            email: "john@gmail.com",
-            phone: "1234567890",
-        })
+        await db.insert(applicant).values([
+            { firstName: "John", lastName: "Doe", email: "john@gmail.com", phone: "1234567890", accessCode: "3d33w223", appliedFor: positionId },
+            { firstName: "Jane", lastName: "Smith", email: "jane@gmail.com", phone: "0987654321", accessCode: "4f44x334", appliedFor: positionId },
+            { firstName: "Alice", lastName: "Johnson", email: "alice@gmail.com", phone: "1122334455", accessCode: "5g55y445", appliedFor: positionId },
+            { firstName: "Bob", lastName: "Brown", email: "bob@gmail.com", phone: "2233445566", accessCode: "6h66z556", appliedFor: positionId },
+            { firstName: "Charlie", lastName: "Davis", email: "charlie@gmail.com", phone: "3344556677", accessCode: "7i77a667", appliedFor: positionId },
+            { firstName: "David", lastName: "Wilson", email: "david@gmail.com", phone: "4455667788", accessCode: "8j88b778", appliedFor: positionId },
+            { firstName: "Eva", lastName: "Clark", email: "eva@gmail.com", phone: "5566778899", accessCode: "9k99c889", appliedFor: positionId },
+            { firstName: "Frank", lastName: "Lewis", email: "frank@gmail.com", phone: "6677889900", accessCode: "0l00d990", appliedFor: positionId },
+            { firstName: "Grace", lastName: "Walker", email: "grace@gmail.com", phone: "7788990011", accessCode: "1m11e001", appliedFor: positionId },
+            { firstName: "Hank", lastName: "Hall", email: "hank@gmail.com", phone: "8899001122", accessCode: "2n22f112", appliedFor: positionId },
+        ]);
 
         console.log(options);
         console.log(questions);

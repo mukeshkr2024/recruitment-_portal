@@ -3,6 +3,8 @@ import { FaSuitcase } from "react-icons/fa";
 import { LuBox } from "react-icons/lu";
 import { TbUsers } from "react-icons/tb";
 import { Link, useLocation } from 'react-router-dom';
+import { Button } from "../ui/button";
+import { LogOut } from "lucide-react";
 
 interface SidebarLink {
     id: number;
@@ -24,9 +26,9 @@ export const Sidebar = () => {
 
     return (
         <div className="w-16 md:w-56 fixed left-0 top-0 z-10 h-screen boder-r pt-8 px-4 bg-white">
-            <div className="mb-8">
-                <img src="/logo.svg" alt="logo" className="w-28 hidden md:flex" />
-                <img src="/logo_mini.svg" alt="logo" className="w-8 flex md:hidden" />
+            <div className="mb-8 flex items-center justify-center">
+                <img src="/cp_logo.svg" alt="logo" className="" />
+                <p className="text-sm font-semibold">Cloudprism Solutions</p>
             </div>
 
             <ul className="mt-6 space-y-6">
@@ -50,7 +52,10 @@ export const Sidebar = () => {
             </ul>
 
             <div className="w-full absolute bottom-5 left-0 px-4 py-2 cursor-pointer text-center">
-                Logout
+                <Button style={{ width: '100%' }} className="flex items-center px-4 rounded-3xl" variant="outline">
+                    <LogOut size={18} />
+                    <span className="ml-2">Logout</span>
+                </Button>
             </div>
         </div>
     )

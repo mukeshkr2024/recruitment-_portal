@@ -9,7 +9,7 @@ export const PositionDetailPage = () => {
         <div className="p-6">
             <div>
                 <div>
-                    <h2>Assesment Questions</h2>
+                    <h2>Assesment Setup</h2>
                 </div>
                 <AssesmentQuestions positionId={positionId!} />
             </div>

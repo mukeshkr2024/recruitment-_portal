@@ -1,0 +1,1 @@
+ALTER TABLE "applicant" ADD COLUMN "access_code" varchar(255) NOT NULL;
