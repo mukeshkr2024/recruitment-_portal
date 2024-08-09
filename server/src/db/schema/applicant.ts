@@ -9,17 +9,19 @@ export const applicant = pgTable("applicant", {
         .$defaultFn(() => crypto.randomUUID()),
     firstName: varchar("first_name", { length: 255 }).notNull(),
     lastName: varchar("last_name", { length: 255 }).notNull(),
-    email: varchar("email").notNull().unique(),
-    appliedFor: text("applied_for").references(() => position.id),
+    email: varchar("email", { length: 255 }).notNull().unique(),
+    positionId: text("applied_for").references(() => position.id, {
+        onDelete: "cascade"
+    }).notNull(),
     accessCode: varchar("access_code", { length: 255 }).notNull(),
     phone: varchar("contact_phone", { length: 255 }).notNull(),
     createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { mode: "string" }).notNull().defaultNow(),
-})
+});
 
-export const applicantRelations = relations(applicant, ({ one, many }) => ({
-    appliedFor: one(position, {
-        fields: [applicant.appliedFor],
-        references: [position.id]
-    })
-}))
+export const applicantRelations = relations(applicant, ({ one }) => ({
+    position: one(position, {
+        fields: [applicant.positionId],
+        references: [position.id],
+    }),
+}));

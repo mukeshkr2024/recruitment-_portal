@@ -1,5 +1,7 @@
 import { pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import crypto from "crypto";
+import { relations } from "drizzle-orm";
+import { position } from "./postition";
 
 export const user = pgTable("user", {
     id: text("id")
@@ -13,3 +15,7 @@ export const user = pgTable("user", {
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updateAt: timestamp("update_at").notNull().defaultNow(),
 })
+
+export const userRelations = relations(user, ({ one, many }) => ({
+    positions: many(position)
+}))

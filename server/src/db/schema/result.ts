@@ -1,4 +1,4 @@
-import { integer, numeric, pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import { integer, pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { applicant } from "./applicant";
 import { position } from "./postition";
 import { relations } from "drizzle-orm";
