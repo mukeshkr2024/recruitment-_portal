@@ -27,12 +27,12 @@ const seed = async () => {
 
         // Create job positions
         const jobPositions = await db.insert(position).values([
-            { positionName: "UI/UX Designer", createdBy: userId },
-            { positionName: "Software Engineer", createdBy: userId },
-            { positionName: "Product Manager", createdBy: userId },
-            { positionName: "Data Scientist", createdBy: userId },
-            { positionName: "DevOps Engineer", createdBy: userId },
-            { positionName: "Quality Assurance Engineer", createdBy: userId },
+            { positionName: "UI/UX Designer", createdBy: userId, duration: 30 },
+            { positionName: "Software Engineer", createdBy: userId, duration: 30 },
+            { positionName: "Product Manager", createdBy: userId, duration: 30 },
+            { positionName: "Data Scientist", createdBy: userId, duration: 30 },
+            { positionName: "DevOps Engineer", createdBy: userId, duration: 30 },
+            { positionName: "Quality Assurance Engineer", createdBy: userId, duration: 30 },
         ]).returning();
 
         const positionId = jobPositions[0].id

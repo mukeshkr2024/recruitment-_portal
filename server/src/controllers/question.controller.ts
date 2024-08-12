@@ -34,6 +34,8 @@ export const createQuestion = async (req: Request, res: Response) => {
 
         const { questionText, answer1, answer2, answer3, answer4 } = req.body;
 
+
+
         const isAlreadyQuestionExist = await db.query.question.findFirst({
             where: eq(question.questionText, questionText)
         })
@@ -50,20 +52,20 @@ export const createQuestion = async (req: Request, res: Response) => {
 
         const options = await db.insert(option).values([{
             questionId: createdQuestion[0].id,
-            optionText: answer1,
-            isCorrect: false,
+            optionText: answer1?.text,
+            isCorrect: answer1?.isCorrect,
         }, {
             questionId: createdQuestion[0].id,
-            optionText: answer2,
-            isCorrect: false,
+            optionText: answer2?.text,
+            isCorrect: answer2?.isCorrect,
         }, {
             questionId: createdQuestion[0].id,
-            optionText: answer3,
-            isCorrect: false,
+            optionText: answer3?.text,
+            isCorrect: answer3?.isCorrect,
         }, {
             questionId: createdQuestion[0].id,
-            optionText: answer4,
-            isCorrect: true,
+            optionText: answer4?.text,
+            isCorrect: answer4?.isCorrect,
         }]).returning()
 
         return res.status(200).json({
@@ -154,7 +156,8 @@ export const updateQuestion = async (req: Request, res: Response) => {
                 const optionId = questionExist.options[i]?.id;
                 if (optionId) {
                     await db.update(option).set({
-                        optionText: answers[i]
+                        optionText: answers[i]?.text,
+                        isCorrect: answers[i]?.isCorrect
                     }).where(eq(option.id, optionId))
                     updatedOptions.push({ id: optionId, text: answers[i] });
                 }

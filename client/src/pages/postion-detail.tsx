@@ -7,9 +7,10 @@ export const PositionDetailPage = () => {
 
     return (
         <div className="p-6">
-            <div>
+            <div className="flex flex-col space-y-4">
                 <div>
-                    <h2>Assesment Setup</h2>
+                    <h2 className="text-3xl font-bold text-blue-900">
+                        Assesment Setup</h2>
                 </div>
                 <AssesmentQuestions positionId={positionId!} />
             </div>

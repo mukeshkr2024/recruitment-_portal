@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import crypto from "crypto";
 import { user } from "./user";
 import { relations } from "drizzle-orm";
@@ -13,6 +13,7 @@ export const position = pgTable("position", {
     createdBy: text("created_by").references(() => user.id, {
         onDelete: "cascade"
     }).notNull(),
+    duration: integer("duration").default(0),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

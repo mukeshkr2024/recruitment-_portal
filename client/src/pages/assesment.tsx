@@ -1,9 +1,9 @@
+import { useState } from "preact/hooks"; // or from "react" for React
 import { useGetApplicantQuestions } from "@/api/applicants/use-get-applicantQuestions";
 import { useSubmitAssessment } from "@/api/applicants/use-submit-assesment";
 import { AssessmentFooter } from "@/components/assesments/assement-footer";
 import { AssessmentHeader } from "@/components/assesments/assesment-header";
 import { ConfirmSubmit } from "@/components/assesments/confirm-submit";
-import { useState } from "preact/hooks";
 
 type Question = {
     id: string,
@@ -36,16 +36,12 @@ export const AssessmentPage = () => {
 
     const [isSubmitClicked, setIsSubmitClicked] = useState<boolean>(false);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
-
-    // Initialize selectedOptions as an array of objects with null selectedOptionId and isSelected as false
     const [selectedOptions, setSelectedOptions] = useState<SelectedOption[]>(
         questions.map(question => ({
             questionId: question.id,
             selectedOptionId: null,
             isSelected: false
         }))
-
-
     );
 
     const currentQuestion = questions[currentQuestionIndex];
@@ -69,13 +65,14 @@ export const AssessmentPage = () => {
     }
 
     const handleSubmit = () => {
+        console.log("formattedData");
         const formattedData = selectedOptions.map(option => ({
             questionId: option.questionId,
             selectedOptionId: option.selectedOptionId,
             isSelected: option.isSelected
         }));
 
-        submitMuttation.mutate(formattedData)
+        submitMuttation.mutate(formattedData);
 
         console.log("Formatted Data for Submission:", formattedData);
     }
@@ -83,6 +80,8 @@ export const AssessmentPage = () => {
     const totalQuestions = questions.length;
     const isPrevDisabled = currentQuestionIndex === 0;
     const isNextDisabled = currentQuestionIndex === totalQuestions - 1;
+
+    const duration = 1; // Duration in minutes
 
     return (
         <>
@@ -94,7 +93,12 @@ export const AssessmentPage = () => {
                     />
                 ) : (
                     <div className="py-4">
-                        <AssessmentHeader />
+                        <AssessmentHeader
+                            duration={duration}
+                            onTimeUp={
+                                handleSubmit
+                            }
+                        />
                         <section className="max-w-6xl mx-auto pt-40">
                             <div className="text-2xl flex items-center gap-x-1.5 font-semibold">
                                 <span>{currentQuestionIndex + 1}</span>

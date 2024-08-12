@@ -1,6 +1,7 @@
 import { useGetQuestion } from "@/api/questions/use-get-question";
 import { useUpdateQuestion } from "@/api/questions/use-update-question";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
     Dialog,
     DialogContent,
@@ -30,12 +31,34 @@ type Props = {
 }
 
 export const editQuestionSchema = z.object({
-    questionText: z.string(),
-    answer1: z.string(),
-    answer2: z.string(),
-    answer3: z.string(),
-    answer4: z.string(),
-});
+    questionText: z.string().min(10, "Question Title is required"),
+    answer1: z.object({
+        text: z.string().min(4, "Option 1 is required"),
+        isCorrect: z.boolean(),
+    }),
+    answer2: z.object({
+        text: z.string().min(4, "Option 2 is required"),
+        isCorrect: z.boolean(),
+    }),
+    answer3: z.object({
+        text: z.string().min(4, "Option 3 is required"),
+        isCorrect: z.boolean(),
+    }),
+    answer4: z.object({
+        text: z.string().min(4, "Option 4 is required"),
+        isCorrect: z.boolean(),
+    }),
+}).refine(
+    (data) =>
+        data.answer1.isCorrect ||
+        data.answer2.isCorrect ||
+        data.answer3.isCorrect ||
+        data.answer4.isCorrect,
+    {
+        message: "At least one option must be marked as correct",
+        path: ["answer1", "answer2", "answer3", "answer4"],
+    }
+);
 
 export const EditQuestion = ({ onClose, questionId }: Props) => {
 
@@ -47,10 +70,6 @@ export const EditQuestion = ({ onClose, questionId }: Props) => {
         resolver: zodResolver(editQuestionSchema),
         defaultValues: {
             questionText: "",
-            answer1: "",
-            answer2: "",
-            answer3: "",
-            answer4: "",
         },
     });
 
@@ -58,10 +77,22 @@ export const EditQuestion = ({ onClose, questionId }: Props) => {
         if (question) {
             form.reset({
                 questionText: question?.questionText,
-                answer1: question?.options[0].optionText,
-                answer2: question?.options[1].optionText,
-                answer3: question?.options[2].optionText,
-                answer4: question?.options[3].optionText
+                answer1: {
+                    text: question?.options[0].optionText,
+                    isCorrect: question?.options[0].isCorrect
+                },
+                answer2: {
+                    text: question?.options[1].optionText,
+                    isCorrect: question?.options[1].isCorrect
+                },
+                answer3: {
+                    text: question?.options[2].optionText,
+                    isCorrect: question?.options[2].isCorrect
+                },
+                answer4: {
+                    text: question?.options[3].optionText,
+                    isCorrect: question?.options[3].isCorrect
+                }
             })
         }
     }, [question])
@@ -102,7 +133,7 @@ export const EditQuestion = ({ onClose, questionId }: Props) => {
                                         <FormLabel>Question Title</FormLabel>
                                         <FormControl>
                                             <Textarea
-                                                placeholder="eg: UI/UX Designer"
+                                                placeholder="e.g., What is UI/UX Design?"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -110,72 +141,163 @@ export const EditQuestion = ({ onClose, questionId }: Props) => {
                                     </FormItem>
                                 )}
                             />
-
                             <div className="mt-4 flex flex-col gap-y-4">
-                                <h3>Answers</h3>
-                                <FormField
-                                    control={form.control}
-                                    name="answer1"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder="eg: UI/UX Designer"
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                /><FormField
-                                    control={form.control}
-                                    name="answer2"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder="eg: UI/UX Designer"
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                /><FormField
-                                    control={form.control}
-                                    name="answer3"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder="eg: UI/UX Designer"
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                /><FormField
-                                    control={form.control}
-                                    name="answer4"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder="eg: UI/UX Designer"
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+                                <div>
+                                    <h3 className="font-medium">Options</h3>
+                                    <p className="text-sm text-gray-700">one option must be marked as correct</p>
+                                </div>
+                                <div className="flex gap-x-4 items-center">
+                                    <FormField
+                                        control={form.control}
+                                        name="answer1.isCorrect"
+                                        render={({ field }) => (
+                                            <FormItem >
+                                                <FormControl>
+                                                    <Checkbox
+                                                        checked={field.value}
+                                                        onCheckedChange={(checked) =>
+                                                            field.onChange(checked)
+                                                        }
+                                                        className="size-5"
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="answer1.text"
+
+                                        render={({ field }) => (
+                                            <FormItem className="flex-1">
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder="eg: UI/UX Designer"
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+
+                                <div className="flex gap-x-4 items-center">
+                                    <FormField
+                                        control={form.control}
+                                        name="answer2.isCorrect"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormControl>
+                                                    <Checkbox
+                                                        checked={field.value}
+                                                        onCheckedChange={(checked) =>
+                                                            field.onChange(checked)
+                                                        }
+                                                        className="size-5"
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="answer2.text"
+                                        render={({ field }) => (
+                                            <FormItem className="flex-1">
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder="eg: UI/UX Designer"
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+
+                                <div className="flex gap-x-4 items-center">
+                                    <FormField
+                                        control={form.control}
+                                        name="answer3.isCorrect"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormControl>
+                                                    <Checkbox
+                                                        checked={field.value}
+                                                        onCheckedChange={(checked) =>
+                                                            field.onChange(checked)
+                                                        }
+                                                        className="size-5"
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="answer3.text"
+                                        render={({ field }) => (
+                                            <FormItem className="flex-1">
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder="eg: UI/UX Designer"
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+
+                                <div className="flex gap-x-4 items-center">
+                                    <FormField
+                                        control={form.control}
+                                        name="answer4.isCorrect"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormControl>
+                                                    <Checkbox
+                                                        checked={field.value}
+                                                        onCheckedChange={(checked) =>
+                                                            field.onChange(checked)
+                                                        }
+                                                        className="size-5"
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="answer4.text"
+                                        render={({ field }) => (
+                                            <FormItem className="flex-1">
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder="eg: UI/UX Designer"
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+
                             </div>
+
+
                             <div className="mb-4 mt-4 flex gap-x-4">
                                 <Button
                                     variant="outline"
                                     className="w-28"
-                                    onClick={onClose}
                                     type="button"
                                 >
                                     Cancel
@@ -190,7 +312,7 @@ export const EditQuestion = ({ onClose, questionId }: Props) => {
                             </div>
                         </form>
                     </Form>
-                </div>
+                </div >
             </DialogContent>
         </Dialog>
     );
