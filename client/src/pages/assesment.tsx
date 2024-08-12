@@ -26,8 +26,6 @@ export const AssessmentPage = () => {
     const { assesmentId } = useParams()
 
 
-
-
     const { data, error, isLoading } = useGetApplicantQuestions(assesmentId!);
     const submitMuttation = useSubmitAssessment();
 
@@ -89,7 +87,7 @@ export const AssessmentPage = () => {
     const isPrevDisabled = currentQuestionIndex === 0;
     const isNextDisabled = currentQuestionIndex === totalQuestions - 1;
 
-    const duration = 1; // Duration in minutes
+    const duration = 30; // Duration in minutes
 
     return (
         <>

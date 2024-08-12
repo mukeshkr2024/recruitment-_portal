@@ -8,6 +8,9 @@ import { Trash } from "lucide-react";
 
 interface Assesment {
     id: string;
+    status: string;
+    score: number;
+    totalScore: number;
     applicant: {
         firstName: string;
         lastName: string;
@@ -88,9 +91,9 @@ export const ApplicantsPage = () => {
                                     <TableCell className="text-gray-600">{assesment?.applicant?.email}</TableCell>
                                     <TableCell className="text-gray-600">{assesment?.applicant?.phone}</TableCell>
                                     <TableCell className="text-gray-600">{assesment.position.positionName}</TableCell>
-                                    <TableCell className="text-gray-600">Not Completed</TableCell>
+                                    <TableCell className="text-gray-600">{assesment?.status}</TableCell>
                                     <TableCell className="text-gray-600">{formatDate(assesment.createdAt)}</TableCell>
-                                    <TableCell className="text-gray-600">Null</TableCell>
+                                    <TableCell className="text-gray-600">{assesment?.score}/{assesment?.totalScore}</TableCell>
                                     <TableCell className="text-gray-600">{assesment?.applicant.accessCode}</TableCell>
                                     <TableCell className="text-gray-600">
                                         <div className="flex gap-x-5">

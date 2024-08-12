@@ -1,4 +1,4 @@
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, desc, eq } from "drizzle-orm";
 import { Request, Response } from "express";
 import db from "../db";
 import { applicant, assessment, option, question, } from "../db/schema";
@@ -107,7 +107,8 @@ export const getApplicants = async (req: Request, res: Response) => {
             with: {
                 applicant: true,
                 position: true,
-            }
+            },
+            orderBy: desc(assessment.createdAt)
         })
 
         return res.status(200).json(assesment)
@@ -151,13 +152,14 @@ export const getApplicantAssesment = async (req: Request, res: Response) => {
         const assessments = await db.query.assessment.findMany({
             where: eq(assessment.applicantId, applicantId),
             columns: {
-                id: true
+                id: true,
+                status: true
             },
             with: {
                 position: {
                     columns: {
-                        id: true,
-                        positionName: true
+                        positionName: true,
+
                     }
                 },
 

@@ -103,7 +103,7 @@ bg-[url('/bg_1.png')] bg-cover">
                                             <FormItem>
                                                 <FormLabel className="font-normal">Enter access code</FormLabel>
                                                 <FormControl>
-                                                    <Input placeholder="Access code" {...field} />
+                                                    <Input placeholder="Access code" type="password" {...field} />
                                                 </FormControl>
                                                 <FormMessage className="text-xs font-normal" />
                                             </FormItem>

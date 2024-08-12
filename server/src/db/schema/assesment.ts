@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { applicant } from "./applicant";
 import { position } from "./postition";
 
@@ -9,6 +9,9 @@ export const assessment = pgTable("assesment", {
         .$defaultFn(() => crypto.randomUUID()),
     applicantId: text("applicant_id").references(() => applicant.id).notNull(),
     positionId: text("position_id").references(() => position.id).notNull(),
+    status: text("status").default("PENDING").notNull(),
+    score: integer("score").default(0).notNull(),
+    totalScore: integer("total_score").default(0).notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 })

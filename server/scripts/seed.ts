@@ -111,7 +111,7 @@ const seed = async () => {
         // // Create assessments
         await db.insert(assessment).values([
             { positionId: positionIds[0], applicantId: applicants[0].id },
-            { positionId: positionIds[1], applicantId: applicants[0].id },
+            { positionId: positionIds[1], applicantId: applicants[0].id, status: "COMPLETED" },
             {
                 positionId: positionIds[0],
                 applicantId: applicants[1].id

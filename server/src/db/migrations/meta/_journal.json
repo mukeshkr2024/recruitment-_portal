@@ -36,6 +36,13 @@
       "when": 1723448244730,
       "tag": "0004_zippy_blizzard",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1723460907805,
+      "tag": "0005_faulty_wildside",
+      "breakpoints": true
     }
   ]
 }

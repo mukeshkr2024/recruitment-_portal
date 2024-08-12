@@ -101,7 +101,7 @@ bg-[url('/bg_1.png')] bg-cover">
                                             <FormItem>
                                                 <FormLabel className="font-normal">Password</FormLabel>
                                                 <FormControl>
-                                                    <Input placeholder="Password" {...field} />
+                                                    <Input placeholder="Password" type="password" {...field} />
                                                 </FormControl>
                                                 <FormMessage className="text-xs font-normal" />
                                             </FormItem>
