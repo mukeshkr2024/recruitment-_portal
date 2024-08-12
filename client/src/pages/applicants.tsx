@@ -27,7 +27,7 @@ interface Assesment {
 // Define the component
 export const ApplicantsPage = () => {
 
-    const { data: assesments, isLoading } = useGetApplicants()
+    const { data: assesments } = useGetApplicants()
 
     console.log(assesments?.length);
 

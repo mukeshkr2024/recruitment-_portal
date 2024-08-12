@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 export const useSubmitAssessment = () => {
     const navigate = useNavigate()
     return useMutation({
-        mutationFn: async (data) => {
+        mutationFn: async (data: any) => {
             try {
                 await apiClient.post("/applicants/submit-assessment", data)
                 console.log("Assessment submitted successfully");

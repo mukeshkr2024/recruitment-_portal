@@ -1,12 +1,11 @@
+import { logOutSession } from "@/lib/utils";
+import { LogOut } from "lucide-react";
 import { IconType } from "react-icons";
 import { FaSuitcase } from "react-icons/fa";
 import { LuBox } from "react-icons/lu";
 import { TbUsers } from "react-icons/tb";
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from "../ui/button";
-import { LogOut } from "lucide-react";
-import { useAdminAuth } from "@/hooks/useAdminAuth";
-import { logOutSession } from "@/lib/utils";
 
 interface SidebarLink {
     id: number;

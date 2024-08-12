@@ -5,7 +5,7 @@ export const useCreatePosition = () => {
     const queryClient = useQueryClient()
 
     return useMutation({
-        mutationFn: async (positionData) => {
+        mutationFn: async (positionData: any) => {
             await apiClient.post("/positions", positionData)
         },
         onSuccess: () => {

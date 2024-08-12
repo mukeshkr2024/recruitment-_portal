@@ -12,7 +12,7 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useApplicantLogin } from "@/api/applicants/use-applicant-login";
 import { useEffect } from "preact/hooks";
 import { useApplicantAuth } from "@/hooks/useApplicantAuth";
