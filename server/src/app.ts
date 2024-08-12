@@ -3,11 +3,12 @@ import express, { NextFunction, Request, Response } from "express";
 import morgan from "morgan";
 import { createPosition, deletePosition, getPostions } from "./controllers/position.controller";
 import { createQuestion, deleteQuestion, getQuestion, getQuestionsByPostionId, updateQuestion } from "./controllers/question.controller";
-import { applicantRouter } from "./routes/applicant.routes";
+import { applicantsRouter } from "./routes/applicants.routes";
 import { authRouter } from "./routes/auth.routes";
 import cookieParser from "cookie-parser"
 import { isAdminAuthenticated } from "./middleware/auth";
 import { getAnalytics } from "./controllers/analytics.controoler";
+import { applicantRouter } from "./routes/applicant.routes";
 
 export const app = express()
 
@@ -49,7 +50,8 @@ app.put("/api/v1/question/:questionId", updateQuestion)
 app.get("/api/v1/analytics", getAnalytics)
 
 // applicants 
-app.use("/api/v1/applicants", applicantRouter)
+app.use("/api/v1/applicants", applicantsRouter)
+app.use("/api/v1/applicant", applicantRouter)
 app.use("/api/v1/auth", authRouter)
 
 // unknown api request

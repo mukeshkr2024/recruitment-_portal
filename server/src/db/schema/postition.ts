@@ -4,6 +4,7 @@ import { user } from "./user";
 import { relations } from "drizzle-orm";
 import { question } from "./question";
 import { result } from "./result";
+import { assessment } from "./assesment";
 
 export const position = pgTable("position", {
     id: text("id")
@@ -25,4 +26,5 @@ export const positionRelations = relations(position, ({ many, one }) => ({
     }),
     questions: many(question),
     results: many(result),
+    assesment: many(assessment)
 }));

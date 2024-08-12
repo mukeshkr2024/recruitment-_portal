@@ -9,18 +9,20 @@ interface Position {
 }
 
 interface Applicant {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string;
+    applicant: {
+        id: string;
+        firstName: string;
+        lastName: string;
+        email: string;
+        phone: string;
+    }
 }
 
 export const DashboardPage: React.FC = () => {
     const [currentPosition, setCurrentPosition] = useState<string | null>(null);
 
     const { data: analytics, isLoading: isAnalyticsLoading, error: analyticsError } = useGetAnalytics();
-    const { data: applicants, isLoading: isApplicantsLoading, error: applicantsError } = useGetApplicantsByPosition(currentPosition);
+    const { data: assesments, isLoading: isApplicantsLoading, error: applicantsError } = useGetApplicantsByPosition(currentPosition);
 
     // Update currentPosition when analytics data is available
     useEffect(() => {
@@ -106,16 +108,16 @@ export const DashboardPage: React.FC = () => {
                             <p className="text-gray-500">Loading...</p>
                         ) : applicantsError ? (
                             <p className="text-red-600">Error loading applicants.</p>
-                        ) : applicants?.length > 0 ? (
+                        ) : assesments?.length > 0 ? (
                             <div className="space-y-4">
-                                {applicants.map((applicant: Applicant) => (
+                                {assesments.map((assesment: Applicant) => (
                                     <div
-                                        key={applicant.id}
+                                        key={assesment?.applicant?.id}
                                         className="p-4 border rounded-md bg-gray-50 hover:bg-gray-200 transition-colors duration-150"
                                     >
-                                        <p className="font-semibold text-gray-800">{applicant.firstName} {applicant.lastName}</p>
-                                        <p className="text-gray-700">{applicant.email}</p>
-                                        <p className="text-gray-700">{applicant.phone}</p>
+                                        <p className="font-semibold text-gray-800">{assesment?.applicant?.firstName} {assesment?.applicant?.lastName}</p>
+                                        <p className="text-gray-700">{assesment?.applicant?.email}</p>
+                                        <p className="text-gray-700">{assesment?.applicant?.phone}</p>
                                     </div>
                                 ))}
                             </div>

@@ -7,63 +7,43 @@ type Props = {
 }
 
 export const AssessmentHeader = ({ duration, onTimeUp }: Props) => {
-    // Convert minutes to seconds
+    // Convert duration from minutes to seconds
     const initialTime = duration * 60;
+
     const [timeLeft, setTimeLeft] = useState<number>(initialTime);
 
     useEffect(() => {
-        const now = Date.now();
-        const savedTime = localStorage.getItem('assessmentTimeLeft');
-        const savedTimestamp = localStorage.getItem('assessmentTimestamp');
-
-        if (savedTime && savedTimestamp) {
-            const elapsedTime = Math.floor((now - Number(savedTimestamp)) / 1000);
-            const remainingTime = Number(savedTime) - elapsedTime;
-
-            if (remainingTime <= 0) {
-                setTimeLeft(0);
-                onTimeUp(); // Trigger the time up callback
-                localStorage.removeItem('assessmentTimeLeft');
-                localStorage.removeItem('assessmentTimestamp');
-                return;
-            }
-
-            setTimeLeft(remainingTime);
+        // Initialize the timer from localStorage if available
+        const savedTime = localStorage.getItem('secondsLeft');
+        if (savedTime) {
+            setTimeLeft(parseInt(savedTime, 10));
         } else {
-            setTimeLeft(initialTime);
-            localStorage.setItem('assessmentTimeLeft', initialTime.toString());
-            localStorage.setItem('assessmentTimestamp', now.toString());
+            localStorage.setItem('secondsLeft', initialTime.toString());
         }
 
-        // Save time to localStorage every second
-        const intervalId = setInterval(() => {
-            setTimeLeft(prevTime => {
-                if (prevTime <= 1) {
-                    clearInterval(intervalId);
-                    onTimeUp(); // Trigger the time up callback
-                    localStorage.removeItem('assessmentTimeLeft');
-                    localStorage.removeItem('assessmentTimestamp');
+        // Timer countdown logic
+        const countdown = setInterval(() => {
+            setTimeLeft(prev => {
+                if (prev <= 1) {
+                    clearInterval(countdown);
+                    localStorage.removeItem('secondsLeft');
+                    onTimeUp();
                     return 0;
                 }
-                const newTime = prevTime - 1;
-                localStorage.setItem('assessmentTimeLeft', newTime.toString());
-                localStorage.setItem('assessmentTimestamp', Date.now().toString());
+                const newTime = prev - 1;
+                localStorage.setItem('secondsLeft', newTime.toString());
                 return newTime;
             });
         }, 1000);
 
-        // Clean up the interval and localStorage on component unmount
-        return () => {
-            clearInterval(intervalId);
-            localStorage.removeItem('assessmentTimeLeft');
-            localStorage.removeItem('assessmentTimestamp');
-        };
-    }, [onTimeUp, initialTime]);
+        return () => clearInterval(countdown);
+    }, [initialTime, onTimeUp]);
 
+    // Format the time in MM:SS
     const formatTime = (seconds: number) => {
         const minutes = Math.floor(seconds / 60);
         const secs = seconds % 60;
-        return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
     };
 
     return (

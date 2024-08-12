@@ -1,12 +1,14 @@
+import { getApplicantAssesment, getJobPostions, registerApplicant } from "../controllers/applicant.controller";
 import express from "express";
-import { getApplicants, getApplicantsAssessmentQuestions, getApplicantsByPositon, submitAssessment } from "../controllers/applicant.controller";
+import { isApplicantAuthenticated } from "../middleware/auth";
 
 const applicantRouter = express.Router();
 
-applicantRouter.get("/", getApplicants)
-applicantRouter.get("/position/:positionId", getApplicantsByPositon)
-applicantRouter.get("/assesment-questions", getApplicantsAssessmentQuestions)
-applicantRouter.post("/submit-assessment", submitAssessment)
+applicantRouter.get("/assessments", isApplicantAuthenticated, getApplicantAssesment)
+applicantRouter.get("/job-positions", getJobPostions)
+applicantRouter.post("/register", registerApplicant)
 
 
-export { applicantRouter };
+
+
+export { applicantRouter }; 

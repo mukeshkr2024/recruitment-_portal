@@ -1,19 +1,23 @@
-import { AssessmentHeader } from "@/components/assesments/assesment-header"
 import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 
 export const InstructionPage = () => {
+
+    const { assesmentId } = useParams()
 
     const navigate = useNavigate();
 
     const handleClick = () => {
-        navigate("/assesments")
+        navigate(`/assesment/${assesmentId}`)
     }
 
     return (
         <div className="py-4">
-            <AssessmentHeader />
+            <Card className="flex max-w-7xl mx-auto items-center py-5 px-6 shadow-md justify-center ">
+                <h2 className="text-[#000000] font-semibold text-3xl">Internal Assessment: UI/UX Designer</h2>
+            </Card>
             <section className="max-w-[75rem] mx-auto mt-5">
                 <h3 className="text-xl font-semibold text-[#000000]">Instructions</h3>
                 <ul className="flex flex-col gap-y-2 mt-3 text-base">

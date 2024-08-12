@@ -6,6 +6,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Button } from "../ui/button";
 import { LogOut } from "lucide-react";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
+import { logOutSession } from "@/lib/utils";
 
 interface SidebarLink {
     id: number;
@@ -23,10 +24,8 @@ const SIDEBAR_LINKS: SidebarLink[] = [
 
 export const Sidebar = () => {
 
-    const { logout } = useAdminAuth();
-
     const handleLogout = () => {
-        logout();
+        logOutSession()
         window.location.href = '/';
     }
 

@@ -6,13 +6,15 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { formatDate } from "@/utils";
 import { Trash } from "lucide-react";
 
-interface Applicant {
+interface Assesment {
     id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string;
-    accessCode: string;
+    applicant: {
+        firstName: string;
+        lastName: string;
+        email: string;
+        phone: string;
+        accessCode: string;
+    }
     createdAt: string;
     position: {
         positionName: string
@@ -22,9 +24,9 @@ interface Applicant {
 // Define the component
 export const ApplicantsPage = () => {
 
-    const { data: applicants, isLoading } = useGetApplicants()
+    const { data: assesments, isLoading } = useGetApplicants()
 
-    console.log(applicants?.length);
+    console.log(assesments?.length);
 
 
     const deleteMutation = useDeletePosition()
@@ -78,24 +80,24 @@ export const ApplicantsPage = () => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {applicants?.length ? (
-                            applicants.map((applicant: Applicant, idx: number) => (
-                                <TableRow key={applicant.id}>
+                        {assesments?.length ? (
+                            assesments.map((assesment: Assesment, idx: number) => (
+                                <TableRow key={assesment.id}>
                                     <TableCell className="text-gray-600">{idx + 1}</TableCell>
-                                    <TableCell className="text-gray-600">{applicant.firstName}{" "}{applicant.lastName}</TableCell>
-                                    <TableCell className="text-gray-600">{applicant.email}</TableCell>
-                                    <TableCell className="text-gray-600">{applicant.phone}</TableCell>
-                                    <TableCell className="text-gray-600">{applicant.position.positionName}</TableCell>
+                                    <TableCell className="text-gray-600">{assesment?.applicant?.firstName}{" "}{assesment?.applicant?.lastName}</TableCell>
+                                    <TableCell className="text-gray-600">{assesment?.applicant?.email}</TableCell>
+                                    <TableCell className="text-gray-600">{assesment?.applicant?.phone}</TableCell>
+                                    <TableCell className="text-gray-600">{assesment.position.positionName}</TableCell>
                                     <TableCell className="text-gray-600">Not Completed</TableCell>
-                                    <TableCell className="text-gray-600">{formatDate(applicant.createdAt)}</TableCell>
+                                    <TableCell className="text-gray-600">{formatDate(assesment.createdAt)}</TableCell>
                                     <TableCell className="text-gray-600">Null</TableCell>
-                                    <TableCell className="text-gray-600">{applicant.accessCode}</TableCell>
+                                    <TableCell className="text-gray-600">{assesment?.applicant.accessCode}</TableCell>
                                     <TableCell className="text-gray-600">
                                         <div className="flex gap-x-5">
                                             {/* <Link to={`/applicants/${applicant.id}`}>
                                                 <Pencil size={18} />
                                             </Link> */}
-                                            <ConfirmDialog onConfirm={() => onDelete(applicant.id)}>
+                                            <ConfirmDialog onConfirm={() => onDelete(assesment.id)}>
                                                 <Trash size={18} className="text-red-500 cursor-pointer" />
                                             </ConfirmDialog>
                                         </div>

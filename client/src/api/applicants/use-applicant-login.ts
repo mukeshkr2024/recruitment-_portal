@@ -11,7 +11,7 @@ export const useApplicantLogin = () => {
             mutationFn: async (loginData: z.infer<typeof loginSchema>) => {
                 try {
                     await apiClient.post("auth/applicant-login", loginData)
-                    navigate("/instructions")
+                    navigate("/applicant-dashboard")
                 } catch (error) {
                     console.log(error);
                 }

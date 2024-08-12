@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import db from "../db";
-import { eq } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 import { position } from "../db/schema";
 
 let userId = "7b3c4f20-d565-4b6e-b477-d9decc436ec1"
@@ -10,7 +10,15 @@ export const getPostions = async (req: Request, res: Response) => {
 
         console.log("called");
 
-        const postions = await db.query.position.findMany()
+        const postions = await db.query.position.findMany({
+            with: {
+                assesment: {
+                    columns: {
+                        id: true
+                    }
+                }
+            }
+        })
 
         console.log("postions", postions);
 

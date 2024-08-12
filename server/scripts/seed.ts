@@ -1,16 +1,18 @@
 import db from "../src/db";
-import { user, position, question, option, applicant, result } from "../src/db/schema";
+import { user, position, question, option, applicant, result, assessment } from "../src/db/schema";
 
 const seed = async () => {
     try {
         console.log("Seeding started...");
 
-        // await db.delete(result);
-        await db.delete(applicant);
-        await db.delete(question);
-        await db.delete(option);
-        await db.delete(position);
-        await db.delete(user);
+        // Clear existing data
+        await db.delete(assessment);
+        await db.delete(result).catch(error => console.error("Error deleting from result:", error));
+        await db.delete(applicant).catch(error => console.error("Error deleting from applicant:", error));
+        await db.delete(question).catch(error => console.error("Error deleting from question:", error));
+        await db.delete(option).catch(error => console.error("Error deleting from option:", error));
+        await db.delete(position).catch(error => console.error("Error deleting from position:", error));
+        await db.delete(user).catch(error => console.error("Error deleting from user:", error));
 
         // Create users 
         const userCreated = await db.insert(user).values([{
@@ -21,9 +23,11 @@ const seed = async () => {
             role: "admin",
         }]).returning();
 
+        if (userCreated.length === 0) {
+            throw new Error("Failed to create user");
+        }
 
         const userId = userCreated[0].id;
-
 
         // Create job positions
         const jobPositions = await db.insert(position).values([
@@ -35,38 +39,30 @@ const seed = async () => {
             { positionName: "Quality Assurance Engineer", createdBy: userId, duration: 30 },
         ]).returning();
 
-        const positionId = jobPositions[0].id
+        if (jobPositions.length === 0) {
+            throw new Error("Failed to create job positions");
+        }
 
+        const positionIds = jobPositions.map(p => p.id);
+
+        // Create questions
         const questions = await db.insert(question).values([
-            {
-                positionId: positionId,
-                questionText: "How do you approach designing a user interface for a new product? - Question 1"
-            },
-            {
-                positionId: positionId,
-                questionText: "Can you describe a time when you had to balance user needs with business goals in your design? - Question 2"
-            },
-            {
-                positionId: positionId,
-                questionText: "What tools and methods do you use for user research and usability testing? - Question 3"
-            },
-            {
-                positionId: positionId,
-                questionText: "How do you ensure your designs are accessible to users with disabilities? - Question 4"
-            },
-            {
-                positionId: positionId,
-                questionText: "Can you give an example of how you’ve used feedback to iterate on a design? - Question 5"
-            },
-            {
-                positionId: positionId,
-                questionText: "What are some common UI/UX mistakes you’ve encountered, and how do you avoid them? - Question 6"
-            }
-        ]).returning()
+            { positionId: positionIds[0], questionText: "How do you approach designing a user interface for a new product? - Question 1" },
+            { positionId: positionIds[0], questionText: "Can you describe a time when you had to balance user needs with business goals in your design? - Question 2" },
+            { positionId: positionIds[0], questionText: "What tools and methods do you use for user research and usability testing? - Question 3" },
+            { positionId: positionIds[0], questionText: "How do you ensure your designs are accessible to users with disabilities? - Question 4" },
+            { positionId: positionIds[0], questionText: "Can you give an example of how you’ve used feedback to iterate on a design? - Question 5" },
+            { positionId: positionIds[0], questionText: "What are some common UI/UX mistakes you’ve encountered, and how do you avoid them? - Question 6" }
+        ]).returning();
+
+        if (questions.length === 0) {
+            throw new Error("Failed to create questions");
+        }
 
         const questionIds = questions.map(q => q.id);
 
-        const options = await db.insert(option).values([
+        // Create options
+        await db.insert(option).values([
             { questionId: questionIds[0], optionText: "Option 1 for question 1", isCorrect: true },
             { questionId: questionIds[0], optionText: "Option 2 for question 1", isCorrect: false },
             { questionId: questionIds[0], optionText: "Option 3 for question 1", isCorrect: false },
@@ -96,26 +92,65 @@ const seed = async () => {
             { questionId: questionIds[5], optionText: "Option 2 for question 6", isCorrect: false },
             { questionId: questionIds[5], optionText: "Option 3 for question 6", isCorrect: false },
             { questionId: questionIds[5], optionText: "Option 4 for question 6", isCorrect: false }
-        ])
-
-        await db.insert(applicant).values([
-            { firstName: "John", lastName: "Doe", email: "john@gmail.com", phone: "1234567890", accessCode: "3d33w223", positionId: positionId },
-            { firstName: "Jane", lastName: "Smith", email: "jane@gmail.com", phone: "0987654321", accessCode: "4f44x334", positionId: positionId },
-            { firstName: "Alice", lastName: "Johnson", email: "alice@gmail.com", phone: "1122334455", accessCode: "5g55y445", positionId: positionId },
-            { firstName: "Bob", lastName: "Brown", email: "bob@gmail.com", phone: "2233445566", accessCode: "6h66z556", positionId: positionId },
-            { firstName: "Charlie", lastName: "Davis", email: "charlie@gmail.com", phone: "3344556677", accessCode: "7i77a667", positionId: positionId },
-            { firstName: "David", lastName: "Wilson", email: "david@gmail.com", phone: "4455667788", accessCode: "8j88b778", positionId: positionId },
-            { firstName: "Eva", lastName: "Clark", email: "eva@gmail.com", phone: "5566778899", accessCode: "9k99c889", positionId: positionId },
-            { firstName: "Frank", lastName: "Lewis", email: "frank@gmail.com", phone: "6677889900", accessCode: "0l00d990", positionId: positionId },
-            { firstName: "Grace", lastName: "Walker", email: "grace@gmail.com", phone: "7788990011", accessCode: "1m11e001", positionId: positionId },
-            { firstName: "Hank", lastName: "Hall", email: "hank@gmail.com", phone: "8899001122", accessCode: "2n22f112", positionId: positionId },
         ]);
 
+        // Create applicants
+        const applicants = await db.insert(applicant).values([
+            { firstName: "John", lastName: "Doe", email: "admin@gmail.com", phone: "1234567890", accessCode: "password" },
+            { firstName: "Jane", lastName: "Smith", email: "jane@gmail.com", phone: "0987654321", accessCode: "4f44x334" },
+            { firstName: "Alice", lastName: "Johnson", email: "alice@gmail.com", phone: "1122334455", accessCode: "5g55y445" },
+            { firstName: "Bob", lastName: "Brown", email: "bob@gmail.com", phone: "2233445566", accessCode: "6h66z556" },
+            { firstName: "Charlie", lastName: "Davis", email: "charlie@gmail.com", phone: "3344556677", accessCode: "7i77a667" },
+            { firstName: "David", lastName: "Wilson", email: "david@gmail.com", phone: "4455667788", accessCode: "8j88b778" },
+            { firstName: "Eva", lastName: "Clark", email: "eva@gmail.com", phone: "5566778899", accessCode: "9k99c889" },
+            { firstName: "Frank", lastName: "Lewis", email: "frank@gmail.com", phone: "6677889900", accessCode: "0l00d990" },
+            { firstName: "Grace", lastName: "Walker", email: "grace@gmail.com", phone: "7788990011", accessCode: "1m11e001" },
+            { firstName: "Hank", lastName: "Hall", email: "hank@gmail.com", phone: "8899001122", accessCode: "2n22f112" }
+        ]).returning();
+
+        // // Create assessments
+        await db.insert(assessment).values([
+            { positionId: positionIds[0], applicantId: applicants[0].id },
+            { positionId: positionIds[1], applicantId: applicants[0].id },
+            {
+                positionId: positionIds[0],
+                applicantId: applicants[1].id
+            }, {
+                positionId: positionIds[0],
+                applicantId: applicants[2].id
+            }, {
+                positionId: positionIds[1],
+                applicantId: applicants[3].id
+            }, {
+                positionId: positionIds[1],
+                applicantId: applicants[4].id
+            }, {
+                positionId: positionIds[2],
+                applicantId: applicants[5].id
+            }, {
+                positionId: positionIds[2],
+                applicantId: applicants[6].id
+            }, {
+                positionId: positionIds[3],
+                applicantId: applicants[7].id
+            }, {
+                positionId: positionIds[3],
+                applicantId: applicants[8].id
+            }, {
+                positionId: positionIds[4],
+                applicantId: applicants[9].id
+            }
+
+        ]);
 
         console.log("Job Positions created:", jobPositions);
+        console.log("Questions created:", questions);
+        console.log("Applicants created:", applicants);
+        console.log("Assessments created successfully.");
+
         console.log("Seeding finished...");
     } catch (error) {
-        console.error("Error in seeding", error);
+        console.error("Error in seeding:", error);
     }
 }
 

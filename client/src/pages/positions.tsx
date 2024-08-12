@@ -11,6 +11,9 @@ interface Position {
     id: string;
     positionName: string;
     createdAt: string;
+    assesment: {
+        id: string
+    }[]
 }
 
 // Define the component
@@ -50,6 +53,9 @@ export const PositionPage = () => {
                                 Position
                             </TableHead>
                             <TableHead className="text-gray-700 font-semibold bg-gray-200">
+                                Total Applicants
+                            </TableHead>
+                            <TableHead className="text-gray-700 font-semibold bg-gray-200">
                                 CreatedAt
                             </TableHead>
                             <TableHead className="text-gray-700 font-semibold bg-gray-200">
@@ -63,6 +69,7 @@ export const PositionPage = () => {
                                 <TableRow key={position.id} className="hover:bg-gray-100">
                                     <TableCell className="text-gray-600">{idx + 1}</TableCell>
                                     <TableCell className="text-gray-800">{position.positionName}</TableCell>
+                                    <TableCell className="text-gray-800">{position?.assesment?.length || 0}</TableCell>
                                     <TableCell className="text-gray-600">{formatDate(position.createdAt)}</TableCell>
                                     <TableCell>
                                         <div className="flex gap-x-5">

@@ -35,7 +35,7 @@ export const LoginPage = () => {
 
     if (loading) return <div>Loading...</div>;
 
-    if (applicant) return <Navigate to="/assesments" />
+    if (applicant) return <Navigate to="/applicant-dashboard" />
 
     const loginMutation = useApplicantLogin();
 

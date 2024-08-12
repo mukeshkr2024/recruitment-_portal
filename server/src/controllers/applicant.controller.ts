@@ -1,20 +1,32 @@
+import { and, asc, eq } from "drizzle-orm";
 import { Request, Response } from "express";
 import db from "../db";
-import { and, eq } from "drizzle-orm";
-import { applicant, option, question, } from "../db/schema";
+import { applicant, assessment, option, question, } from "../db/schema";
+import { generateAccessCode } from "../utils";
 
 export const getApplicantsAssessmentQuestions = async (req: Request, res: Response) => {
     try {
 
-        const positions = await db.query.position.findMany({})
+        const { assessmentId } = req.params;
+
+        console.log(assessmentId);
+
+        const AssesmentFound = await db.query.assessment.findFirst({
+            where: eq(assessment.id, assessmentId)
+        })
+
+        if (!AssesmentFound) {
+            throw new Error("Assessment not found")
+        }
+
+        console.log(AssesmentFound);
 
         const questions = await db.query.question.findMany({
             columns: {
                 id: true,
                 questionText: true
             },
-
-            where: eq(question.positionId, positions[0].id),
+            where: eq(question.positionId, AssesmentFound?.positionId),
             with: {
                 options: {
                     columns: {
@@ -91,21 +103,14 @@ export const submitAssessment = async (req: Request, res: Response) => {
 
 export const getApplicants = async (req: Request, res: Response) => {
     try {
-        const applicants = await db.query.applicant.findMany({
-            columns: {
-                updatedAt: false,
-                positionId: false
-            },
+        const assesment = await db.query.assessment.findMany({
             with: {
-                position: {
-                    columns: {
-                        positionName: true
-                    }
-                }
+                applicant: true,
+                position: true,
             }
-        });
+        })
 
-        return res.status(200).json(applicants);
+        return res.status(200).json(assesment)
     } catch (error) {
         console.error("Error fetching applicants:", error);
         return res.status(500).json({ error: "Failed to fetch applicants." });
@@ -118,15 +123,122 @@ export const getApplicantsByPositon = async (req: Request, res: Response) => {
 
         const { positionId } = req.params
 
-        const applicants = await db.query.applicant.findMany({
-            where: eq(applicant.positionId, positionId),
-            limit: 4,
-            offset: 1,
+        const applicants = await db.query.assessment.findMany({
+            where: eq(assessment.positionId, positionId),
+            with: {
+                applicant: true,
+            }
         })
 
-        console.log(positionId);
+        console.log(applicants);
 
         return res.status(200).json(applicants)
+    } catch (error) {
+        console.log(error);
+
+    }
+}
+
+export const getApplicantAssesment = async (req: Request, res: Response) => {
+    try {
+
+        const applicantId = req.id;
+
+        if (!applicantId) return
+
+        console.log(applicantId);
+
+        const assessments = await db.query.assessment.findMany({
+            where: eq(assessment.applicantId, applicantId),
+            columns: {
+                id: true
+            },
+            with: {
+                position: {
+                    columns: {
+                        id: true,
+                        positionName: true
+                    }
+                },
+
+            },
+            orderBy: asc(assessment.createdAt)
+        })
+
+        return res.status(200).json(assessments)
+    } catch (error) {
+        console.log(error);
+
+    }
+}
+
+
+export const registerApplicant = async (req: Request, res: Response) => {
+    try {
+        const { firstName, lastName, email, phone, appliedFor } = req.body
+
+        if (!firstName || !lastName || !email || !phone || !appliedFor) {
+            throw new Error("All fields are required")
+        }
+
+
+        const existingApplicant = await db.query.applicant.findFirst({
+            where: eq(applicant.email, email)
+        })
+
+        console.log(existingApplicant);
+
+        let foundApplicant;
+
+        if (existingApplicant) {
+            foundApplicant = await db.update(applicant).set({
+                accessCode: generateAccessCode(8)
+            }).where(eq(applicant.email, existingApplicant.email)).returning()
+
+        } else {
+            foundApplicant = await db.insert(applicant).values({
+                firstName,
+                lastName,
+                email,
+                phone,
+                accessCode: generateAccessCode(8)
+            }).returning()
+
+        }
+
+        console.log(foundApplicant);
+
+        // create assesment 
+
+        const assesment = await db.insert(assessment).values({
+            applicantId: foundApplicant[0].id,
+            positionId: appliedFor
+        }).returning()
+
+        console.log(assesment);
+
+
+        return res.status(201).json({
+            success: true,
+        })
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const getJobPostions = async (Req: Request, res: Response) => {
+    try {
+
+        const jobPositions = await db.query.position.findMany({
+            columns: {
+                id: true,
+                positionName: true
+            }
+        })
+
+        return res.status(200).json(jobPositions)
+
     } catch (error) {
         console.log(error);
 

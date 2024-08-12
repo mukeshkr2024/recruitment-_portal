@@ -12,6 +12,8 @@ import { QueryClient, QueryClientProvider } from "react-query"
 import { PositionDetailPage } from "./pages/postion-detail"
 import { ApplicantProtectLayout } from "./components/layouts/applicant-protect-layout"
 import { AdminLoginPage } from "./pages/admin-login"
+import { ApplicantDashboard } from "./pages/applicant-dashboard"
+import { RegisterPage } from "./pages/register"
 
 const queryClient = new QueryClient()
 
@@ -23,10 +25,12 @@ export const App = () => {
           <Routes>
             <Route path="/" element={<AdminLoginPage />} />
             <Route path="/applicant-login" element={<LoginPage />} />
+            <Route path="/applicant-register" element={<RegisterPage />} />
             <Route element={<ApplicantProtectLayout />}>
-              <Route path="/instructions" element={<InstructionPage />} />
-              <Route path="/assesments" element={<AssessmentPage />} />
+              <Route path="/instructions/:assesmentId" element={<InstructionPage />} />
+              <Route path="/assesment/:assesmentId" element={<AssessmentPage />} />
               <Route path="/submitted" element={<SubmittedPage />} />
+              <Route path="/applicant-dashboard" element={<ApplicantDashboard />} />
             </Route>
 
             {/* Addmin Routes  */}

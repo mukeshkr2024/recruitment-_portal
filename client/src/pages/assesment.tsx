@@ -4,6 +4,7 @@ import { useSubmitAssessment } from "@/api/applicants/use-submit-assesment";
 import { AssessmentFooter } from "@/components/assesments/assement-footer";
 import { AssessmentHeader } from "@/components/assesments/assesment-header";
 import { ConfirmSubmit } from "@/components/assesments/confirm-submit";
+import { useLocation, useParams } from "react-router-dom";
 
 type Question = {
     id: string,
@@ -21,7 +22,13 @@ type SelectedOption = {
 }
 
 export const AssessmentPage = () => {
-    const { data, error, isLoading } = useGetApplicantQuestions();
+
+    const { assesmentId } = useParams()
+
+
+
+
+    const { data, error, isLoading } = useGetApplicantQuestions(assesmentId!);
     const submitMuttation = useSubmitAssessment();
 
     if (isLoading) {
@@ -45,6 +52,7 @@ export const AssessmentPage = () => {
     );
 
     const currentQuestion = questions[currentQuestionIndex];
+
 
     const handleNext = () => {
         setCurrentQuestionIndex(prev => prev + 1);
