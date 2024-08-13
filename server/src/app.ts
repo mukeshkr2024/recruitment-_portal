@@ -24,7 +24,7 @@ app.use(express.json({ limit: "50mb" }))
 // CORS configuration
 app.use(
     cors({
-        origin: ["http://localhost:3000", "http://localhost:5173", "https://assessment-client-sigma.vercel.app", "http://82.112.227.200:4173"],
+        origin: ["http://localhost:3000", "http://localhost:5173", "https://assessment-client-sigma.vercel.app", "http://82.112.227.200:4173", "http://careers.codingcommando.in"],
         credentials: true,
         methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
         allowedHeaders: ["Content-Type", "Authorization"],
