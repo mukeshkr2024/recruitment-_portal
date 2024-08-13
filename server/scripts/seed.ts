@@ -96,7 +96,7 @@ const seed = async () => {
 
         // Create applicants
         const applicants = await db.insert(applicant).values([
-            { firstName: "John", lastName: "Doe", email: "admin@gmail.com", phone: "1234567890", accessCode: "password" },
+            { firstName: "John", lastName: "Doe", email: "applicant@gmail.com", phone: "1234567890", accessCode: "password" },
             { firstName: "Jane", lastName: "Smith", email: "jane@gmail.com", phone: "0987654321", accessCode: "4f44x334" },
             { firstName: "Alice", lastName: "Johnson", email: "alice@gmail.com", phone: "1122334455", accessCode: "5g55y445" },
             { firstName: "Bob", lastName: "Brown", email: "bob@gmail.com", phone: "2233445566", accessCode: "6h66z556" },
