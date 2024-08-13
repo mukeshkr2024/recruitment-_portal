@@ -7,11 +7,13 @@ import { applicant } from "../db/schema";
 
 export const isApplicantAuthenticated = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const access_token = req.cookies.access_token;
-
-        if (!access_token) {
+        // Extract token from Authorization header
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
             return res.status(401).json({ message: "Access Denied" });
         }
+
+        const access_token = authHeader.split(' ')[1];
 
         const decoded = jwt.verify(access_token, env.JWT_KEY) as JwtPayload;
 
@@ -38,11 +40,13 @@ export const isApplicantAuthenticated = async (req: Request, res: Response, next
 
 export const isAdminAuthenticated = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const access_token = req.cookies.access_token;
-
-        if (!access_token) {
+        // Extract token from Authorization header
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
             return res.status(401).json({ message: "Access Denied" });
         }
+
+        const access_token = authHeader.split(' ')[1];
 
         const decoded = jwt.verify(access_token, env.JWT_KEY) as JwtPayload;
 

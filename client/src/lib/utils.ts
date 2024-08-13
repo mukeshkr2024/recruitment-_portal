@@ -1,6 +1,5 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
-import Cookies from 'js-cookie';
 
 
 export function cn(...inputs: ClassValue[]) {
@@ -8,8 +7,10 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const logOutSession = () => {
-  const token = Cookies.get('access_token');
+  // Retrieve the token from localStorage
+  const token = localStorage.getItem('access_token');
 
   console.log(token);
-  Cookies.remove('access_token');
-}
+  // Remove the token from localStorage
+  localStorage.removeItem('access_token');
+};

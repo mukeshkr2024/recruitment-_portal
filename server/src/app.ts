@@ -21,15 +21,18 @@ app.use(morgan("dev"));
 // parse body
 app.use(express.json({ limit: "50mb" }))
 
-//cors
+// CORS configuration
 app.use(
     cors({
-        origin: ["http://localhost:3000", "http://localhost:5173"],
+        origin: ["http://localhost:3000", "http://localhost:5173", "https://assessment-client-sigma.vercel.app"],
         credentials: true,
+        methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization"],
     })
 );
 
-// Routes 
+// Handle preflight requests
+app.options("*", cors());
 
 // test routes
 app.get("/api/v1/test", (req: Request, res: Response) => {
@@ -54,6 +57,16 @@ app.get("/api/v1/analytics", getAnalytics)
 app.use("/api/v1/applicants", applicantsRouter)
 app.use("/api/v1/applicant", applicantRouter)
 app.use("/api/v1/auth", authRouter)
+
+// // Debugging route
+// app.get("/api/v1/debug", (req: Request, res: Response) => {
+//     console.log("Cookies: ", req.cookies); // Log cookies for debugging
+//     res.setHeader('Access-Control-Allow-Origin', '*');
+//     res.json({
+//         headers: req.headers,
+//         origin: req.headers.origin
+//     });
+// });
 
 // unknown api request
 app.all("*", (req: Request, res: Response, next: NextFunction) => {

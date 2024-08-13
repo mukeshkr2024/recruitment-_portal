@@ -10,7 +10,8 @@ export const useApplicantLogin = () => {
         {
             mutationFn: async (loginData: z.infer<typeof loginSchema>) => {
                 try {
-                    await apiClient.post("auth/applicant-login", loginData)
+                    const { data } = await apiClient.post("auth/applicant-login", loginData)
+                    localStorage.setItem('access_token', data.token);
                     navigate("/applicant-dashboard")
                 } catch (error) {
                     console.log(error);
