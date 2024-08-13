@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { Card } from "../ui/card";
 
 type Props = {

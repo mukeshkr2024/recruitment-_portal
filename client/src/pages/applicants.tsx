@@ -1,6 +1,6 @@
 import { useGetApplicants } from "@/api/applicants/use-get-applicants";
 import { useDeletePosition } from "@/api/positions/use-delete-positions";
-import { CreateApplicant } from "@/components/applicant/create-applicant";
+// import { CreateApplicant } from "@/components/applicant/create-applicant";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatDate } from "@/utils";

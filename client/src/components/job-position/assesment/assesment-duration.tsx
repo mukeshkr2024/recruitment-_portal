@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { useUpdateDuration } from '@/api/use-updateDuration';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { useUpdateDuration } from '@/api/use-updateDuration';
+import { useState } from 'react';
 
 export const AssessmentDuration = ({ duration: initialDuration, positionId }: { duration: number, positionId: string }) => {
     const [duration, setDuration] = useState(initialDuration);
