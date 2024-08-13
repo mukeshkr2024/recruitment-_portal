@@ -24,7 +24,7 @@ app.use(express.json({ limit: "50mb" }))
 // CORS configuration
 app.use(
     cors({
-        origin: ["http://localhost:3000", "http://localhost:5173", "https://assessment-client-sigma.vercel.app"],
+        origin: ["http://localhost:3000", "http://localhost:5173", "https://assessment-client-sigma.vercel.app", "http://82.112.227.200:4173"],
         credentials: true,
         methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
         allowedHeaders: ["Content-Type", "Authorization"],
@@ -58,15 +58,6 @@ app.use("/api/v1/applicants", applicantsRouter)
 app.use("/api/v1/applicant", applicantRouter)
 app.use("/api/v1/auth", authRouter)
 
-// // Debugging route
-// app.get("/api/v1/debug", (req: Request, res: Response) => {
-//     console.log("Cookies: ", req.cookies); // Log cookies for debugging
-//     res.setHeader('Access-Control-Allow-Origin', '*');
-//     res.json({
-//         headers: req.headers,
-//         origin: req.headers.origin
-//     });
-// });
 
 // unknown api request
 app.all("*", (req: Request, res: Response, next: NextFunction) => {
