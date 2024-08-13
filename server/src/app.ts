@@ -1,7 +1,7 @@
 import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
 import morgan from "morgan";
-import { createPosition, deletePosition, getPostions } from "./controllers/position.controller";
+import { createPosition, deletePosition, getPostions, updatePosition } from "./controllers/position.controller";
 import { createQuestion, deleteQuestion, getQuestion, getQuestionsByPostionId, updateQuestion } from "./controllers/question.controller";
 import { applicantsRouter } from "./routes/applicants.routes";
 import { authRouter } from "./routes/auth.routes";
@@ -46,6 +46,7 @@ app.post("/api/v1/questions/:positionId", createQuestion)
 app.delete("/api/v1/questions/:questionId", deleteQuestion)
 app.get("/api/v1/question/:questionId", getQuestion)
 app.put("/api/v1/question/:questionId", updateQuestion)
+app.patch("/api/v1/position/duration-update/:positionId", updatePosition)
 
 app.get("/api/v1/analytics", getAnalytics)
 

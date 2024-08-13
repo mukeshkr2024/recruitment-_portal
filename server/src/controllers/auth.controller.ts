@@ -3,18 +3,16 @@ import db from "../db";
 import { eq } from "drizzle-orm";
 import { applicant, user } from "../db/schema";
 import { generateToken } from "../utils/jwt";
+import { ErrorHandler } from "../utils/ErrorHandler";
+import { CatchAsyncError } from "../middleware/catchAsyncError";
 
-// Error handling middleware
-const handleError = (res: Response, message: string, statusCode: number = 400) => {
-    return res.status(statusCode).json({ success: false, message });
-};
 
-export const applicantLogin = async (req: Request, res: Response) => {
+export const applicantLogin = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { email, access_code } = req.body;
 
         if (!email || !access_code) {
-            return handleError(res, "All fields are required", 400);
+            throw new Error("All fields are required")
         }
 
         const isUserFound = await db.query.applicant.findFirst({
@@ -22,7 +20,7 @@ export const applicantLogin = async (req: Request, res: Response) => {
         });
 
         if (!isUserFound || isUserFound.accessCode !== access_code) {
-            return handleError(res, "Invalid details", 401);
+            throw new Error("Invalid details")
         }
 
         const access_token = generateToken(isUserFound.id);
@@ -40,17 +38,16 @@ export const applicantLogin = async (req: Request, res: Response) => {
         });
 
     } catch (error) {
-        console.error("Error during applicant login:", error);
-        return handleError(res, "Server error", 500);
+        return next(new ErrorHandler(error, 400));
     }
 };
 
-export const applicantDetail = async (req: Request, res: Response) => {
+export const applicantDetail = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req;
 
         if (!id) {
-            return handleError(res, "Invalid ID", 400);
+            throw new Error("Invalid id")
         }
 
         const applicantFound = await db.query.applicant.findFirst({
@@ -64,22 +61,21 @@ export const applicantDetail = async (req: Request, res: Response) => {
         });
 
         if (!applicantFound) {
-            return handleError(res, "Applicant not found", 404);
+            throw new Error("applicant not found")
         }
 
         res.status(200).json(applicantFound);
     } catch (error) {
-        console.error("Error fetching applicant details:", error);
-        return handleError(res, "Server error", 500);
+        return next(new ErrorHandler(error, 400));
     }
-};
+});
 
-export const userLogin = async (req: Request, res: Response) => {
+export const userLogin = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { email, password } = req.body;
 
         if (!email || !password) {
-            return handleError(res, "All fields are required", 400);
+            throw new Error("All fields are required")
         }
 
         const isUserFound = await db.query.user.findFirst({
@@ -87,7 +83,7 @@ export const userLogin = async (req: Request, res: Response) => {
         });
 
         if (!isUserFound || isUserFound.password !== password) {
-            return handleError(res, "Invalid details", 401);
+            throw new Error("Invalid details")
         }
 
         const access_token = generateToken(isUserFound.id);
@@ -105,17 +101,16 @@ export const userLogin = async (req: Request, res: Response) => {
         });
 
     } catch (error) {
-        console.error("Error during user login:", error);
-        return handleError(res, "Server error", 500);
+        return next(new ErrorHandler(error, 400));
     }
-};
+});
 
-export const userDetail = async (req: Request, res: Response) => {
+export const userDetail = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req;
 
         if (!id) {
-            return handleError(res, "Invalid ID", 400);
+            throw new Error("Invalid id")
         }
 
         const userFound = await db.query.user.findFirst({
@@ -129,17 +124,16 @@ export const userDetail = async (req: Request, res: Response) => {
         });
 
         if (!userFound) {
-            return handleError(res, "User not found", 404);
+            throw new Error("User not found")
         }
 
         res.status(200).json(userFound);
     } catch (error) {
-        console.error("Error fetching user details:", error);
-        return handleError(res, "Server error", 500);
+        return next(new ErrorHandler(error, 400));
     }
-};
+});
 
-export const logout = (req: Request, res: Response, next: NextFunction) => {
+export const logout = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
         res.clearCookie("access_token", {
             httpOnly: true,
@@ -153,7 +147,6 @@ export const logout = (req: Request, res: Response, next: NextFunction) => {
             message: "Logout successful",
         });
     } catch (error) {
-        console.error("Error during logout:", error);
-        return handleError(res, "Server error", 500);
+        return next(new ErrorHandler(error, 400));
     }
-};
+});

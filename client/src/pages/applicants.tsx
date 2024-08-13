@@ -48,9 +48,9 @@ export const ApplicantsPage = () => {
         <div className="p-6">
             <div className="flex w-full justify-between">
                 <h2 className="text-3xl font-bold text-blue-900">Job Applicants</h2>
-                <div>
+                {/* <div>
                     <CreateApplicant />
-                </div>
+                </div> */}
             </div>
             <div className="mt-2">
                 <Table>

@@ -12,7 +12,7 @@ type Props = {
 
 export const AssessmentFooter = ({ totalQuestions, handleBack, isPrevDisabled, answered, isNextDisabled, handleNext, handleIsSubmitClicked }: Props) => {
     return (
-        <section className="max-w-7xl mx-auto pt-44">
+        <section className="max-w-7xl mx-auto">
             <div className="w-full flex justify-between">
                 <p className="text-lg text-[#000000] font-semibold">Answered: {answered}/{totalQuestions}</p>
                 <div className="flex gap-x-4 items-center">

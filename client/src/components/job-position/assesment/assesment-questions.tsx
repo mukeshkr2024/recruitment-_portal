@@ -1,4 +1,3 @@
-import { useGetQuestions } from '@/api/questions/use-get-questions';
 import { Card } from '@/components/ui/card';
 import { Pencil, Trash } from 'lucide-react';
 import { CreateQuestion } from './create-question-dialog';
@@ -13,8 +12,8 @@ type Question = {
     questionText: string
 }
 
-export const AssesmentQuestions = ({ positionId }: { positionId: string }) => {
-    const { data: questions } = useGetQuestions(positionId);
+export const AssesmentQuestions = ({ positionId, questions }: { positionId: string, questions: any }) => {
+
     const mutation = useDeleteQuestion();
     const [questionToEdit, setQuestionToEdit] = useState<string | null>(null);
 

@@ -1,15 +1,14 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import db from "../db";
-import { count, eq } from "drizzle-orm";
+import { asc, count, desc, eq } from "drizzle-orm";
 import { position } from "../db/schema";
+import { CatchAsyncError } from "../middleware/catchAsyncError";
+import { ErrorHandler } from "../utils/ErrorHandler";
 
 let userId = "7b3c4f20-d565-4b6e-b477-d9decc436ec1"
 
-export const getPostions = async (req: Request, res: Response) => {
+export const getPostions = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
-
-        console.log("called");
-
         const postions = await db.query.position.findMany({
             with: {
                 assesment: {
@@ -17,23 +16,24 @@ export const getPostions = async (req: Request, res: Response) => {
                         id: true
                     }
                 }
-            }
+            },
+            orderBy: asc(position.createdAt)
         })
 
         console.log("postions", postions);
 
         return res.status(200).json(postions)
     } catch (error) {
-        console.log(error);
+        return next(new ErrorHandler(error, 400));
     }
-}
+})
 
-export const createPosition = async (req: Request, res: Response) => {
+export const createPosition = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { positionName } = req.body
 
         if (!positionName) {
-            return res.status(400).json({ error: "Position name is required" })
+            throw new Error("Position name is required")
         }
 
         const isAlreadyExists = await db.query.position.findFirst({
@@ -41,7 +41,7 @@ export const createPosition = async (req: Request, res: Response) => {
         })
 
         if (isAlreadyExists) {
-            return res.status(400).json({ error: "Position name already exists" })
+            throw new Error("Already exists")
         }
 
         const newPosition = await db.insert(position).values({
@@ -51,11 +51,11 @@ export const createPosition = async (req: Request, res: Response) => {
 
         return res.status(201).json(newPosition)
     } catch (error) {
-        console.log(error);
+        return next(new ErrorHandler(error, 400));
     }
-}
+})
 
-export const deletePosition = async (req: Request, res: Response) => {
+export const deletePosition = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { positionId } = req.params;
 
@@ -69,6 +69,24 @@ export const deletePosition = async (req: Request, res: Response) => {
 
         return res.status(200).json(deletePosition[0]);
     } catch (error) {
-        console.log(error);
+        return next(new ErrorHandler(error, 400));
     }
-}
+})
+
+export const updatePosition = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        console.log("updatePosition");
+
+        const { positionId } = req.params;
+
+        const updatePosition = await db.update(position).set({
+            duration: req.body.duration,
+        }).where(
+            eq(position.id, positionId)
+        )
+
+        return res.status(200).json(updatePosition);
+    } catch (error) {
+        return next(new ErrorHandler(error, 400));
+    }
+})

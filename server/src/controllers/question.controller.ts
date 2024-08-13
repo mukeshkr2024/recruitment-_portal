@@ -1,40 +1,37 @@
 import { asc, desc, eq } from "drizzle-orm";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import db from "../db";
-import { option, position, question, } from "../db/schema";
+import { assessment, option, position, question, } from "../db/schema";
+import { CatchAsyncError } from "../middleware/catchAsyncError";
+import { ErrorHandler } from "../utils/ErrorHandler";
 
-export const getQuestionsByPostionId = async (req: Request, res: Response) => {
+export const getQuestionsByPostionId = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
-
         const { positionId } = req.params;
 
-        const jobPositon = await db.query.position.findFirst({
-            where: eq(position.id, positionId)
+        const positions = await db.query.position.findFirst({
+            where: eq(position.id, positionId),
+            with: {
+                questions: true,
+            },
         })
 
-        if (!jobPositon) {
-            throw new Error("Job position not found")
+        if (!positions) {
+            throw new Error("Position not found")
         }
 
-        const questions = await db.query.question.findMany({
-            where: eq(question.positionId, jobPositon.id),
-            orderBy: asc(question.createdAt)
-        })
-
-        return res.status(200).json(questions)
+        return res.status(200).json(positions)
     } catch (error) {
-        console.log(error);
+        return next(new ErrorHandler(error, 400));
     }
-}
+})
 
-export const createQuestion = async (req: Request, res: Response) => {
+export const createQuestion = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
 
         const { positionId } = req.params;
 
         const { questionText, answer1, answer2, answer3, answer4 } = req.body;
-
-
 
         const isAlreadyQuestionExist = await db.query.question.findFirst({
             where: eq(question.questionText, questionText)
@@ -74,12 +71,11 @@ export const createQuestion = async (req: Request, res: Response) => {
         })
 
     } catch (error) {
-        console.log(error);
-
+        return next(new ErrorHandler(error, 400));
     }
-}
+})
 
-export const deleteQuestion = async (req: Request, res: Response) => {
+export const deleteQuestion = async (req: Request, res: Response, next: NextFunction) => {
     try {
 
         const { questionId } = req.params;
@@ -91,12 +87,11 @@ export const deleteQuestion = async (req: Request, res: Response) => {
         return res.status(200).json(response)
 
     } catch (error) {
-        console.log(error);
-
+        return next(new ErrorHandler(error, 400));
     }
 }
 
-export const getQuestion = async (req: Request, res: Response) => {
+export const getQuestion = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
 
         const { questionId } = req.params;
@@ -117,12 +112,12 @@ export const getQuestion = async (req: Request, res: Response) => {
         return res.status(200).json(response)
 
     } catch (error) {
-        console.log(error);
+        return next(new ErrorHandler(error, 400));
     }
-}
+})
 
 
-export const updateQuestion = async (req: Request, res: Response) => {
+export const updateQuestion = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
 
         const { questionId } = req.params;
@@ -172,6 +167,6 @@ export const updateQuestion = async (req: Request, res: Response) => {
         )
 
     } catch (error) {
-
+        return next(new ErrorHandler(error, 400));
     }
-}
+})

@@ -1,16 +1,14 @@
 import { and, asc, desc, eq } from "drizzle-orm";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import db from "../db";
 import { applicant, assessment, option, question, } from "../db/schema";
+import { CatchAsyncError } from "../middleware/catchAsyncError";
 import { generateAccessCode } from "../utils";
+import { ErrorHandler } from "../utils/ErrorHandler";
 
-export const getApplicantsAssessmentQuestions = async (req: Request, res: Response) => {
+export const getApplicantsAssessmentQuestions = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
-
         const { assessmentId } = req.params;
-
-        console.log(assessmentId);
-
         const AssesmentFound = await db.query.assessment.findFirst({
             where: eq(assessment.id, assessmentId)
         })
@@ -18,8 +16,6 @@ export const getApplicantsAssessmentQuestions = async (req: Request, res: Respon
         if (!AssesmentFound) {
             throw new Error("Assessment not found")
         }
-
-        console.log(AssesmentFound);
 
         const questions = await db.query.question.findMany({
             columns: {
@@ -41,11 +37,12 @@ export const getApplicantsAssessmentQuestions = async (req: Request, res: Respon
         return res.status(200).json(questions)
 
     } catch (error) {
-        console.log(error);
+        return next(new ErrorHandler(error, 400));
     }
 }
+)
 
-export const submitAssessment = async (req: Request, res: Response) => {
+export const submitAssessment = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const answers = req.body;
 
@@ -55,7 +52,6 @@ export const submitAssessment = async (req: Request, res: Response) => {
 
         let totalScore = 0;
 
-        console.log('Received answers:', answers);
 
         for (let answer of answers) {
             const correctOption = await db.query.option.findFirst({
@@ -66,11 +62,9 @@ export const submitAssessment = async (req: Request, res: Response) => {
             });
 
             if (!correctOption) {
-                console.warn(`No correct option found for questionId: ${answer.questionId}`);
                 continue;
             }
 
-            console.log('Correct option:', correctOption);
 
             if (correctOption.id === answer.selectedOptionId) {
                 totalScore += 1;
@@ -81,27 +75,17 @@ export const submitAssessment = async (req: Request, res: Response) => {
         const [position] = await db.query.position.findMany({ limit: 1 });
 
         if (!applicant || !position) {
-            return res.status(404).json({ error: 'Applicant or position not found.' });
+            throw new Error("Applicant or position not found.")
         }
-
-        // const response = await db.insert(result).values({
-        //     applicantId: applicant.id,
-        //     appliedPositonId: position.id,
-        //     score: totalScore,
-        //     totalScore: answers.length,
-        // }).returning();
-
-        // console.log(response);
 
         return res.status(200).json({ totalScore });
     } catch (error) {
-        console.error('Error submitting assessment:', error);
-        return res.status(500).json({ error: 'Internal Server Error' });
+        return next(new ErrorHandler(error, 400));
     }
-};
+});
 
 
-export const getApplicants = async (req: Request, res: Response) => {
+export const getApplicants = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const assesment = await db.query.assessment.findMany({
             with: {
@@ -113,12 +97,11 @@ export const getApplicants = async (req: Request, res: Response) => {
 
         return res.status(200).json(assesment)
     } catch (error) {
-        console.error("Error fetching applicants:", error);
-        return res.status(500).json({ error: "Failed to fetch applicants." });
+        return next(new ErrorHandler(error, 400));
     }
-};
+});
 
-export const getApplicantsByPositon = async (req: Request, res: Response) => {
+export const getApplicantsByPositon = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
         console.log("getApplicantsByPositon");
 
@@ -135,12 +118,11 @@ export const getApplicantsByPositon = async (req: Request, res: Response) => {
 
         return res.status(200).json(applicants)
     } catch (error) {
-        console.log(error);
-
+        return next(new ErrorHandler(error, 400));
     }
-}
+})
 
-export const getApplicantAssesment = async (req: Request, res: Response) => {
+export const getApplicantAssesment = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
 
         const applicantId = req.id;
@@ -169,13 +151,12 @@ export const getApplicantAssesment = async (req: Request, res: Response) => {
 
         return res.status(200).json(assessments)
     } catch (error) {
-        console.log(error);
-
+        return next(new ErrorHandler(error, 400));
     }
-}
+})
 
 
-export const registerApplicant = async (req: Request, res: Response) => {
+export const registerApplicant = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { firstName, lastName, email, phone, appliedFor } = req.body
 
@@ -210,8 +191,6 @@ export const registerApplicant = async (req: Request, res: Response) => {
 
         console.log(foundApplicant);
 
-        // create assesment 
-
         const assesment = await db.insert(assessment).values({
             applicantId: foundApplicant[0].id,
             positionId: appliedFor
@@ -225,11 +204,12 @@ export const registerApplicant = async (req: Request, res: Response) => {
         })
 
     } catch (error) {
-        console.log(error);
+        return next(new ErrorHandler(error, 400));
     }
-}
+})
 
-export const getJobPostions = async (Req: Request, res: Response) => {
+
+export const getJobPostions = CatchAsyncError(async (Req: Request, res: Response, next: NextFunction) => {
     try {
 
         const jobPositions = await db.query.position.findMany({
@@ -242,7 +222,6 @@ export const getJobPostions = async (Req: Request, res: Response) => {
         return res.status(200).json(jobPositions)
 
     } catch (error) {
-        console.log(error);
-
+        return next(new ErrorHandler(error, 400));
     }
-}
+})

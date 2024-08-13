@@ -1,15 +1,22 @@
 import { Button } from '@/components/ui/button';
-import Cookies from 'js-cookie';
-
+import { logOutSession } from '@/lib/utils';
+import { useEffect } from 'preact/hooks';
 
 export const SubmittedPage = () => {
 
     const handleClick = () => {
-        const token = Cookies.get('access_token');
-
-        console.log(token);
-        Cookies.remove('access_token');
+        logOutSession()
+        window.location.href = '/applicant-login';
     }
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            handleClick();
+        }, 10000);
+
+        return () => clearTimeout(timer);
+    }, []);
+
 
     return (
         <div className="min-h-screen w-screen flex items-center justify-center">

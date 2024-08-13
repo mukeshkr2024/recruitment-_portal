@@ -3,7 +3,7 @@ import { useSubmitAssessment } from "@/api/applicants/use-submit-assesment";
 import { AssessmentFooter } from "@/components/assesments/assement-footer";
 import { AssessmentHeader } from "@/components/assesments/assesment-header";
 import { ConfirmSubmit } from "@/components/assesments/confirm-submit";
-import { useState } from "preact/hooks"; // or from "react" for React
+import { useEffect, useState } from "preact/hooks"; // or from "react" for React
 import { useParams } from "react-router-dom";
 
 type Question = {
@@ -89,30 +89,68 @@ export const AssessmentPage = () => {
 
     const duration = 30; // Duration in minutes
 
+    const initialTime = duration * 60;
+
+    const [timeLeft, setTimeLeft] = useState<number>(initialTime);
+
+    useEffect(() => {
+        // Initialize the timer from localStorage if available
+        const savedTime = localStorage.getItem('secondsLeft');
+        if (savedTime) {
+            setTimeLeft(parseInt(savedTime, 10));
+        } else {
+            localStorage.setItem('secondsLeft', initialTime.toString());
+        }
+
+        // Timer countdown logic
+        const countdown = setInterval(() => {
+            setTimeLeft(prev => {
+                if (prev <= 1) {
+                    clearInterval(countdown);
+                    localStorage.removeItem('secondsLeft');
+                    handleSubmit();
+                    return 0;
+                }
+                const newTime = prev - 1;
+                localStorage.setItem('secondsLeft', newTime.toString());
+                return newTime;
+            });
+        }, 1000);
+
+        return () => clearInterval(countdown);
+    }, [initialTime, handleSubmit]);
+
+
+    const formatTime = (seconds: number) => {
+        const minutes = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+    };
+
     return (
-        <>
+        <div className="flex flex-col min-h-screen pt-4 pb-12">
             {
                 isSubmitClicked ? (
                     <ConfirmSubmit
                         handleSubmit={handleSubmit}
+                        timeRemaining={timeLeft}
                         handleIsSubmitClicked={() => setIsSubmitClicked(!isSubmitClicked)}
                     />
                 ) : (
-                    <div className="py-4">
-                        <AssessmentHeader
-                            duration={duration}
-                            onTimeUp={
-                                handleSubmit
-                            }
-                        />
-                        <section className="max-w-6xl mx-auto pt-40">
-                            <div className="text-2xl flex items-center gap-x-1.5 font-semibold">
-                                <span>{currentQuestionIndex + 1}</span>
-                                <p>{currentQuestion.questionText}</p>
-                            </div>
-                            <div className="mt-4 ml-4 flex flex-col gap-y-2">
-                                {
-                                    currentQuestion.options.map((option, idx) => (
+                    <>
+                        <div className="flex-none">
+                            <AssessmentHeader
+                                timeLeft={formatTime(timeLeft)}
+                            />
+                        </div>
+                        <div className="flex-grow mx-auto w-full max-w-7xl flex items-center">
+                            <div className="">
+                                <section className="text-2xl flex items-start gap-x-1.5 font-semibold">
+                                    <span>{currentQuestionIndex + 1}.</span>
+                                    <p>{currentQuestion.questionText}</p>
+                                </section>
+                                <section className="mt-4 ml-4 flex flex-col gap-y-2">
+                                    {currentQuestion.options.map((option, idx) => (
                                         <div className="flex gap-x-2.5" key={option.id}>
                                             <input
                                                 type="radio"
@@ -123,24 +161,30 @@ export const AssessmentPage = () => {
                                                 onChange={() => handleOptionChange(currentQuestion.id, option.id)}
                                                 className="transform scale-125"
                                             />
-                                            <label htmlFor={`option-${option.id}`}>{String.fromCharCode(97 + idx)}). {option.optionText}</label>
+                                            <label htmlFor={`option-${option.id}`}>
+                                                {String.fromCharCode(97 + idx)}). {option.optionText}
+                                            </label>
                                         </div>
-                                    ))
-                                }
+                                    ))}
+                                </section>
                             </div>
-                        </section>
-                        <AssessmentFooter
-                            totalQuestions={totalQuestions}
-                            handleBack={handlePrev}
-                            handleNext={handleNext}
-                            handleIsSubmitClicked={() => setIsSubmitClicked(!isSubmitClicked)}
-                            isPrevDisabled={isPrevDisabled}
-                            isNextDisabled={isNextDisabled}
-                            answered={selectedOptions.filter(option => option.isSelected).length}
-                        />
-                    </div>
+                        </div >
+
+                        {/* Bottom Card */}
+                        <div className="flex-none" >
+                            <AssessmentFooter
+                                totalQuestions={totalQuestions}
+                                handleBack={handlePrev}
+                                handleNext={handleNext}
+                                handleIsSubmitClicked={() => setIsSubmitClicked(!isSubmitClicked)}
+                                isPrevDisabled={isPrevDisabled}
+                                isNextDisabled={isNextDisabled}
+                                answered={selectedOptions.filter(option => option.isSelected).length}
+                            />
+                        </div >
+                    </>
                 )
             }
-        </>
+        </div >
     );
 };
