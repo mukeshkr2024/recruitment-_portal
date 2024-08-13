@@ -45,6 +45,10 @@ export const getApplicantsAssessmentQuestions = CatchAsyncError(async (req: Requ
 export const submitAssessment = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const answers = req.body;
+        const { assementId } = req.params;
+
+        console.log(assementId);
+
 
         if (!Array.isArray(answers) || answers.length === 0) {
             return res.status(400).json({ error: 'Invalid input: answers should be a non-empty array.' });
@@ -52,6 +56,7 @@ export const submitAssessment = CatchAsyncError(async (req: Request, res: Respon
 
         let totalScore = 0;
 
+        const maxScore = answers.length;
 
         for (let answer of answers) {
             const correctOption = await db.query.option.findFirst({
@@ -71,14 +76,13 @@ export const submitAssessment = CatchAsyncError(async (req: Request, res: Respon
             }
         }
 
-        const [applicant] = await db.query.applicant.findMany({ limit: 1 });
-        const [position] = await db.query.position.findMany({ limit: 1 });
+        await db.update(assessment).set({
+            score: totalScore,
+            totalScore: maxScore,
+            status: "COMPLETED"
+        }).where(eq(assessment.id, assementId))
 
-        if (!applicant || !position) {
-            throw new Error("Applicant or position not found.")
-        }
-
-        return res.status(200).json({ totalScore });
+        return res.status(200).json({ success: "true" });
     } catch (error) {
         return next(new ErrorHandler(error, 400));
     }

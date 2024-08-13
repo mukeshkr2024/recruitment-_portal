@@ -25,9 +25,8 @@ export const AssessmentPage = () => {
 
     const { assesmentId } = useParams()
 
-
     const { data, error, isLoading } = useGetApplicantQuestions(assesmentId!);
-    const submitMuttation = useSubmitAssessment();
+    const submitMuttation = useSubmitAssessment(assesmentId!);
 
     if (isLoading) {
         return <div>Loading...</div>;
