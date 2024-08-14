@@ -2,6 +2,7 @@ import { Navigate, Outlet } from 'react-router-dom'
 import { Sidebar } from '../admin/sidebar'
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useEffect } from 'preact/hooks';
+import { LoadingSpinner } from '../LoadingSpinner';
 
 export const AdminDashboardLayout = () => {
     const { checkAuth, admin, loading } = useAdminAuth();
@@ -15,7 +16,7 @@ export const AdminDashboardLayout = () => {
 
 
     if (loading) {
-        return <div>Loading...</div>
+        return <LoadingSpinner />
     }
 
 

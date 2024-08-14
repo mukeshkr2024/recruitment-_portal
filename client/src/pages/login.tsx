@@ -16,6 +16,7 @@ import { Navigate } from "react-router-dom";
 import { useApplicantLogin } from "@/api/applicants/use-applicant-login";
 import { useEffect } from "preact/hooks";
 import { useApplicantAuth } from "@/hooks/useApplicantAuth";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 
 export const loginSchema = z.object({
     email: z.string().email(),
@@ -33,7 +34,7 @@ export const LoginPage = () => {
         checkAuth();
     }, [checkAuth]);
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <LoadingSpinner />
 
     if (applicant) return <Navigate to="/applicant-dashboard" />
 

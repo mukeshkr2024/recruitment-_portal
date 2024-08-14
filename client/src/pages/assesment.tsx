@@ -3,6 +3,7 @@ import { useSubmitAssessment } from "@/api/applicants/use-submit-assesment";
 import { AssessmentFooter } from "@/components/assesments/assement-footer";
 import { AssessmentHeader } from "@/components/assesments/assesment-header";
 import { ConfirmSubmit } from "@/components/assesments/confirm-submit";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { useEffect, useState } from "preact/hooks"; // or from "react" for React
 import { useParams } from "react-router-dom";
 
@@ -29,7 +30,7 @@ export const AssessmentPage = () => {
     const submitMuttation = useSubmitAssessment(assesmentId!);
 
     if (isLoading) {
-        return <div>Loading...</div>;
+        return <LoadingSpinner />
     }
 
     if (error || !data) {

@@ -1,4 +1,5 @@
 import { getInstructions } from "@/api/use-get-intructions";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -10,7 +11,7 @@ export const InstructionPage = () => {
     const navigate = useNavigate();
 
     if (isLoading) {
-        return <div className="text-center p-4">Loading...</div>;
+        return <LoadingSpinner />
     }
 
     const handleClick = () => {

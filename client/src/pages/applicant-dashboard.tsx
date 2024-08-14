@@ -1,4 +1,5 @@
 import { useGetApplicantAssessments } from '@/api/applicants/use-getApplicantAssesment';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { useApplicantAuth } from '@/hooks/useApplicantAuth';
 import { logOutSession } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
@@ -12,12 +13,12 @@ interface Assessment {
 }
 
 export const ApplicantDashboard = () => {
-  const { data: assessments } = useGetApplicantAssessments();
-  const { applicant } = useApplicantAuth();
+  const { data: assessments, isLoading } = useGetApplicantAssessments();
+  const { applicant, loading } = useApplicantAuth();
   const navigate = useNavigate();
 
-  if (!applicant) {
-    return <div className="text-center p-4">Loading...</div>;
+  if (isLoading || loading) {
+    return <LoadingSpinner />
   }
 
   // @ts-ignore

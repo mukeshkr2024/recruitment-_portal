@@ -46,7 +46,7 @@ export const DashboardPage: React.FC = () => {
                     </CardHeader>
                     <CardContent className="p-6">
                         {isAnalyticsLoading ? (
-                            <p className="text-gray-500">Loading...</p>
+                            <p className="text-gray-500">.</p>
                         ) : analyticsError ? (
                             <p className="text-red-600">Error loading job positions.</p>
                         ) : (

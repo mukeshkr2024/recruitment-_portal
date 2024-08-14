@@ -2,6 +2,7 @@ import { useDeletePosition } from "@/api/positions/use-delete-positions";
 import { useGetPositions } from "@/api/positions/use-get-positions";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { CreatePositions } from "@/components/job-position/create-postions";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/components/ui/use-toast";
 import { formatDate } from "@/utils";
@@ -25,7 +26,7 @@ export const PositionPage = () => {
     const deleteMutation = useDeletePosition()
 
     if (isLoading) {
-        return <div>Loading...</div>;
+        return <LoadingSpinner />
     }
 
     const onDelete = (positionId: string) => {

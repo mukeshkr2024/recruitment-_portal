@@ -33,7 +33,7 @@ export const AdminLoginPage = () => {
         checkAuth();
     }, [checkAuth]);
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return null
 
     if (admin) return <Navigate to="/dashboard" />
 
