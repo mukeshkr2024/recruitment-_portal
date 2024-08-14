@@ -1,7 +1,6 @@
 import { useApplicantAuth } from "@/hooks/useApplicantAuth"
 import { useEffect } from "preact/hooks";
 import { Navigate, Outlet } from "react-router-dom"
-import { LoadingSpinner } from "../LoadingSpinner";
 
 export const ApplicantProtectLayout = () => {
     const { checkAuth, applicant, loading } = useApplicantAuth();
