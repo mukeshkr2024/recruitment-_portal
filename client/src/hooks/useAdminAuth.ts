@@ -18,15 +18,21 @@ type IAdminAuth = {
 };
 
 export const useAdminAuth = create<IAdminAuth>((set: SetState<IAdminAuth>) => ({
+
     admin: null,
     loading: true,
 
     setApplicant: (applicant) => set({ admin: applicant }),
 
     checkAuth: async () => {
+        const token = localStorage.getItem('access_token');
         try {
-            const { data } = await apiClient.get("/auth/admin-details");
-            set({ admin: data || null, loading: false });
+            if (token) {
+                const { data } = await apiClient.get("/auth/admin-details");
+                set({ admin: data || null, loading: false });
+            } else {
+                set({ admin: null, loading: false })
+            }
         } catch (error) {
             console.error("Failed to check authentication:", error);
             set({ loading: false });

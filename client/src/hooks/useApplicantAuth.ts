@@ -24,9 +24,14 @@ export const useApplicantAuth = create<IApplicantAuth>((set: SetState<IApplicant
     setApplicant: (applicant) => set({ applicant }),
 
     checkAuth: async () => {
+        const token = localStorage.getItem('access_token');
         try {
-            const { data } = await apiClient.get("/auth/applicant-details");
-            set({ applicant: data || null, loading: false });
+            if (token) {
+                const { data } = await apiClient.get("/auth/applicant-details");
+                set({ applicant: data || null, loading: false });
+            } else {
+                set({ applicant: null, loading: false });
+            }
         } catch (error) {
             console.error("Failed to check authentication:", error);
             set({ loading: false });

@@ -9,6 +9,8 @@ import cookieParser from "cookie-parser"
 import { isAdminAuthenticated } from "./middleware/auth";
 import { getAnalytics } from "./controllers/analytics.controoler";
 import { applicantRouter } from "./routes/applicant.routes";
+import { getInstructionsDetails } from "./controllers/applicant.controller";
+import { ErrorMiddleware } from "./middleware/error";
 
 export const app = express()
 
@@ -50,7 +52,7 @@ app.delete("/api/v1/questions/:questionId", deleteQuestion)
 app.get("/api/v1/question/:questionId", getQuestion)
 app.put("/api/v1/question/:questionId", updateQuestion)
 app.patch("/api/v1/position/duration-update/:positionId", updatePosition)
-
+app.get('/api/v1/instructions/:assessmentId', getInstructionsDetails)
 app.get("/api/v1/analytics", getAnalytics)
 
 // applicants 
@@ -65,3 +67,6 @@ app.all("*", (req: Request, res: Response, next: NextFunction) => {
     err.status = 404;
     next(err);
 });
+
+// error handling middleware
+app.use(ErrorMiddleware)

@@ -43,6 +43,13 @@
       "when": 1723460907805,
       "tag": "0005_faulty_wildside",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1723614154796,
+      "tag": "0006_motionless_morlocks",
+      "breakpoints": true
     }
   ]
 }

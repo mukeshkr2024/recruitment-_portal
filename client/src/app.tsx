@@ -13,6 +13,7 @@ import { PositionPage } from "./pages/positions"
 import { PositionDetailPage } from "./pages/postion-detail"
 import { RegisterPage } from "./pages/register"
 import { SubmittedPage } from "./pages/submitted"
+import { Toaster } from "./components/ui/toaster"
 
 const queryClient = new QueryClient()
 
@@ -42,6 +43,7 @@ export const App = () => {
             <Route />
           </Routes>
         </BrowserRouter>
+        <Toaster />
       </div>
     </QueryClientProvider>
   )

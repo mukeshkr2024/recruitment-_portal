@@ -120,7 +120,7 @@ export const EditQuestion = ({ onClose, questionId }: Props) => {
             </DialogTrigger>
             <DialogContent className="max-w-6xl" style={{ maxHeight: '80vh', overflowY: 'auto' }}>
                 <DialogHeader>
-                    <DialogTitle>Create New Question</DialogTitle>
+                    <DialogTitle>Edit Question</DialogTitle>
                 </DialogHeader>
                 <div className="flex flex-col gap-y-4">
                     <Form {...form}>

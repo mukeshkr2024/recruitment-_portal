@@ -7,7 +7,9 @@ export const assessment = pgTable("assesment", {
     id: text("id")
         .primaryKey()
         .$defaultFn(() => crypto.randomUUID()),
-    applicantId: text("applicant_id").references(() => applicant.id).notNull(),
+    applicantId: text("applicant_id").references(() => applicant.id, {
+        onDelete: "cascade"
+    }).notNull(),
     positionId: text("position_id").references(() => position.id).notNull(),
     status: text("status").default("PENDING").notNull(),
     score: integer("score").default(0).notNull(),

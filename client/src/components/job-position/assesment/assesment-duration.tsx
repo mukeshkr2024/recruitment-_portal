@@ -2,18 +2,26 @@ import { useUpdateDuration } from '@/api/use-updateDuration';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/components/ui/use-toast';
 import { useState } from 'react';
 
 export const AssessmentDuration = ({ duration: initialDuration, positionId }: { duration: number, positionId: string }) => {
     const [duration, setDuration] = useState(initialDuration);
-    const mutation = useUpdateDuration(positionId)
-
+    const { mutate, isLoading, } = useUpdateDuration(positionId)
+    const { toast } = useToast()
     const handleInputChange = (event: any) => {
         setDuration(Number(event.target.value));
     };
 
     const handleUpdateClick = () => {
-        mutation.mutate(duration);
+        mutate(duration, {
+            onSuccess: () => {
+                toast({
+                    title: "Assessment duration updated successfully"
+                });
+            },
+
+        });
     };
 
     return (
@@ -30,7 +38,7 @@ export const AssessmentDuration = ({ duration: initialDuration, positionId }: { 
                         onChange={handleInputChange}
                         required={true}
                     />
-                    <Button onClick={handleUpdateClick}>Update</Button>
+                    <Button disabled={isLoading} onClick={handleUpdateClick}>Update</Button>
                 </CardContent>
             </Card>
         </div>

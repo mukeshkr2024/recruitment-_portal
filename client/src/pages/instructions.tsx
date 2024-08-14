@@ -1,46 +1,72 @@
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import { useNavigate, useParams } from "react-router-dom"
+import { getInstructions } from "@/api/use-get-intructions";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useNavigate, useParams } from "react-router-dom";
 
 export const InstructionPage = () => {
-
-    const { assesmentId } = useParams()
-
+    const { assesmentId } = useParams();
+    const { data, isLoading } = getInstructions(assesmentId!);
     const navigate = useNavigate();
 
-    const handleClick = () => {
-        navigate(`/assesment/${assesmentId}`)
+    if (isLoading) {
+        return <div className="text-center p-4">Loading...</div>;
     }
 
+    const handleClick = () => {
+        navigate(`/assesment/${assesmentId}`);
+    };
+
     return (
-        <div className="py-4">
-            <Card className="flex max-w-7xl mx-auto items-center py-5 px-6 shadow-md justify-center ">
-                <h2 className="text-[#000000] font-semibold text-3xl">Internal Assessment: UI/UX Designer</h2>
+        <div className="flex flex-col min-h-screen p-4 md:p-6 lg:p-8">
+            {/* Card 1 */}
+            <Card className="flex flex-col max-w-4xl lg:max-w-6xl mx-auto py-4 px-4 md:py-5 md:px-6 shadow-md justify-center w-full">
+                <h2 className="sm:text-2xl text-xl text-center md:text-3xl font-semibold text-gray-900">
+                    Internal Assessment: {data?.assessment_name}
+                </h2>
             </Card>
-            <section className="max-w-[75rem] mx-auto mt-5">
-                <h3 className="text-xl font-semibold text-[#000000]">Instructions</h3>
-                <ul className="flex flex-col gap-y-2 mt-3 text-base">
-                    <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum faucibus, lorem et porta volutpat, metus tellus sagittis urna, vel lobortis leo magna ut lorem. Phasellus a aliquam nunc. Vivamus ornare non sapien non mollis. Phasellus molestie commodo efficitur. Cras et dictum nisi. Donec porta, diam id commodo euismod, tellus magna feugiat augue, at tincidunt ligula nibh ut eros. Fusce blandit commodo nisl a cursus. Sed dignissim velit non magna aliquet egestas. Integer tellus purus, viverra vitae sagittis id, aliquam vitae felis.</li>
-                    <li>Etiam eget mattis tortor. Aenean consectetur nisl non orci porttitor, vitae mollis mauris egestas. Proin vulputate porttitor ipsum non ullamcorper. Aenean ex nisi, facilisis sed tellus non, maximus rhoncus risus. Cras mollis posuere mi, ut hendrerit nisl euismod nec.</li>
-                    <li>
-                        Integer a lorem luctus, convallis velit ut, luctus dui. Quisque lobortis faucibus eros, eu mollis ipsum rutrum tempus. Proin non justo diam. In hac habitasse platea dictumst. Aenean dignissim velit nisl, at scelerisque neque varius id. Cras venenatis mi diam, a fringilla ligula vestibulum sit amet. Etiam eleifend hendrerit leo, ac pulvinar justo lacinia eget.
-                    </li>
-                    <li>Sed non leo tortor. Integer nulla lectus, interdum quis ipsum in, convallis rutrum risus. Nulla facilisi. Suspendisse quis felis hendrerit, tincidunt ipsum sed, laoreet quam. Maecenas at suscipit ex, vitae fringilla nunc. Sed maximus tempor diam sit amet commodo. Donec eleifend luctus nibh, eget imperdiet eros ullamcorper ut. Donec rutrum scelerisque eros, ac pharetra mi elementum eu. Duis non maximus eros, a mollis odio. Fusce accumsan dui vitae eleifend blandit. Sed imperdiet lacus a nulla gravida, et ornare leo volutpat. Integer dolor risus, lacinia quis viverra non, mollis at neque. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Morbi convallis tortor a ipsum scelerisque auctor. Sed id molestie libero. In in ante tellus.</li>
+
+            {/* Card 2 */}
+            <section className="max-w-4xl lg:max-w-5xl mx-auto mt-4 md:mt-6 flex-grow">
+                <h3 className="text-xl md:text-2xl font-semibold text-gray-900">
+                    Assessment Instructions
+                </h3>
+                <ul className="mt-3 text-base md:text-lg space-y-2">
+                    <li>This assessment is designed to evaluate your knowledge and practical skills in UI/UX design through a series of multiple-choice questions (MCQs).</li>
+                    <li>The assessment consists of {data?.total_questions} questions, and you will have a total of {data?.time} minutes to complete it. Please make sure to manage your time effectively.</li>
+                    <li>Each question has four possible answers. Select the option that you believe is most accurate.</li>
+                    <li>Once you have answered all the questions, click on the "Submit" button to finalize your responses. Please note that you will not be able to return to the assessment after submission.</li>
+                    <li>Ensure you have a stable internet connection throughout the duration of the assessment. A sudden loss of connection may affect your progress.</li>
+                    <li>Your assessment results will be emailed to you within 24 to 48 hours. Further instructions on the next steps will also be included.</li>
+                    <li>Please make sure you are in a quiet environment, free from distractions, to maximize your focus during the assessment.</li>
+                    <li>This assessment is confidential and intended for your personal use only. Sharing questions or answers with others is strictly prohibited and may lead to disqualification.</li>
                 </ul>
-                <ol className="mt-2">
-                    <li>
-                        Lorem ipsum dolor sit amet.
-                    </li>
-                    <li>Lorem ipsum dolor sit amet.</li>
+                <h4 className="text-lg md:text-xl font-semibold text-gray-900 mt-5">
+                    Additional Guidelines
+                </h4>
+                <ol className="mt-2 list-decimal list-inside space-y-2 text-base md:text-lg">
+                    <li>Read each question carefully before selecting your answer. Rushing through may lead to mistakes.</li>
+                    <li>Do not refresh or close the browser window during the assessment, as this could cause you to lose progress or be locked out of the exam.</li>
+                    <li>Keep track of time. A timer will be displayed at the top of the screen to help you monitor the remaining time.</li>
                 </ol>
-                <div className="flex mt-5 gap-x-4">
-                    <Checkbox className="size-[18px] mt-2" />
-                    <p className="pr-8">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum faucibus, lorem et porta volutpat, metus tellus sagittis urna, vel lobortis leo magna ut lorem. </p> <Button className="bg-[#5138ED] px-10 hover:bg-[#5138ED]"
-                        onClick={handleClick}
-                    >Start Exam</Button>
-                </div>
             </section>
+
+            {/* Card 3 */}
+            <div className="max-w-4xl lg:max-w-5xl  mx-auto mt-6 flex-none">
+                <div className="flex flex-col md:flex-row mt-5 gap-4 items-center justify-between">
+                    <div className="flex items-center gap-4">
+                        <Checkbox className="w-4 h-4" />
+                        <p className="text-base md:text-lg pr-4">I have read and understood the instructions and guidelines for this assessment.</p>
+                    </div>
+                    <Button
+                        disabled={data.status === "COMPLETED"}
+                        className="bg-blue-600 text-white px-6 py-2 md:px-10 md:py-3 hover:bg-blue-700"
+                        onClick={handleClick}
+                    >
+                        Start Assessment
+                    </Button>
+                </div>
+            </div>
         </div>
-    )
-}
+    );
+};

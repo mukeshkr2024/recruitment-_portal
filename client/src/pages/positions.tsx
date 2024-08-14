@@ -3,6 +3,7 @@ import { useGetPositions } from "@/api/positions/use-get-positions";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { CreatePositions } from "@/components/job-position/create-postions";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useToast } from "@/components/ui/use-toast";
 import { formatDate } from "@/utils";
 import { Pencil, Trash } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -19,6 +20,7 @@ interface Position {
 // Define the component
 export const PositionPage = () => {
     const { data: positions, isLoading } = useGetPositions();
+    const { toast } = useToast()
 
     const deleteMutation = useDeletePosition()
 
@@ -27,8 +29,13 @@ export const PositionPage = () => {
     }
 
     const onDelete = (positionId: string) => {
-        console.log("Deleting");
-        deleteMutation.mutate(positionId)
+        deleteMutation.mutate(positionId, {
+            onSuccess: () => {
+                toast({
+                    title: "Job Position deleted Successfully"
+                })
+            }
+        })
     }
 
     return (

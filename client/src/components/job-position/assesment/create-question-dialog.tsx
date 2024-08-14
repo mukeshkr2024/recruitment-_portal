@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PlusCircle } from "lucide-react";
 import { useState } from "preact/hooks";
@@ -56,7 +57,8 @@ export const questionFormSchema = z.object({
 
 export const CreateQuestion = ({ positionId }: { positionId: string }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const mutation = useCreateQuestion(positionId);
+    const { mutate, isLoading } = useCreateQuestion(positionId);
+    const { toast } = useToast();
 
     const form = useForm<z.infer<typeof questionFormSchema>>({
         resolver: zodResolver(questionFormSchema),
@@ -71,10 +73,13 @@ export const CreateQuestion = ({ positionId }: { positionId: string }) => {
 
     function onSubmit(values: z.infer<typeof questionFormSchema>) {
         console.log(values);
-        mutation.mutate(values, {
+        mutate(values, {
             onSuccess: () => {
                 form.reset();
                 setIsOpen(false);
+                toast({
+                    title: "Question added successfully"
+                })
             }
         });
     }
@@ -281,7 +286,7 @@ export const CreateQuestion = ({ positionId }: { positionId: string }) => {
                                 </Button>
                                 <Button
                                     className="w-28"
-                                    disabled={isSubmitting || !isValid}
+                                    disabled={isSubmitting || !isValid || isLoading}
                                     type="submit"
                                 >
                                     Submit

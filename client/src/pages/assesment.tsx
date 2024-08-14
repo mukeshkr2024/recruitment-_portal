@@ -23,7 +23,7 @@ type SelectedOption = {
 
 export const AssessmentPage = () => {
 
-    const { assesmentId } = useParams()
+    const { assesmentId } = useParams();
 
     const { data, error, isLoading } = useGetApplicantQuestions(assesmentId!);
     const submitMuttation = useSubmitAssessment(assesmentId!);
@@ -39,17 +39,31 @@ export const AssessmentPage = () => {
     const questions: Question[] = data;
 
     const [isSubmitClicked, setIsSubmitClicked] = useState<boolean>(false);
-    const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
-    const [selectedOptions, setSelectedOptions] = useState<SelectedOption[]>(
-        questions.map(question => ({
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(() => {
+        const savedIndex = localStorage.getItem(`currentQuestionIndex-${assesmentId}`);
+        return savedIndex ? parseInt(savedIndex, 10) : 0;
+    });
+    const [selectedOptions, setSelectedOptions] = useState<SelectedOption[]>(() => {
+        const savedOptions = localStorage.getItem(`selectedOptions-${assesmentId}`);
+        if (savedOptions) {
+            return JSON.parse(savedOptions);
+        }
+        return questions.map(question => ({
             questionId: question.id,
             selectedOptionId: null,
             isSelected: false
-        }))
-    );
+        }));
+    });
+
+    useEffect(() => {
+        localStorage.setItem(`selectedOptions-${assesmentId}`, JSON.stringify(selectedOptions));
+    }, [selectedOptions, assesmentId]);
+
+    useEffect(() => {
+        localStorage.setItem(`currentQuestionIndex-${assesmentId}`, currentQuestionIndex.toString());
+    }, [currentQuestionIndex, assesmentId]);
 
     const currentQuestion = questions[currentQuestionIndex];
-
 
     const handleNext = () => {
         setCurrentQuestionIndex(prev => prev + 1);
@@ -64,13 +78,17 @@ export const AssessmentPage = () => {
     const handleOptionChange = (questionId: string, optionId: string) => {
         setSelectedOptions(prev => prev.map(option =>
             option.questionId === questionId
-                ? { ...option, selectedOptionId: optionId, isSelected: true }
+                ? {
+                    ...option,
+                    // Toggle selection
+                    selectedOptionId: option.selectedOptionId === optionId ? null : optionId,
+                    isSelected: option.selectedOptionId === optionId ? false : true
+                }
                 : option
         ));
     }
 
     const handleSubmit = () => {
-        console.log("formattedData");
         const formattedData = selectedOptions.map(option => ({
             questionId: option.questionId,
             selectedOptionId: option.selectedOptionId,
@@ -79,7 +97,10 @@ export const AssessmentPage = () => {
 
         submitMuttation.mutate(formattedData);
 
-        console.log("Formatted Data for Submission:", formattedData);
+        localStorage.removeItem(`selectedOptions-${assesmentId}`);
+        localStorage.removeItem(`currentQuestionIndex-${assesmentId}`);
+        localStorage.removeItem('secondsLeft');
+
     }
 
     const totalQuestions = questions.length;
@@ -93,7 +114,6 @@ export const AssessmentPage = () => {
     const [timeLeft, setTimeLeft] = useState<number>(initialTime);
 
     useEffect(() => {
-        // Initialize the timer from localStorage if available
         const savedTime = localStorage.getItem('secondsLeft');
         if (savedTime) {
             setTimeLeft(parseInt(savedTime, 10));
@@ -101,7 +121,6 @@ export const AssessmentPage = () => {
             localStorage.setItem('secondsLeft', initialTime.toString());
         }
 
-        // Timer countdown logic
         const countdown = setInterval(() => {
             setTimeLeft(prev => {
                 if (prev <= 1) {
@@ -118,7 +137,6 @@ export const AssessmentPage = () => {
 
         return () => clearInterval(countdown);
     }, [initialTime, handleSubmit]);
-
 
     const formatTime = (seconds: number) => {
         const minutes = Math.floor(seconds / 60);
@@ -152,7 +170,7 @@ export const AssessmentPage = () => {
                                     {currentQuestion.options.map((option, idx) => (
                                         <div className="flex gap-x-2.5" key={option.id}>
                                             <input
-                                                type="radio"
+                                                type="checkbox"  // Changed from "radio" to "checkbox"
                                                 id={`option-${option.id}`}
                                                 name={`question-${currentQuestion.id}`}
                                                 value={option.id}

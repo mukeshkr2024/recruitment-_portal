@@ -5,6 +5,7 @@ import { useDeleteQuestion } from '@/api/questions/use-delete-question';
 import { useState } from 'preact/hooks';
 import { EditQuestion } from './edit-questions';
 import { ConfirmDialog } from '@/components/confirm-dialog';
+import { useToast } from '@/components/ui/use-toast';
 
 type Question = {
     id: string,
@@ -13,12 +14,18 @@ type Question = {
 }
 
 export const AssesmentQuestions = ({ positionId, questions }: { positionId: string, questions: any }) => {
-
+    const { toast } = useToast()
     const mutation = useDeleteQuestion();
     const [questionToEdit, setQuestionToEdit] = useState<string | null>(null);
 
     const handleDelete = (questionId: string) => {
-        mutation.mutate(questionId);
+        mutation.mutate(questionId, {
+            onSuccess: () => {
+                toast({
+                    title: "Question deleted successfully",
+                })
+            }
+        });
     }
 
     return (

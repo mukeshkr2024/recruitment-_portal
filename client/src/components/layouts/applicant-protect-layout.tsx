@@ -7,6 +7,9 @@ export const ApplicantProtectLayout = () => {
 
     console.log(applicant);
 
+    const token = localStorage.getItem('access_token');
+    console.log("token" + token);
+
     useEffect(() => {
         checkAuth()
     }, [])

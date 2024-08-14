@@ -1,7 +1,7 @@
 import { and, asc, desc, eq } from "drizzle-orm";
 import { NextFunction, Request, Response } from "express";
 import db from "../db";
-import { applicant, assessment, option, question, } from "../db/schema";
+import { applicant, assementRelations, assessment, option, question, } from "../db/schema";
 import { CatchAsyncError } from "../middleware/catchAsyncError";
 import { generateAccessCode } from "../utils";
 import { ErrorHandler } from "../utils/ErrorHandler";
@@ -133,8 +133,6 @@ export const getApplicantAssesment = CatchAsyncError(async (req: Request, res: R
 
         if (!applicantId) return
 
-        console.log(applicantId);
-
         const assessments = await db.query.assessment.findMany({
             where: eq(assessment.applicantId, applicantId),
             columns: {
@@ -145,10 +143,9 @@ export const getApplicantAssesment = CatchAsyncError(async (req: Request, res: R
                 position: {
                     columns: {
                         positionName: true,
-
+                        createdAt: true
                     }
                 },
-
             },
             orderBy: asc(assessment.createdAt)
         })
@@ -215,7 +212,6 @@ export const registerApplicant = CatchAsyncError(async (req: Request, res: Respo
 
 export const getJobPostions = CatchAsyncError(async (Req: Request, res: Response, next: NextFunction) => {
     try {
-
         const jobPositions = await db.query.position.findMany({
             columns: {
                 id: true,
@@ -224,6 +220,58 @@ export const getJobPostions = CatchAsyncError(async (Req: Request, res: Response
         })
 
         return res.status(200).json(jobPositions)
+
+    } catch (error) {
+        return next(new ErrorHandler(error, 400));
+    }
+})
+
+
+export const getInstructionsDetails = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
+        console.log("getInstructionsDetails");
+
+        const { assessmentId } = req.params;
+
+        const assessmentDetails = await db.query.assessment.findFirst({
+            where: eq(assessment.id, assessmentId),
+            with: {
+                position: {
+                    with: {
+                        questions: true
+                    }
+                }
+            }
+        })
+
+
+        return res.status(200).json({
+            assessment_name: assessmentDetails?.position?.positionName,
+            total_questions: assessmentDetails?.position.questions.length || 0,
+            time: assessmentDetails?.position.duration,
+            status: assessmentDetails?.status
+        })
+
+    } catch (error) {
+        return next(new ErrorHandler(error, 400));
+    }
+})
+
+export const deleteApplicant = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { applicantId } = req.params;
+
+        const deleteApplicant = await db.delete(applicant).where(eq(
+            applicant.id, applicantId
+        )).returning();
+
+        console.log("deleteApplicant", deleteApplicant);
+
+
+        return res.status(200).json({
+            message: "Deleted successfully"
+        })
 
     } catch (error) {
         return next(new ErrorHandler(error, 400));

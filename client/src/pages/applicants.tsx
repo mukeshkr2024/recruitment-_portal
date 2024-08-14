@@ -1,8 +1,8 @@
+import { useDeleteApplicant } from "@/api/applicants/use-delete-applicant";
 import { useGetApplicants } from "@/api/applicants/use-get-applicants";
-import { useDeletePosition } from "@/api/positions/use-delete-positions";
-// import { CreateApplicant } from "@/components/applicant/create-applicant";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useToast } from "@/components/ui/use-toast";
 import { formatDate } from "@/utils";
 import { Trash } from "lucide-react";
 
@@ -12,6 +12,7 @@ interface Assesment {
     score: number;
     totalScore: number;
     applicant: {
+        id: string;
         firstName: string;
         lastName: string;
         email: string;
@@ -24,24 +25,22 @@ interface Assesment {
     }
 }
 
-// Define the component
 export const ApplicantsPage = () => {
-
     const { data: assesments } = useGetApplicants()
+    const { toast } = useToast()
 
-    console.log(assesments?.length);
+    const deleteMutation = useDeleteApplicant()
 
-
-    const deleteMutation = useDeletePosition()
-
-    // if (isLoading) {
-    //     return <div>Loading...</div>;
-    // }
-
-    const onDelete = (positionId: string) => {
-        console.log("Deleting");
-        console.log(positionId);
-        deleteMutation.mutate(positionId)
+    const onDelete = (applicantId: string) => {
+        deleteMutation.mutate(applicantId, {
+            onSuccess: () => {
+                toast(
+                    {
+                        title: "Applicant deleted successfully"
+                    }
+                )
+            }
+        })
     }
 
     return (
@@ -100,7 +99,7 @@ export const ApplicantsPage = () => {
                                             {/* <Link to={`/applicants/${applicant.id}`}>
                                                 <Pencil size={18} />
                                             </Link> */}
-                                            <ConfirmDialog onConfirm={() => onDelete(assesment.id)}>
+                                            <ConfirmDialog onConfirm={() => onDelete(assesment?.applicant?.id)}>
                                                 <Trash size={18} className="text-red-500 cursor-pointer" />
                                             </ConfirmDialog>
                                         </div>

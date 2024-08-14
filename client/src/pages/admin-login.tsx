@@ -48,10 +48,11 @@ export const AdminLoginPage = () => {
     })
 
     function onSubmit(values: z.infer<typeof adminloginSchema>) {
-        loginMutation.mutate(values)
-        if (loginMutation.isSuccess) {
-            console.log("new login");
-        }
+        loginMutation.mutate(values, {
+            onSuccess: () => {
+                form.reset()
+            }
+        })
     }
 
     return (

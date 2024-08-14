@@ -12,15 +12,15 @@ export const applicantLogin = async (req: Request, res: Response, next: NextFunc
         const { email, access_code } = req.body;
 
         if (!email || !access_code) {
-            throw new Error("All fields are required")
+            return next(new ErrorHandler("Invalid credentials", 400))
         }
 
         const isUserFound = await db.query.applicant.findFirst({
-            where: eq(applicant.email, email) // fixed applicant schema usage
+            where: eq(applicant.email, email)
         });
 
         if (!isUserFound || isUserFound.accessCode !== access_code) {
-            throw new Error("Invalid details")
+            return next(new ErrorHandler("Invalid credentials", 400))
         }
 
         const access_token = generateToken(isUserFound.id);
@@ -75,7 +75,7 @@ export const userLogin = CatchAsyncError(async (req: Request, res: Response, nex
         const { email, password } = req.body;
 
         if (!email || !password) {
-            throw new Error("All fields are required")
+            return next(new ErrorHandler("Invalid credentials", 400))
         }
 
         const isUserFound = await db.query.user.findFirst({
@@ -83,7 +83,7 @@ export const userLogin = CatchAsyncError(async (req: Request, res: Response, nex
         });
 
         if (!isUserFound || isUserFound.password !== password) {
-            throw new Error("Invalid details")
+            return next(new ErrorHandler("Invalid credentials", 400))
         }
 
         const access_token = generateToken(isUserFound.id);
