@@ -55,9 +55,9 @@ export const questionFormSchema = z.object({
     }
 );
 
-export const CreateQuestion = ({ positionId }: { positionId: string }) => {
+export const CreateQuestion = ({ examId }: { examId: string }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const { mutate, isLoading } = useCreateQuestion(positionId);
+    const { mutate, isLoading } = useCreateQuestion(examId);
     const { toast } = useToast();
 
     const form = useForm<z.infer<typeof questionFormSchema>>({

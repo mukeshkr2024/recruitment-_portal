@@ -16,6 +16,7 @@ import { RegisterPage } from "./pages/register"
 import { SubmittedPage } from "./pages/submitted"
 import { Exams } from "./pages/exams"
 import { ExamDetail } from "./pages/exam-detail"
+import { JobPositionApplicants } from "./pages/position-applicants"
 
 const queryClient = new QueryClient()
 
@@ -39,6 +40,8 @@ export const App = () => {
             <Route element={<AdminDashboardLayout />}>
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/positions" element={<PositionPage />} />
+              <Route path="/positions/:positionId" element={<PositionDetailPage />} />
+              <Route path="/positions/:positionId/applicants" element={<JobPositionApplicants />} />
               <Route path="/positions/:positionId" element={<PositionDetailPage />} />
               <Route path="/exams/:examId" element={<ExamDetail />} />
               <Route path="/applicants" element={<ApplicantsPage />} />

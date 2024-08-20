@@ -57,6 +57,13 @@
       "when": 1724121299636,
       "tag": "0007_redundant_rumiko_fujikawa",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1724136776758,
+      "tag": "0008_dry_stryfe",
+      "breakpoints": true
     }
   ]
 }

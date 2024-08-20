@@ -29,7 +29,7 @@ export const getQuestionsByPostionId = CatchAsyncError(async (req: Request, res:
 export const createQuestion = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
 
-        const { positionId } = req.params;
+        const { examId } = req.params;
 
         const { questionText, answer1, answer2, answer3, answer4 } = req.body;
 
@@ -37,13 +37,12 @@ export const createQuestion = CatchAsyncError(async (req: Request, res: Response
             where: eq(question.questionText, questionText)
         })
 
-
         if (isAlreadyQuestionExist) {
             throw new Error("Question already exist")
         }
 
         const createdQuestion = await db.insert(question).values([{
-            positionId: positionId,
+            examId: examId,
             questionText: questionText,
         }]).returning()
 

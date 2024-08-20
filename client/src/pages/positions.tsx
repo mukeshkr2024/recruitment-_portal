@@ -77,7 +77,11 @@ export const PositionPage = () => {
                                 <TableRow key={position.id} className="hover:bg-gray-100">
                                     <TableCell className="text-gray-600">{idx + 1}</TableCell>
                                     <TableCell className="text-gray-800">{position.positionName}</TableCell>
-                                    <TableCell className="text-gray-800">{position?.assesment?.length || 0}</TableCell>
+                                    <TableCell className="text-gray-800">
+                                        <Link to={`/positions/${position.id}/applicants`} className="hover:underline">
+                                            {position?.assesment?.length || 0}
+                                        </Link>
+                                    </TableCell>
                                     <TableCell className="text-gray-600">{formatDate(position.createdAt)}</TableCell>
                                     <TableCell>
                                         <div className="flex gap-x-5">

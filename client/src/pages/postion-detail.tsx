@@ -1,12 +1,13 @@
-import { useGetQuestions } from "@/api/questions/use-get-questions"
-import { AssessmentDuration } from "@/components/job-position/assesment/assesment-duration"
-import { AssesmentQuestions } from "@/components/job-position/assesment/assesment-questions"
-import { useParams } from "react-router-dom"
+import { useGetPositionExams } from "@/api/position-exam/use-getPositionExams";
+import { useGetPosition } from "@/api/positions/use-get-position";
+import { PositionExams } from "@/components/job-position/positions-exam";
+import { useParams } from "react-router-dom";
 
 export const PositionDetailPage = () => {
 
     const { positionId } = useParams()
-    const { data, isLoading } = useGetQuestions(positionId!);
+    const { data, isLoading } = useGetPosition(positionId!);
+
 
     if (isLoading) {
         return <div>Loadig....</div>
@@ -19,11 +20,8 @@ export const PositionDetailPage = () => {
                     <h2 className="text-3xl font-bold text-blue-900">
                         Assesment Setup</h2>
                 </div>
-                <AssessmentDuration
-                    positionId={positionId!}
-                    duration={data?.duration}
-                />
-                <AssesmentQuestions positionId={positionId!} questions={data?.questions} />
+
+                <PositionExams positionId={positionId!} />
             </div>
         </div>
     )

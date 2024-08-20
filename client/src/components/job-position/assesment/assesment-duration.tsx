@@ -1,13 +1,13 @@
-import { useUpdateDuration } from '@/api/use-updateDuration';
+import { useUpdateExamDuration } from '@/api/exams/use-updateExamDuration';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import { useState } from 'react';
 
-export const AssessmentDuration = ({ duration: initialDuration, positionId }: { duration: number, positionId: string }) => {
+export const AssessmentDuration = ({ duration: initialDuration, examId }: { duration: number, examId: string }) => {
     const [duration, setDuration] = useState(initialDuration);
-    const { mutate, isLoading, } = useUpdateDuration(positionId)
+    const { mutate, isLoading, } = useUpdateExamDuration(examId)
     const { toast } = useToast()
     const handleInputChange = (event: any) => {
         setDuration(Number(event.target.value));

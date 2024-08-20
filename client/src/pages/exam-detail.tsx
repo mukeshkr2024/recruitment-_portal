@@ -20,10 +20,10 @@ export const ExamDetail = () => {
                         Assesment Setup</h2>
                 </div>
                 <AssessmentDuration
-                    positionId={examId!}
+                    examId={examId!}
                     duration={data?.duration}
                 />
-                <AssesmentQuestions positionId={examId!} questions={data?.questions} />
+                <AssesmentQuestions examId={examId!} questions={data?.questions} />
             </div>
         </div>
     )

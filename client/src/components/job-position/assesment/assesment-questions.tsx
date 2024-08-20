@@ -9,11 +9,11 @@ import { useToast } from '@/components/ui/use-toast';
 
 type Question = {
     id: string,
-    positionId: string,
+    examId: string,
     questionText: string
 }
 
-export const AssesmentQuestions = ({ positionId, questions }: { positionId: string, questions: any }) => {
+export const AssesmentQuestions = ({ examId, questions }: { examId: string, questions: any }) => {
     const { toast } = useToast()
     const mutation = useDeleteQuestion();
     const [questionToEdit, setQuestionToEdit] = useState<string | null>(null);
@@ -33,7 +33,7 @@ export const AssesmentQuestions = ({ positionId, questions }: { positionId: stri
             <Card className="w-full p-6">
                 <div className="flex w-full justify-between">
                     <h2 className="text-2xl font-semibold">Questions</h2>
-                    <CreateQuestion positionId={positionId} />
+                    <CreateQuestion examId={examId} />
                 </div>
                 <div className="mt-5">
                     {

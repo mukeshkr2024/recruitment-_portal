@@ -1,6 +1,6 @@
+import { asc, eq } from "drizzle-orm";
 import { NextFunction, Request, Response } from "express";
 import db from "../db";
-import { asc, count, desc, eq } from "drizzle-orm";
 import { position } from "../db/schema";
 import { CatchAsyncError } from "../middleware/catchAsyncError";
 import { ErrorHandler } from "../utils/ErrorHandler";
@@ -88,5 +88,28 @@ export const updatePosition = CatchAsyncError(async (req: Request, res: Response
         return res.status(200).json(updatePosition);
     } catch (error) {
         return next(new ErrorHandler(error, 400));
+    }
+})
+
+export const getPosition = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
+        const { positionId } = req.params;
+
+        console.log(positionId);
+
+        const query = await db.query.position.findFirst({
+            where: eq(position.id, positionId)
+        })
+
+        if (!query) {
+            throw new Error("Position not found")
+        }
+
+        return res.status(200).json(query);
+
+    } catch (error) {
+        return next(new ErrorHandler(error, 400));
+
     }
 })

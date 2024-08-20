@@ -18,7 +18,7 @@ interface SidebarLink {
 const SIDEBAR_LINKS: SidebarLink[] = [
     { id: 0, path: "/dashboard", name: "Dashboard", icon: LuBox },
     { id: 1, path: "/positions", name: "Job Postions", icon: FaSuitcase },
-    { id: 2, path: "exams", name: "Exams", icon: BookOpenCheck },
+    { id: 2, path: "/exams", name: "Exams", icon: BookOpenCheck },
     { id: 3, path: "/applicants", name: "Applicants", icon: TbUsers }
 ]
 

@@ -2,6 +2,7 @@ import { useGetExams } from "@/api/exams/use-get-positions";
 import { useDeletePosition } from "@/api/positions/use-delete-positions";
 import { useGetPositions } from "@/api/positions/use-get-positions";
 import { ConfirmDialog } from "@/components/confirm-dialog";
+import { CreateExam } from "@/components/exams/create-exam";
 import { CreatePositions } from "@/components/job-position/create-postions";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -12,7 +13,7 @@ import { Link } from "react-router-dom";
 
 interface Position {
     id: string;
-    positionName: string;
+    name: string;
     createdAt: string;
     assesment: {
         id: string
@@ -50,7 +51,7 @@ export const Exams = () => {
                 </h2>
 
                 <div>
-                    <CreatePositions />
+                    <CreateExam />
                 </div>
             </div>
             <div className="mt-2">

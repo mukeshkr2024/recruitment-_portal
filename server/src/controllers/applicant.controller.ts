@@ -115,6 +115,7 @@ export const getApplicantsByPositon = CatchAsyncError(async (req: Request, res: 
             where: eq(assessment.positionId, positionId),
             with: {
                 applicant: true,
+                position: true,
             }
         })
 

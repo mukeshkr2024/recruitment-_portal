@@ -13,8 +13,7 @@ const seed = async () => {
         await db.delete(option).catch(error => console.error("Error deleting from option:", error));
         await db.delete(position).catch(error => console.error("Error deleting from position:", error));
         await db.delete(user).catch(error => console.error("Error deleting from user:", error));
-        await db.delete(exam).catch(error => console.error("Error deleting from exam:", error));
-
+        await db.delete(jobPositionExams).catch(error => console.error("Error deleting from exam:", error));
 
         // Create users 
         const userCreated = await db.insert(user).values([{
