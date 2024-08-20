@@ -37,7 +37,7 @@ export const AssessmentPage = () => {
         return <div>Error fetching questions</div>;
     }
 
-    const questions: Question[] = data;
+    const questions: Question[] = data?.questions;
 
     const [isSubmitClicked, setIsSubmitClicked] = useState<boolean>(false);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(() => {
@@ -108,7 +108,7 @@ export const AssessmentPage = () => {
     const isPrevDisabled = currentQuestionIndex === 0;
     const isNextDisabled = currentQuestionIndex === totalQuestions - 1;
 
-    const duration = 30; // Duration in minutes
+    const duration = data?.total_time; // Duration in minutes
 
     const initialTime = duration * 60;
 

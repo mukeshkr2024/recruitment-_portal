@@ -6,16 +6,16 @@ const seed = async () => {
         console.log("Seeding started...");
 
         // Clear existing data
-        await db.delete(assessment);
-        await db.delete(result).catch(error => console.error("Error deleting from result:", error));
-        await db.delete(applicant).catch(error => console.error("Error deleting from applicant:", error));
-        await db.delete(question).catch(error => console.error("Error deleting from question:", error));
-        await db.delete(option).catch(error => console.error("Error deleting from option:", error));
-        await db.delete(position).catch(error => console.error("Error deleting from position:", error));
-        await db.delete(user).catch(error => console.error("Error deleting from user:", error));
-        await db.delete(jobPositionExams).catch(error => console.error("Error deleting from exam:", error));
+        const tables = [assessment, result, applicant, question, option, position, user, jobPositionExams, exam];
+        for (const table of tables) {
+            try {
+                await db.delete(table);
+                console.log(`Cleared data from ${table}`);
+            } catch (error) {
+                console.error(`Error deleting from ${table}:`, error);
+            }
+        }
 
-        // Create users 
         const userCreated = await db.insert(user).values([{
             firstName: "Mukesh",
             lastName: "Kumar",
@@ -48,25 +48,37 @@ const seed = async () => {
 
         const exams = await db.insert(exam).values([{
             name: "exam1",
-            duration: 60
+            duration: 10
         }, {
             name: "exam2",
-            duration: 90
+            duration: 15
         }, {
             name: "exam3",
-            duration: 120,
+            duration: 20,
         }]).returning()
 
         const examIds = exams.map(exam => exam.id);
 
         // Create questions
         const questions = await db.insert(question).values([
-            { examId: examIds[0], questionText: "How do you approach designing a user interface for a new product? - Question 1" },
-            { examId: examIds[0], questionText: "Can you describe a time when you had to balance user needs with business goals in your design? - Question 2" },
-            { examId: examIds[0], questionText: "What tools and methods do you use for user research and usability testing? - Question 3" },
-            { examId: examIds[0], questionText: "How do you ensure your designs are accessible to users with disabilities? - Question 4" },
-            { examId: examIds[0], questionText: "Can you give an example of how you’ve used feedback to iterate on a design? - Question 5" },
-            { examId: examIds[0], questionText: "What are some common UI/UX mistakes you’ve encountered, and how do you avoid them? - Question 6" }
+            { examId: examIds[0], questionText: "How do you prioritize user needs when designing a new product?" },
+            { examId: examIds[0], questionText: "Describe a challenging project where you had to align user experience with business objectives. How did you handle it?" },
+            { examId: examIds[0], questionText: "Which user research techniques do you find most effective, and how do you apply them in your design process?" },
+            { examId: examIds[0], questionText: "What steps do you take to ensure your designs are accessible to users with disabilities?" },
+            { examId: examIds[0], questionText: "Provide an example where feedback significantly changed your design approach. What was the outcome?" },
+            { examId: examIds[1], questionText: "What are some common UI/UX design pitfalls you've encountered, and how do you avoid them?" },
+            { examId: examIds[1], questionText: "How do you prioritize user needs when designing a new product?" },
+            { examId: examIds[1], questionText: "Describe a challenging project where you had to align user experience with business objectives. How did you handle it?" },
+            { examId: examIds[1], questionText: "Which user research techniques do you find most effective, and how do you apply them in your design process?" },
+            { examId: examIds[1], questionText: "What steps do you take to ensure your designs are accessible to users with disabilities?" },
+            { examId: examIds[1], questionText: "Provide an example where feedback significantly changed your design approach. What was the outcome?" },
+            { examId: examIds[1], questionText: "What are some common UI/UX design pitfalls you've encountered, and how do you avoid them?" },
+            { examId: examIds[2], questionText: "How do you prioritize user needs when designing a new product?" },
+            { examId: examIds[2], questionText: "Describe a challenging project where you had to align user experience with business objectives. How did you handle it?" },
+            { examId: examIds[2], questionText: "Which user research techniques do you find most effective, and how do you apply them in your design process?" },
+            { examId: examIds[2], questionText: "What steps do you take to ensure your designs are accessible to users with disabilities?" },
+            { examId: examIds[2], questionText: "Provide an example where feedback significantly changed your design approach. What was the outcome?" },
+            { examId: examIds[2], questionText: "What are some common UI/UX design pitfalls you've encountered, and how do you avoid them?" }
         ]).returning();
 
         if (questions.length === 0) {
@@ -77,37 +89,99 @@ const seed = async () => {
 
         // Create options
         await db.insert(option).values([
-            { questionId: questionIds[0], optionText: "Option 1 for question 1", isCorrect: true },
-            { questionId: questionIds[0], optionText: "Option 2 for question 1", isCorrect: false },
-            { questionId: questionIds[0], optionText: "Option 3 for question 1", isCorrect: false },
-            { questionId: questionIds[0], optionText: "Option 4 for question 1", isCorrect: false },
+            // Options for examId: examIds[0]
+            { questionId: questionIds[0], optionText: "Conduct user interviews and analyze user feedback", isCorrect: true },
+            { questionId: questionIds[0], optionText: "Follow industry design trends", isCorrect: false },
+            { questionId: questionIds[0], optionText: "Use a one-size-fits-all design approach", isCorrect: false },
+            { questionId: questionIds[0], optionText: "Prioritize business goals over user needs", isCorrect: false },
 
-            { questionId: questionIds[1], optionText: "Option 1 for question 2", isCorrect: true },
-            { questionId: questionIds[1], optionText: "Option 2 for question 2", isCorrect: false },
-            { questionId: questionIds[1], optionText: "Option 3 for question 2", isCorrect: false },
-            { questionId: questionIds[1], optionText: "Option 4 for question 2", isCorrect: false },
+            { questionId: questionIds[1], optionText: "Used A/B testing to refine user interactions", isCorrect: true },
+            { questionId: questionIds[1], optionText: "Focused on the most expensive features", isCorrect: false },
+            { questionId: questionIds[1], optionText: "Implemented designs based on personal preference", isCorrect: false },
+            { questionId: questionIds[1], optionText: "Avoided user feedback to expedite the project", isCorrect: false },
 
-            { questionId: questionIds[2], optionText: "Option 1 for question 3", isCorrect: true },
-            { questionId: questionIds[2], optionText: "Option 2 for question 3", isCorrect: false },
-            { questionId: questionIds[2], optionText: "Option 3 for question 3", isCorrect: false },
-            { questionId: questionIds[2], optionText: "Option 4 for question 3", isCorrect: false },
+            { questionId: questionIds[2], optionText: "Conducting user surveys and usability tests", isCorrect: true },
+            { questionId: questionIds[2], optionText: "Relying on team opinions", isCorrect: false },
+            { questionId: questionIds[2], optionText: "Following best practices without validation", isCorrect: false },
+            { questionId: questionIds[2], optionText: "Using analytics tools exclusively", isCorrect: false },
 
-            { questionId: questionIds[3], optionText: "Option 1 for question 4", isCorrect: true },
-            { questionId: questionIds[3], optionText: "Option 2 for question 4", isCorrect: false },
-            { questionId: questionIds[3], optionText: "Option 3 for question 4", isCorrect: false },
-            { questionId: questionIds[3], optionText: "Option 4 for question 4", isCorrect: false },
+            { questionId: questionIds[3], optionText: "Apply WCAG (Web Content Accessibility Guidelines) standards", isCorrect: true },
+            { questionId: questionIds[3], optionText: "Design for aesthetics only", isCorrect: false },
+            { questionId: questionIds[3], optionText: "Ensure design fits all screens without testing", isCorrect: false },
+            { questionId: questionIds[3], optionText: "Limit font sizes and colors for simplicity", isCorrect: false },
 
-            { questionId: questionIds[4], optionText: "Option 1 for question 5", isCorrect: true },
-            { questionId: questionIds[4], optionText: "Option 2 for question 5", isCorrect: false },
-            { questionId: questionIds[4], optionText: "Option 3 for question 5", isCorrect: false },
-            { questionId: questionIds[4], optionText: "Option 4 for question 5", isCorrect: false },
+            { questionId: questionIds[4], optionText: "Iterated based on user feedback leading to a more user-friendly interface", isCorrect: true },
+            { questionId: questionIds[4], optionText: "Kept initial design despite user feedback", isCorrect: false },
+            { questionId: questionIds[4], optionText: "Implemented feedback without assessing impact", isCorrect: false },
+            { questionId: questionIds[4], optionText: "Focused on personal opinions rather than user needs", isCorrect: false },
 
-            { questionId: questionIds[5], optionText: "Option 1 for question 6", isCorrect: true },
-            { questionId: questionIds[5], optionText: "Option 2 for question 6", isCorrect: false },
-            { questionId: questionIds[5], optionText: "Option 3 for question 6", isCorrect: false },
-            { questionId: questionIds[5], optionText: "Option 4 for question 6", isCorrect: false }
+            { questionId: questionIds[5], optionText: "Overloading the user interface with information", isCorrect: true },
+            { questionId: questionIds[5], optionText: "Using consistent UI patterns", isCorrect: false },
+            { questionId: questionIds[5], optionText: "Adhering to responsive design principles", isCorrect: false },
+            { questionId: questionIds[5], optionText: "Applying user-centered design principles", isCorrect: false },
+
+            // Options for examId: examIds[1] (repeating same questions with different options)
+            { questionId: questionIds[6], optionText: "Conduct user interviews and analyze user feedback", isCorrect: true },
+            { questionId: questionIds[6], optionText: "Follow industry design trends", isCorrect: false },
+            { questionId: questionIds[6], optionText: "Use a one-size-fits-all design approach", isCorrect: false },
+            { questionId: questionIds[6], optionText: "Prioritize business goals over user needs", isCorrect: false },
+
+            { questionId: questionIds[7], optionText: "Used A/B testing to refine user interactions", isCorrect: true },
+            { questionId: questionIds[7], optionText: "Focused on the most expensive features", isCorrect: false },
+            { questionId: questionIds[7], optionText: "Implemented designs based on personal preference", isCorrect: false },
+            { questionId: questionIds[7], optionText: "Avoided user feedback to expedite the project", isCorrect: false },
+
+            { questionId: questionIds[8], optionText: "Conducting user surveys and usability tests", isCorrect: true },
+            { questionId: questionIds[8], optionText: "Relying on team opinions", isCorrect: false },
+            { questionId: questionIds[8], optionText: "Following best practices without validation", isCorrect: false },
+            { questionId: questionIds[8], optionText: "Using analytics tools exclusively", isCorrect: false },
+
+            { questionId: questionIds[9], optionText: "Apply WCAG (Web Content Accessibility Guidelines) standards", isCorrect: true },
+            { questionId: questionIds[9], optionText: "Design for aesthetics only", isCorrect: false },
+            { questionId: questionIds[9], optionText: "Ensure design fits all screens without testing", isCorrect: false },
+            { questionId: questionIds[9], optionText: "Limit font sizes and colors for simplicity", isCorrect: false },
+
+            { questionId: questionIds[10], optionText: "Iterated based on user feedback leading to a more user-friendly interface", isCorrect: true },
+            { questionId: questionIds[10], optionText: "Kept initial design despite user feedback", isCorrect: false },
+            { questionId: questionIds[10], optionText: "Implemented feedback without assessing impact", isCorrect: false },
+            { questionId: questionIds[10], optionText: "Focused on personal opinions rather than user needs", isCorrect: false },
+
+            { questionId: questionIds[11], optionText: "Overloading the user interface with information", isCorrect: true },
+            { questionId: questionIds[11], optionText: "Using consistent UI patterns", isCorrect: false },
+            { questionId: questionIds[11], optionText: "Adhering to responsive design principles", isCorrect: false },
+            { questionId: questionIds[11], optionText: "Applying user-centered design principles", isCorrect: false },
+
+            // Options for examId: examIds[2] (same questions as above with different options)
+            { questionId: questionIds[12], optionText: "Conduct user interviews and analyze user feedback", isCorrect: true },
+            { questionId: questionIds[12], optionText: "Follow industry design trends", isCorrect: false },
+            { questionId: questionIds[12], optionText: "Use a one-size-fits-all design approach", isCorrect: false },
+            { questionId: questionIds[12], optionText: "Prioritize business goals over user needs", isCorrect: false },
+
+            { questionId: questionIds[13], optionText: "Used A/B testing to refine user interactions", isCorrect: true },
+            { questionId: questionIds[13], optionText: "Focused on the most expensive features", isCorrect: false },
+            { questionId: questionIds[13], optionText: "Implemented designs based on personal preference", isCorrect: false },
+            { questionId: questionIds[13], optionText: "Avoided user feedback to expedite the project", isCorrect: false },
+
+            { questionId: questionIds[14], optionText: "Conducting user surveys and usability tests", isCorrect: true },
+            { questionId: questionIds[14], optionText: "Relying on team opinions", isCorrect: false },
+            { questionId: questionIds[14], optionText: "Following best practices without validation", isCorrect: false },
+            { questionId: questionIds[14], optionText: "Using analytics tools exclusively", isCorrect: false },
+
+            { questionId: questionIds[15], optionText: "Apply WCAG (Web Content Accessibility Guidelines) standards", isCorrect: true },
+            { questionId: questionIds[15], optionText: "Design for aesthetics only", isCorrect: false },
+            { questionId: questionIds[15], optionText: "Ensure design fits all screens without testing", isCorrect: false },
+            { questionId: questionIds[15], optionText: "Limit font sizes and colors for simplicity", isCorrect: false },
+
+            { questionId: questionIds[16], optionText: "Iterated based on user feedback leading to a more user-friendly interface", isCorrect: true },
+            { questionId: questionIds[16], optionText: "Kept initial design despite user feedback", isCorrect: false },
+            { questionId: questionIds[16], optionText: "Implemented feedback without assessing impact", isCorrect: false },
+            { questionId: questionIds[16], optionText: "Focused on personal opinions rather than user needs", isCorrect: false },
+
+            { questionId: questionIds[17], optionText: "Overloading the user interface with information", isCorrect: true },
+            { questionId: questionIds[17], optionText: "Using consistent UI patterns", isCorrect: false },
+            { questionId: questionIds[17], optionText: "Adhering to responsive design principles", isCorrect: false },
+            { questionId: questionIds[17], optionText: "Applying user-centered design principles", isCorrect: false }
         ]);
-
         // Create applicants
         const applicants = await db.insert(applicant).values([
             { firstName: "John", lastName: "Doe", email: "applicant@gmail.com", phone: "1234567890", accessCode: "password" },

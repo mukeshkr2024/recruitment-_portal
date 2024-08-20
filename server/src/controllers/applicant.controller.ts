@@ -1,7 +1,7 @@
 import { and, asc, desc, eq } from "drizzle-orm";
 import { NextFunction, Request, Response } from "express";
 import db from "../db";
-import { applicant, assementRelations, assessment, option, question, } from "../db/schema";
+import { applicant, assementRelations, assessment, jobPositionExams, option, question, } from "../db/schema";
 import { CatchAsyncError } from "../middleware/catchAsyncError";
 import { generateAccessCode } from "../utils";
 import { ErrorHandler } from "../utils/ErrorHandler";
@@ -9,38 +9,61 @@ import { ErrorHandler } from "../utils/ErrorHandler";
 export const getApplicantsAssessmentQuestions = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { assessmentId } = req.params;
-        const AssesmentFound = await db.query.assessment.findFirst({
-            where: eq(assessment.id, assessmentId)
-        })
 
-        if (!AssesmentFound) {
-            throw new Error("Assessment not found")
+        const assessmentFound = await db.query.assessment.findFirst({
+            where: eq(assessment.id, assessmentId)
+        });
+
+        if (!assessmentFound) {
+            return next(new ErrorHandler("Assessment not found", 404));
         }
 
-        const questions = await db.query.question.findMany({
-            columns: {
-                id: true,
-                questionText: true
-            },
-            where: eq(question.positionId, AssesmentFound?.positionId),
+        const jobExams = await db.query.jobPositionExams.findMany({
+            where: and(eq(jobPositionExams.positionId, assessmentFound.positionId), eq(jobPositionExams.isActive, true)),
             with: {
-                options: {
-                    columns: {
-                        id: true,
-                        optionText: true
+                exam: {
+                    with: {
+                        questions: {
+                            with: {
+                                options: {
+                                    columns: {
+                                        id: true,
+                                        optionText: true
+                                    }
+                                },
+
+                            },
+                            columns: {
+                                id: true,
+                                questionText: true
+                            }
+                        }
                     }
                 }
-
             }
         });
 
-        return res.status(200).json(questions)
+        let totalTime = 0;
+        let questions: any[] = [];
+
+        for (const jobExam of jobExams) {
+            if (jobExam.exam) {
+                totalTime += jobExam.exam.duration || 0;
+                if (jobExam.exam.questions) {
+                    questions = questions.concat(jobExam.exam.questions);
+                }
+            }
+        }
+
+        return res.status(200).json({
+            questions,
+            total_time: totalTime
+        });
 
     } catch (error) {
-        return next(new ErrorHandler(error, 400));
+        return next(new ErrorHandler(error, 500));
     }
-}
-)
+});
 
 export const submitAssessment = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -230,34 +253,51 @@ export const getJobPostions = CatchAsyncError(async (Req: Request, res: Response
 
 export const getInstructionsDetails = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
-
-        console.log("getInstructionsDetails");
-
         const { assessmentId } = req.params;
 
-        const assessmentDetails = await db.query.assessment.findFirst({
+        const assessmentFound = await db.query.assessment.findFirst({
             where: eq(assessment.id, assessmentId),
             with: {
-                position: {
-                    with: {
-                        questions: true
-                    }
+                position: true
+            }
+        });
+
+        if (!assessmentFound) {
+            return next(new ErrorHandler("Assessment not found", 404));
+        }
+
+        const JobExams = await db.query.jobPositionExams.findMany({
+            where: and(eq(jobPositionExams.positionId, assessmentFound.positionId), eq(jobPositionExams.isActive, true)),
+            with: {
+                exam: {
+                    with: { questions: true }
                 }
             }
-        })
+        });
 
+        let total_time = 0;
+        let total_questions = 0;
+
+        for (const exam of JobExams) {
+            if (exam.exam && exam.exam.duration) {
+                total_time += exam.exam.duration;
+            }
+            if (exam.exam && exam.exam.questions) {
+                total_questions += exam.exam.questions.length;
+            }
+        }
 
         return res.status(200).json({
-            assessment_name: assessmentDetails?.position?.positionName,
-            total_questions: assessmentDetails?.position.questions.length || 0,
-            time: assessmentDetails?.position.duration,
-            status: assessmentDetails?.status
-        })
+            assessment_name: assessmentFound.position.positionName,
+            total_questions,
+            time: total_time,
+            status: assessmentFound.status
+        });
 
     } catch (error) {
-        return next(new ErrorHandler(error, 400));
+        return next(new ErrorHandler(error, 500));
     }
-})
+});
 
 export const deleteApplicant = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
