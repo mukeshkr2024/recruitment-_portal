@@ -11,6 +11,7 @@ import { getAnalytics } from "./controllers/analytics.controoler";
 import { applicantRouter } from "./routes/applicant.routes";
 import { getInstructionsDetails } from "./controllers/applicant.controller";
 import { ErrorMiddleware } from "./middleware/error";
+import { getExamQuestions, getExams } from "./controllers/exams-controller";
 
 export const app = express()
 
@@ -60,6 +61,9 @@ app.use("/api/v1/applicants", applicantsRouter)
 app.use("/api/v1/applicant", applicantRouter)
 app.use("/api/v1/auth", authRouter)
 
+// exams 
+app.get("/api/v1/exams", getExams);
+app.get("/api/v1/exams/:examId", getExamQuestions);
 
 // unknown api request
 app.all("*", (req: Request, res: Response, next: NextFunction) => {

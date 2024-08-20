@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useToast } from "@/components/ui/use-toast"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -20,6 +21,7 @@ export const RegisterPage = () => {
 
     const { data: positions } = useGetJobPositions()
     const mutation = useRegisterApplicant()
+    const { toast } = useToast()
 
     const form = useForm<z.infer<typeof registerFormSchema>>({
         resolver: zodResolver(registerFormSchema),
@@ -34,7 +36,15 @@ export const RegisterPage = () => {
 
     function onSubmit(values: z.infer<typeof registerFormSchema>) {
         console.log(values)
-        mutation.mutate(values)
+        mutation.mutate(values, {
+            onSuccess: () => {
+                toast({
+                    title: "Registered successfully"
+                })
+                form.reset();
+            }
+        })
+
     }
 
     return (

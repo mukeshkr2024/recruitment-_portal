@@ -1,13 +1,13 @@
-import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
-import { position } from "./postition";
 import { relations } from "drizzle-orm";
+import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { exam } from "./exam";
 import { option } from "./option";
 
 export const question = pgTable("question", {
     id: text("id")
         .primaryKey()
         .$defaultFn(() => crypto.randomUUID()),
-    positionId: text("position_id").references(() => position.id, {
+    examId: text("exam_id").references(() => exam.id, {
         onDelete: "cascade"
     }).notNull(),
     questionText: text("question_text").notNull(),
@@ -16,9 +16,9 @@ export const question = pgTable("question", {
 });
 
 export const questionRelations = relations(question, ({ one, many }) => ({
-    position: one(position, {
-        fields: [question.positionId],
-        references: [position.id]
+    exam: one(exam, {
+        fields: [question.examId],
+        references: [exam.id]
     }),
     options: many(option)
 }));

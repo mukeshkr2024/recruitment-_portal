@@ -1,5 +1,5 @@
 import { logOutSession } from "@/lib/utils";
-import { LogOut } from "lucide-react";
+import { BookOpenCheck, LogOut } from "lucide-react";
 import { IconType } from "react-icons";
 import { FaSuitcase } from "react-icons/fa";
 import { LuBox } from "react-icons/lu";
@@ -18,7 +18,8 @@ interface SidebarLink {
 const SIDEBAR_LINKS: SidebarLink[] = [
     { id: 0, path: "/dashboard", name: "Dashboard", icon: LuBox },
     { id: 1, path: "/positions", name: "Job Postions", icon: FaSuitcase },
-    { id: 2, path: "/applicants", name: "Applicants", icon: TbUsers }
+    { id: 2, path: "exams", name: "Exams", icon: BookOpenCheck },
+    { id: 3, path: "/applicants", name: "Applicants", icon: TbUsers }
 ]
 
 export const Sidebar = () => {

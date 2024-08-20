@@ -4,7 +4,7 @@ import { AssessmentFooter } from "@/components/assesments/assement-footer";
 import { AssessmentHeader } from "@/components/assesments/assesment-header";
 import { ConfirmSubmit } from "@/components/assesments/confirm-submit";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
-import { useEffect, useState } from "preact/hooks"; // or from "react" for React
+import { useEffect, useState } from "preact/hooks";
 import { useParams } from "react-router-dom";
 
 type Question = {
@@ -144,6 +144,82 @@ export const AssessmentPage = () => {
         const secs = seconds % 60;
         return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
     };
+
+    // security check
+
+    // disbal inspect 
+    useEffect(() => {
+        const handleContextMenu = (e: MouseEvent) => e.preventDefault();
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.ctrlKey && (e.key === 'c' || e.key === 'u' || e.key === 's')) {
+                e.preventDefault();
+            }
+        };
+
+        document.addEventListener('contextmenu', handleContextMenu);
+        document.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            document.removeEventListener('contextmenu', handleContextMenu);
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, []);
+
+    // Prevent Tab Switching
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'hidden') {
+                alert('Cheating detected! Please stay on the assessment page.');
+                // Optional: Track violations and decide on penalties
+            }
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
+    }, []);
+
+    // Time-Based Penalties
+    useEffect(() => {
+        let inactivityTimer: NodeJS.Timeout;
+
+        const resetTimer = () => {
+            clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(() => {
+                setTimeLeft(prev => Math.max(prev - 60, 0)); // Penalize by reducing 1 minute
+            }, 30000); // 30 seconds of inactivity
+        };
+
+        window.addEventListener('mousemove', resetTimer);
+        window.addEventListener('keydown', resetTimer);
+
+        resetTimer();
+
+        return () => {
+            clearTimeout(inactivityTimer);
+            window.removeEventListener('mousemove', resetTimer);
+            window.removeEventListener('keydown', resetTimer);
+        };
+    }, []);
+
+    // Randomize Questions and Options
+    // const shuffleArray = (array: any[]) => {
+    //     return array.sort(() => Math.random() - 0.5);
+    // };
+
+    // useEffect(() => {
+    //     const shuffledQuestions = shuffleArray(questions);
+    //     setQuestions(shuffledQuestions);
+    //     const shuffledOptions = shuffledQuestions.map(question => ({
+    //         ...question,
+    //         options: shuffleArray(question.options)
+    //     }));
+    //     setSelectedOptions(shuffledOptions);
+    // }, []);
+
+
 
     return (
         <div className="flex flex-col min-h-screen pt-4 pb-12">

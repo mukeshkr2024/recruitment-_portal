@@ -1,5 +1,5 @@
 import db from "../src/db";
-import { user, position, question, option, applicant, result, assessment } from "../src/db/schema";
+import { user, position, question, option, applicant, result, assessment, exam, jobPositionExams } from "../src/db/schema";
 
 const seed = async () => {
     try {
@@ -13,6 +13,8 @@ const seed = async () => {
         await db.delete(option).catch(error => console.error("Error deleting from option:", error));
         await db.delete(position).catch(error => console.error("Error deleting from position:", error));
         await db.delete(user).catch(error => console.error("Error deleting from user:", error));
+        await db.delete(exam).catch(error => console.error("Error deleting from exam:", error));
+
 
         // Create users 
         const userCreated = await db.insert(user).values([{
@@ -31,12 +33,12 @@ const seed = async () => {
 
         // Create job positions
         const jobPositions = await db.insert(position).values([
-            { positionName: "UI/UX Designer", createdBy: userId, duration: 30 },
-            { positionName: "Software Engineer", createdBy: userId, duration: 30 },
-            { positionName: "Product Manager", createdBy: userId, duration: 30 },
-            { positionName: "Data Scientist", createdBy: userId, duration: 30 },
-            { positionName: "DevOps Engineer", createdBy: userId, duration: 30 },
-            { positionName: "Quality Assurance Engineer", createdBy: userId, duration: 30 },
+            { positionName: "UI/UX Designer", createdBy: userId },
+            { positionName: "Software Engineer", createdBy: userId },
+            { positionName: "Product Manager", createdBy: userId },
+            { positionName: "Data Scientist", createdBy: userId },
+            { positionName: "DevOps Engineer", createdBy: userId },
+            { positionName: "Quality Assurance Engineer", createdBy: userId },
         ]).returning();
 
         if (jobPositions.length === 0) {
@@ -45,14 +47,27 @@ const seed = async () => {
 
         const positionIds = jobPositions.map(p => p.id);
 
+        const exams = await db.insert(exam).values([{
+            name: "exam1",
+            duration: 60
+        }, {
+            name: "exam2",
+            duration: 90
+        }, {
+            name: "exam3",
+            duration: 120,
+        }]).returning()
+
+        const examIds = exams.map(exam => exam.id);
+
         // Create questions
         const questions = await db.insert(question).values([
-            { positionId: positionIds[0], questionText: "How do you approach designing a user interface for a new product? - Question 1" },
-            { positionId: positionIds[0], questionText: "Can you describe a time when you had to balance user needs with business goals in your design? - Question 2" },
-            { positionId: positionIds[0], questionText: "What tools and methods do you use for user research and usability testing? - Question 3" },
-            { positionId: positionIds[0], questionText: "How do you ensure your designs are accessible to users with disabilities? - Question 4" },
-            { positionId: positionIds[0], questionText: "Can you give an example of how you’ve used feedback to iterate on a design? - Question 5" },
-            { positionId: positionIds[0], questionText: "What are some common UI/UX mistakes you’ve encountered, and how do you avoid them? - Question 6" }
+            { examId: examIds[0], questionText: "How do you approach designing a user interface for a new product? - Question 1" },
+            { examId: examIds[0], questionText: "Can you describe a time when you had to balance user needs with business goals in your design? - Question 2" },
+            { examId: examIds[0], questionText: "What tools and methods do you use for user research and usability testing? - Question 3" },
+            { examId: examIds[0], questionText: "How do you ensure your designs are accessible to users with disabilities? - Question 4" },
+            { examId: examIds[0], questionText: "Can you give an example of how you’ve used feedback to iterate on a design? - Question 5" },
+            { examId: examIds[0], questionText: "What are some common UI/UX mistakes you’ve encountered, and how do you avoid them? - Question 6" }
         ]).returning();
 
         if (questions.length === 0) {
@@ -107,6 +122,25 @@ const seed = async () => {
             { firstName: "Grace", lastName: "Walker", email: "grace@gmail.com", phone: "7788990011", accessCode: "1m11e001" },
             { firstName: "Hank", lastName: "Hall", email: "hank@gmail.com", phone: "8899001122", accessCode: "2n22f112" }
         ]).returning();
+
+
+        // create job position exams 
+        const jobPositionExamsResult = await db.insert(jobPositionExams).values([
+            {
+                positionId: positionIds[0],
+                examId: examIds[1],
+            }, {
+                positionId: positionIds[0],
+                examId: examIds[2],
+            },
+            {
+                positionId: positionIds[1],
+                examId: examIds[1],
+            }, {
+                positionId: positionIds[1],
+                examId: examIds[2],
+            }
+        ])
 
         // // Create assessments
         await db.insert(assessment).values([

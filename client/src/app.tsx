@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "react-query"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { AdminDashboardLayout } from "./components/layouts/admin-dashboard-layout"
 import { ApplicantProtectLayout } from "./components/layouts/applicant-protect-layout"
+import { Toaster } from "./components/ui/toaster"
 import { AdminLoginPage } from "./pages/admin-login"
 import { ApplicantDashboard } from "./pages/applicant-dashboard"
 import { ApplicantsPage } from "./pages/applicants"
@@ -13,7 +14,8 @@ import { PositionPage } from "./pages/positions"
 import { PositionDetailPage } from "./pages/postion-detail"
 import { RegisterPage } from "./pages/register"
 import { SubmittedPage } from "./pages/submitted"
-import { Toaster } from "./components/ui/toaster"
+import { Exams } from "./pages/exams"
+import { ExamDetail } from "./pages/exam-detail"
 
 const queryClient = new QueryClient()
 
@@ -38,7 +40,9 @@ export const App = () => {
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/positions" element={<PositionPage />} />
               <Route path="/positions/:positionId" element={<PositionDetailPage />} />
+              <Route path="/exams/:examId" element={<ExamDetail />} />
               <Route path="/applicants" element={<ApplicantsPage />} />
+              <Route path="/exams" element={<Exams />} />
             </Route>
             <Route />
           </Routes>
