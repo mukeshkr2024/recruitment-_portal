@@ -27,9 +27,9 @@ export const ApplicantDashboard = () => {
   // @ts-ignore
   const { firstName, lastName, email, phone } = applicant;
 
-  const handleStart = (examId: string) => {
+  const handleStart = (positionId: string, examId: string) => {
     console.log(`Starting exam with id: ${examId}`);
-    navigate(`/instructions/${examId}`);
+    navigate(`/instructions/${positionId}/exam/${examId}`);
   };
 
   const handleLogout = () => {
@@ -80,7 +80,7 @@ export const ApplicantDashboard = () => {
                       >
                         <div className="text-gray-700">{exam.name}</div>
                         <button
-                          onClick={() => handleStart(exam.examId)}
+                          onClick={() => handleStart(assessment.id, exam.examId)}
                           className="px-4 py-2 font-semibold rounded-lg shadow transition duration-200 bg-blue-500 text-white hover:bg-blue-600"
                         >
                           Start

@@ -214,16 +214,18 @@ export const getApplicantAssesment = CatchAsyncError(async (req: Request, res: R
 })
 
 export const registerApplicant = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
-    const { firstName, lastName, email, phone, appliedFor } = req.body;
+    const { firstName, lastName, email, phone } = req.body;
+
+    const { positionId } = req.params;
 
     // Check for missing fields
-    if (!firstName || !lastName || !email || !phone || !appliedFor) {
+    if (!firstName || !lastName || !email || !phone) {
         return next(new ErrorHandler("All fields are required", 400));
     }
 
     try {
         const positionFound = await db.query.position.findFirst({
-            where: eq(position.id, appliedFor),
+            where: eq(position.id, positionId),
         });
 
         if (!positionFound) {
@@ -239,7 +241,7 @@ export const registerApplicant = CatchAsyncError(async (req: Request, res: Respo
         if (existingApplicant) {
             const isAlreadyRegistered = await db.query.assessment.findFirst({
                 where: and(
-                    eq(assessment.positionId, appliedFor),
+                    eq(assessment.positionId, positionId),
                     eq(assessment.applicantId, existingApplicant.id),
                 ),
             });
@@ -275,7 +277,7 @@ export const registerApplicant = CatchAsyncError(async (req: Request, res: Respo
         const assessmentEntry = await db.insert(assessment)
             .values({
                 applicantId: foundApplicant.id,
-                positionId: appliedFor,
+                positionId: positionId,
             })
             .returning();
 

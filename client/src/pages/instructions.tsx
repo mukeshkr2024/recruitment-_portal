@@ -6,8 +6,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useNavigate, useParams } from "react-router-dom";
 
 export const InstructionPage = () => {
-    const { assesmentId } = useParams();
-    const { data, isLoading } = getInstructions(assesmentId!);
+    const { assesmentId, examId } = useParams();
+    console.log(assesmentId);
+
+    const { data, isLoading } = getInstructions(assesmentId!, examId!,);
     const navigate = useNavigate();
 
     if (isLoading) {
@@ -15,7 +17,7 @@ export const InstructionPage = () => {
     }
 
     const handleClick = () => {
-        navigate(`/assesment/${assesmentId}`);
+        navigate(`/assesment/${assesmentId}/exam/${examId}`);
     };
 
     return (

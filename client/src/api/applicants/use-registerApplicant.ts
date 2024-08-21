@@ -3,10 +3,10 @@ import { useMutation } from "react-query";
 import { z } from "zod";
 import { apiClient } from "../api-client";
 
-export const useRegisterApplicant = () => {
+export const useRegisterApplicant = (positionId: string) => {
     return useMutation({
         mutationFn: async (data: z.infer<typeof registerFormSchema>) => {
-            await apiClient.post("/applicant/register", data)
+            await apiClient.post(`/applicant/register/${positionId}`, data)
         },
         onSuccess: () => {
             console.log("Assessment submitted successfully");

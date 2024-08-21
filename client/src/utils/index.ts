@@ -4,3 +4,6 @@ export const formatDate = (dateString: string): string => {
     const formattedDate = new Intl.DateTimeFormat('en-GB', options).format(date);
     return formattedDate;
 };
+
+// export const siteUrl = "http://careers.codingcommando.in"
+export const siteUrl = "http://localhost:5173"

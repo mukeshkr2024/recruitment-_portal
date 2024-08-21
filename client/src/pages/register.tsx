@@ -1,12 +1,13 @@
 import { useRegisterApplicant } from "@/api/applicants/use-registerApplicant"
-import { useGetJobPositions } from "@/api/positions/use-getJobPositon"
+import { SuccessMessage } from "@/components/success-message"
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/components/ui/use-toast"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useState } from "preact/hooks"
 import { useForm } from "react-hook-form"
+import { useParams } from "react-router-dom"
 import { z } from "zod"
 
 export const registerFormSchema = z.object({
@@ -14,13 +15,13 @@ export const registerFormSchema = z.object({
     lastName: z.string().nonempty("Last Name is required"),
     email: z.string().email("Invalid email address").nonempty("Email is required"),
     phone: z.string().nonempty("Phone number is required"),
-    appliedFor: z.string().nonempty("Please select a job position")
 })
 
 export const RegisterPage = () => {
+    const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+    const { positionId } = useParams();
 
-    const { data: positions } = useGetJobPositions()
-    const { mutate, isLoading } = useRegisterApplicant()
+    const { mutate, isLoading } = useRegisterApplicant(positionId!)
     const { toast } = useToast()
 
     const form = useForm<z.infer<typeof registerFormSchema>>({
@@ -30,7 +31,6 @@ export const RegisterPage = () => {
             lastName: "",
             email: "",
             phone: "",
-            appliedFor: ""
         }
     })
 
@@ -38,9 +38,7 @@ export const RegisterPage = () => {
         console.log(values)
         mutate(values, {
             onSuccess: () => {
-                toast({
-                    title: "Registered successfully"
-                })
+                setShowSuccessMessage(true);
                 form.reset();
             },
             onError: (error: any) => {
@@ -52,6 +50,10 @@ export const RegisterPage = () => {
         })
 
     }
+
+    const closeSuccessMessage = () => {
+        setShowSuccessMessage(false);
+    };
 
     return (
         <div className="flex items-center w-screen min-h-screen justify-center">
@@ -124,37 +126,14 @@ export const RegisterPage = () => {
                                 </FormItem>
                             )}
                         />
-                        <FormField
-                            control={form.control}
-                            name="appliedFor"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Applied For</FormLabel>
-                                    <FormControl>
-                                        <Select onValueChange={field.onChange} value={field.value}>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectGroup>
-                                                    <SelectLabel>Job Positions</SelectLabel>
-                                                    {positions?.map((pos: any) => (
-                                                        <SelectItem key={pos?.id} value={pos?.id}>{pos?.positionName}</SelectItem>
-                                                    ))}
-                                                </SelectGroup>
-                                            </SelectContent>
-                                        </Select>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <div className="pt-2">
+                        <div className="pt-4">
                             <Button type="submit" className="w-full" disabled={isLoading}>Submit</Button>
                         </div>
                     </form>
                 </Form>
             </div>
+            {showSuccessMessage && <SuccessMessage onClose={closeSuccessMessage} />}
+
         </div>
     )
 }

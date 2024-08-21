@@ -6,7 +6,7 @@ const applicantRouter = express.Router();
 
 applicantRouter.get("/assessments", isApplicantAuthenticated, getApplicantAssesment)
 applicantRouter.get("/job-positions", getJobPostions)
-applicantRouter.post("/register", registerApplicant)
+applicantRouter.post("/register/:positionId", registerApplicant)
 applicantRouter.delete("/:applicantId", deleteApplicant)
 
 export { applicantRouter }; 

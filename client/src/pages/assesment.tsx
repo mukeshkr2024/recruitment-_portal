@@ -24,10 +24,10 @@ type SelectedOption = {
 
 export const AssessmentPage = () => {
 
-    const { assesmentId } = useParams();
+    const { assesmentId, examId } = useParams();
 
-    const { data, error, isLoading } = useGetApplicantQuestions(assesmentId!);
-    const submitMuttation = useSubmitAssessment(assesmentId!);
+    const { data, error, isLoading } = useGetApplicantQuestions(assesmentId!, examId!);
+    const submitMuttation = useSubmitAssessment(assesmentId!, examId!);
 
     if (isLoading) {
         return <LoadingSpinner />
