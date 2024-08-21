@@ -13,10 +13,9 @@ import {
     SelectContent,
     SelectGroup,
     SelectItem,
-    SelectLabel,
     SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
+    SelectValue
+} from "@/components/ui/select";
 
 
 import { PlusCircle } from "lucide-react";

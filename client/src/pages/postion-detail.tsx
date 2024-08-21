@@ -1,17 +1,9 @@
-import { useGetPositionExams } from "@/api/position-exam/use-getPositionExams";
-import { useGetPosition } from "@/api/positions/use-get-position";
 import { PositionExams } from "@/components/job-position/positions-exam";
 import { useParams } from "react-router-dom";
 
 export const PositionDetailPage = () => {
 
     const { positionId } = useParams()
-    const { data, isLoading } = useGetPosition(positionId!);
-
-
-    if (isLoading) {
-        return <div>Loadig....</div>
-    }
 
     return (
         <div className="p-6">

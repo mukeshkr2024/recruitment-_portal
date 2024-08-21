@@ -14,4 +14,4 @@ export const useGetExam = (examId: string) => {
             }
         },
     });
-}; a
+};

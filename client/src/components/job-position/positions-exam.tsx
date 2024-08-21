@@ -1,10 +1,9 @@
+import { useDeletePositionExam } from '@/api/position-exam/use-deletePositionExam';
 import { useGetPositionExams } from '@/api/position-exam/use-getPositionExams';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { useUpdateActiveStatus } from '@/api/position-exam/use-update-activeStatus';
 import { Trash } from 'lucide-react';
 import { ConfirmDialog } from '../confirm-dialog';
-import { useUpdateActiveStatus } from '@/api/position-exam/use-update-activeStatus';
-import { useDeletePositionExam } from '@/api/position-exam/use-deletePositionExam';
-import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { CreateJobPositionExam } from './create-jobPostion-exam';
 
 interface PositionExam {
