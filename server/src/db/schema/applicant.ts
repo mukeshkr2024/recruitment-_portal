@@ -2,6 +2,7 @@ import { pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import crypto from "crypto";
 import { relations } from "drizzle-orm";
 import { assessment } from "./assesment";
+import { examResult } from "./exam-result";
 
 export const applicant = pgTable("applicant", {
     id: text("id")
@@ -17,5 +18,6 @@ export const applicant = pgTable("applicant", {
 });
 
 export const applicantRelations = relations(applicant, ({ many }) => ({
-    assements: many(assessment)
+    assements: many(assessment),
+    examResults: many(examResult)
 }));

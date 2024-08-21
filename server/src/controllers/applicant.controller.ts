@@ -1,7 +1,7 @@
 import { and, arrayContains, asc, desc, eq, inArray } from "drizzle-orm";
 import e, { NextFunction, Request, Response } from "express";
 import db from "../db";
-import { applicant, assessment, exam, jobPositionExams, option, position, question, } from "../db/schema";
+import { applicant, assessment, exam, examResult, jobPositionExams, option, position, question, } from "../db/schema";
 import { CatchAsyncError } from "../middleware/catchAsyncError";
 import { generateAccessCode } from "../utils";
 import { ErrorHandler } from "../utils/ErrorHandler";
@@ -9,7 +9,7 @@ import { sendMail } from "../utils/sendMail";
 
 export const getApplicantsAssessmentQuestions = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { examId } = req.params;
+        const { examId, assessmentId } = req.params;
 
         const examFound = await db.query.exam.findFirst({
             where: eq(exam.id, examId),
@@ -52,11 +52,8 @@ export const getApplicantsAssessmentQuestions = CatchAsyncError(async (req: Requ
 
 export const submitAssessment = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
+        const { examId } = req.params;
         const answers = req.body;
-        const { assementId } = req.params;
-
-        console.log(assementId);
-
 
         if (!Array.isArray(answers) || answers.length === 0) {
             return res.status(400).json({ error: 'Invalid input: answers should be a non-empty array.' });
@@ -78,17 +75,20 @@ export const submitAssessment = CatchAsyncError(async (req: Request, res: Respon
                 continue;
             }
 
-
             if (correctOption.id === answer.selectedOptionId) {
                 totalScore += 1;
             }
         }
 
-        await db.update(assessment).set({
+        const insertQuery = await db.insert(examResult).values({
+            applicantId: req.id,
+            examId: examId,
             score: totalScore,
             totalScore: maxScore,
-            status: "COMPLETED"
-        }).where(eq(assessment.id, assementId))
+            status: "COMPLETED",
+        }).returning();
+
+        console.log("insertQuery", insertQuery);
 
         return res.status(200).json({ success: "true" });
     } catch (error) {
@@ -148,11 +148,14 @@ export const getApplicantAssesment = CatchAsyncError(async (req: Request, res: R
             with: {
                 assements: {
                     with: {
-                        position: true
+                        position: true,
                     }
-                }
+                },
+                examResults: true,
             }
         })
+
+        const examResultIds = applicantPositions?.examResults.map(result => result.examId)
 
         const positionIds = applicantPositions?.assements.map(assement => assement.positionId);
 
@@ -181,15 +184,21 @@ export const getApplicantAssesment = CatchAsyncError(async (req: Request, res: R
 
             const exams = positionExams.filter(exam => exam.positionId === positionId);
 
+            console.log("positionId", positionId);
+
+
             exams.forEach(exam => {
                 acc[positionId].exams.push({
                     examId: exam.exam.id,
-                    name: exam.exam.name
+                    name: exam.exam.name,
+                    status: examResultIds?.includes(exam.exam.id)
+                        ? applicantPositions.examResults.find(e => e.examId === exam.exam.id)?.status || "PENDING"
+                        : "PENDING"
                 });
             });
 
             return acc;
-        }, {} as Record<string, { position_name: string, exams: { examId: string, name: string }[] }>);
+        }, {} as Record<string, { position_name: string, exams: { examId: string, name: string, status: string }[] }>);
 
         //@ts-ignore
         const result = Object.entries(positionMap).map(([id, details]) => ({
@@ -318,7 +327,7 @@ export const getJobPostions = CatchAsyncError(async (Req: Request, res: Response
 
 export const getInstructionsDetails = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { examId } = req.params;
+        const { examId, assementId } = req.params;
 
         console.log("examId: " + examId);
 

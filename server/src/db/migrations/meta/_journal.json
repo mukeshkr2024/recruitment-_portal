@@ -64,6 +64,20 @@
       "when": 1724136776758,
       "tag": "0008_dry_stryfe",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1724225150341,
+      "tag": "0009_serious_big_bertha",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1724225192565,
+      "tag": "0010_lean_meltdown",
+      "breakpoints": true
     }
   ]
 }

@@ -1,12 +1,12 @@
 import db from "../src/db";
-import { user, position, question, option, applicant, result, assessment, exam, jobPositionExams } from "../src/db/schema";
+import { user, position, question, option, applicant, result, assessment, exam, jobPositionExams, examResult } from "../src/db/schema";
 
 const seed = async () => {
     try {
         console.log("Seeding started...");
 
         // Clear existing data
-        const tables = [assessment, result, applicant, question, option, position, user, jobPositionExams, exam];
+        const tables = [assessment, examResult, result, applicant, question, option, position, user, jobPositionExams, exam];
         for (const table of tables) {
             try {
                 await db.delete(table);
