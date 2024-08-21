@@ -4,12 +4,15 @@ import { useApplicantAuth } from '@/hooks/useApplicantAuth';
 import { logOutSession } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
 
+interface Exam {
+  examId: string;
+  name: string;
+}
+
 interface Assessment {
   id: string;
-  position: {
-    positionName: string;
-  };
-  status: 'PENDING' | 'COMPLETED';
+  position_name: string;
+  exams: Exam[];
 }
 
 export const ApplicantDashboard = () => {
@@ -18,15 +21,15 @@ export const ApplicantDashboard = () => {
   const navigate = useNavigate();
 
   if (isLoading || loading) {
-    return <LoadingSpinner />
+    return <LoadingSpinner />;
   }
 
   // @ts-ignore
   const { firstName, lastName, email, phone } = applicant;
 
-  const handleStart = (id: string) => {
-    console.log(`Starting assessment with id: ${id}`);
-    navigate(`/instructions/${id}`);
+  const handleStart = (examId: string) => {
+    console.log(`Starting exam with id: ${examId}`);
+    navigate(`/instructions/${examId}`);
   };
 
   const handleLogout = () => {
@@ -63,21 +66,33 @@ export const ApplicantDashboard = () => {
             assessments.map((assessment: Assessment) => (
               <li
                 key={assessment.id}
-                className="flex flex-col md:flex-row items-center justify-between p-4 bg-gray-50 rounded-lg shadow-sm hover:bg-gray-100 transition duration-200"
+                className="bg-gray-50 rounded-lg shadow-sm p-4"
               >
-                <div className="text-lg font-semibold text-gray-700">
-                  {assessment.position.positionName}
+                <div className="text-lg font-semibold text-gray-700 mb-2">
+                  {assessment.position_name}
                 </div>
-                <button
-                  onClick={() => handleStart(assessment.id)}
-                  disabled={assessment.status !== 'PENDING'}
-                  className={`mt-4 md:mt-0 px-4 py-2 font-semibold rounded-lg shadow transition duration-200 ${assessment.status === 'PENDING'
-                    ? 'bg-blue-500 text-white hover:bg-blue-600'
-                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    }`}
-                >
-                  {assessment.status === 'PENDING' ? 'Start' : 'Completed'}
-                </button>
+                <ul className="space-y-2">
+                  {assessment.exams.length > 0 ? (
+                    assessment.exams.map((exam) => (
+                      <li
+                        key={exam.examId}
+                        className="flex justify-between items-center p-2 bg-gray-100 rounded-lg shadow-sm hover:bg-gray-200 transition duration-200"
+                      >
+                        <div className="text-gray-700">{exam.name}</div>
+                        <button
+                          onClick={() => handleStart(exam.examId)}
+                          className="px-4 py-2 font-semibold rounded-lg shadow transition duration-200 bg-blue-500 text-white hover:bg-blue-600"
+                        >
+                          Start
+                        </button>
+                      </li>
+                    ))
+                  ) : (
+                    <li className="text-center text-gray-600">
+                      No exams available.
+                    </li>
+                  )}
+                </ul>
               </li>
             ))
           ) : (

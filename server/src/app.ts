@@ -54,7 +54,7 @@ app.delete("/api/v1/questions/:questionId", deleteQuestion)
 app.get("/api/v1/question/:questionId", getQuestion)
 app.put("/api/v1/question/:questionId", updateQuestion)
 app.patch("/api/v1/position/duration-update/:positionId", updatePosition)
-app.get('/api/v1/instructions/:assessmentId', getInstructionsDetails)
+app.get('/api/v1/instructions/:examId', getInstructionsDetails)
 app.get("/api/v1/analytics", getAnalytics)
 
 // applicants 

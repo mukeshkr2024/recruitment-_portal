@@ -24,7 +24,6 @@ export const applicantLogin = async (req: Request, res: Response, next: NextFunc
         }
 
         const access_token = generateToken(isUserFound.id);
-
         res.cookie("access_token", access_token, {
             // httpOnly: true,
             secure: process.env.NODE_ENV === "production",
@@ -119,7 +118,7 @@ export const userDetail = CatchAsyncError(async (req: Request, res: Response, ne
                 id: false,
                 password: false,
                 createdAt: false,
-                updatedAt: false // corrected typo
+                updatedAt: false
             }
         });
 

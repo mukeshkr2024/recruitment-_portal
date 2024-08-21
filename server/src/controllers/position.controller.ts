@@ -93,21 +93,14 @@ export const updatePosition = CatchAsyncError(async (req: Request, res: Response
 
 export const getPosition = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
-
         const { positionId } = req.params;
-
-        console.log(positionId);
-
         const query = await db.query.position.findFirst({
             where: eq(position.id, positionId)
         })
-
         if (!query) {
             throw new Error("Position not found")
         }
-
         return res.status(200).json(query);
-
     } catch (error) {
         return next(new ErrorHandler(error, 400));
 

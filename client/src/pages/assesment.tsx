@@ -101,7 +101,7 @@ export const AssessmentPage = () => {
         localStorage.removeItem(`selectedOptions-${assesmentId}`);
         localStorage.removeItem(`currentQuestionIndex-${assesmentId}`);
         localStorage.removeItem('secondsLeft');
-
+        localStorage.removeItem('pageSwitchAttempts');
     }
 
     const totalQuestions = questions.length;
@@ -145,9 +145,7 @@ export const AssessmentPage = () => {
         return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
     };
 
-    // security check
-
-    // disbal inspect 
+    // Security check
     useEffect(() => {
         const handleContextMenu = (e: MouseEvent) => e.preventDefault();
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -165,61 +163,59 @@ export const AssessmentPage = () => {
         };
     }, []);
 
-    // Prevent Tab Switching
+    // Prevent Tab Switching and Track Page Switch Attempts
     useEffect(() => {
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            e.preventDefault();
+            e.returnValue = ''; // Chrome requires returnValue to be set
+        };
+
         const handleVisibilityChange = () => {
             if (document.visibilityState === 'hidden') {
-                alert('Cheating detected! Please stay on the assessment page.');
-                // Optional: Track violations and decide on penalties
+                let attempts = parseInt(localStorage.getItem('pageSwitchAttempts') || '0', 10);
+                attempts += 1;
+                localStorage.setItem('pageSwitchAttempts', attempts.toString());
+
+                if (attempts >= 3) {
+                    handleSubmit();
+                    localStorage.removeItem('pageSwitchAttempts');
+                } else {
+                    alert('You cannot leave this page until the assessment is completed. If you attempt to exit, your assessment will be submitted automatically.');
+                }
             }
         };
 
+        window.addEventListener('beforeunload', handleBeforeUnload);
         document.addEventListener('visibilitychange', handleVisibilityChange);
 
         return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
             document.removeEventListener('visibilitychange', handleVisibilityChange);
         };
-    }, []);
+    }, [handleSubmit]);
 
     // Time-Based Penalties
-    useEffect(() => {
-        let inactivityTimer: NodeJS.Timeout;
-
-        const resetTimer = () => {
-            clearTimeout(inactivityTimer);
-            inactivityTimer = setTimeout(() => {
-                setTimeLeft(prev => Math.max(prev - 60, 0)); // Penalize by reducing 1 minute
-            }, 30000); // 30 seconds of inactivity
-        };
-
-        window.addEventListener('mousemove', resetTimer);
-        window.addEventListener('keydown', resetTimer);
-
-        resetTimer();
-
-        return () => {
-            clearTimeout(inactivityTimer);
-            window.removeEventListener('mousemove', resetTimer);
-            window.removeEventListener('keydown', resetTimer);
-        };
-    }, []);
-
-    // Randomize Questions and Options
-    // const shuffleArray = (array: any[]) => {
-    //     return array.sort(() => Math.random() - 0.5);
-    // };
-
     // useEffect(() => {
-    //     const shuffledQuestions = shuffleArray(questions);
-    //     setQuestions(shuffledQuestions);
-    //     const shuffledOptions = shuffledQuestions.map(question => ({
-    //         ...question,
-    //         options: shuffleArray(question.options)
-    //     }));
-    //     setSelectedOptions(shuffledOptions);
+    //     let inactivityTimer: NodeJS.Timeout;
+
+    //     const resetTimer = () => {
+    //         clearTimeout(inactivityTimer);
+    //         inactivityTimer = setTimeout(() => {
+    //             setTimeLeft(prev => Math.max(prev - 60, 0)); // Penalize by reducing 1 minute
+    //         }, 30000); // 30 seconds of inactivity
+    //     };
+
+    //     window.addEventListener('mousemove', resetTimer);
+    //     window.addEventListener('keydown', resetTimer);
+
+    //     resetTimer();
+
+    //     return () => {
+    //         clearTimeout(inactivityTimer);
+    //         window.removeEventListener('mousemove', resetTimer);
+    //         window.removeEventListener('keydown', resetTimer);
+    //     };
     // }, []);
-
-
 
     return (
         <div className="flex flex-col min-h-screen pt-4 pb-12">
@@ -234,6 +230,7 @@ export const AssessmentPage = () => {
                     <>
                         <div className="flex-none">
                             <AssessmentHeader
+                                title={data?.exam_name}
                                 timeLeft={formatTime(timeLeft)}
                             />
                         </div>

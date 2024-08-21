@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Applicant Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #007bff;
+            color: white;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .content {
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .access-code {
+            font-weight: bold;
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            border-radius: 4px;
+            margin: 20px 0;
+            font-size: 18px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: #999;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="email-container">
+        <div class="header">
+            <h1>Welcome to [Your Company]</h1>
+        </div>
+        <div class="content">
+            <p>Hi <%= name %>,</p>
+            <p>Thank you for applying for the <strong>
+                    <%= position %>
+                </strong> position. We have successfully registered your application.</p>
+            <p>Here is your access code:</p>
+            <div class="access-code">
+                <%= access_code %>
+            </div>
+            <p>Please keep this code safe as it will be required during the application process.</p>
+            <p>Best of luck!</p>
+            <p>Regards,<br>[Your Company]</p>
+        </div>
+        <div class="footer">
+            <p>This email was sent from [Your Company]. If you have any questions, feel free to contact us at
+                support@[yourcompany].com.</p>
+        </div>
+    </div>
+</body>
+
+</html>

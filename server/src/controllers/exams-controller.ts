@@ -1,16 +1,25 @@
 import { NextFunction, Request, Response } from "express";
 import db from "../db";
 import { CatchAsyncError } from "../middleware/catchAsyncError";
-import { and, eq } from "drizzle-orm";
-import { exam, jobPositionExams, position } from "../db/schema";
+import { and, count, eq, sql } from "drizzle-orm";
+import { exam, jobPositionExams, position, question } from "../db/schema";
 import { ErrorHandler } from "../utils/ErrorHandler";
 
 export const getExams = CatchAsyncError(async (req: Request, res: Response) => {
     try {
-
-        const exams = await db.query.exam.findMany({})
-
-        return res.status(200).json({ exams })
+        const examsWithQuestionCount = await db
+            .select({
+                id: exam.id,
+                name: exam.name,
+                createdAt: exam.createdAt,
+                duration: exam.duration,
+                totalQuestions: count(question.id),
+            })
+            .from(exam)
+            .leftJoin(question, sql`${exam.id} = ${question.examId}`)
+            .groupBy(exam.id, exam.name)
+            .orderBy(exam.name);
+        return res.status(200).json({ exams: examsWithQuestionCount });
     } catch (error) {
         console.log(error);
     }

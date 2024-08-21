@@ -23,7 +23,7 @@ export const InstructionPage = () => {
             {/* Card 1 */}
             <Card className="flex flex-col max-w-4xl lg:max-w-6xl mx-auto py-4 px-4 md:py-5 md:px-6 shadow-md justify-center w-full">
                 <h2 className="sm:text-2xl text-xl text-center md:text-3xl font-semibold text-gray-900">
-                    Internal Assessment: {data?.assessment_name}
+                    Internal Assessment: {data?.exam_name}
                 </h2>
             </Card>
 
@@ -34,7 +34,7 @@ export const InstructionPage = () => {
                 </h3>
                 <ul className="mt-3 text-base md:text-lg space-y-2">
                     <li>This assessment is designed to evaluate your knowledge and practical skills in UI/UX design through a series of multiple-choice questions (MCQs).</li>
-                    <li>The assessment consists of {data?.total_questions} questions, and you will have a total of {data?.time} minutes to complete it. Please make sure to manage your time effectively.</li>
+                    <li>The assessment consists of {data?.total_questions} questions, and you will have a total of {data?.total_time} minutes to complete it. Please make sure to manage your time effectively.</li>
                     <li>Each question has four possible answers. Select the option that you believe is most accurate.</li>
                     <li>Once you have answered all the questions, click on the "Submit" button to finalize your responses. Please note that you will not be able to return to the assessment after submission.</li>
                     <li>Ensure you have a stable internet connection throughout the duration of the assessment. A sudden loss of connection may affect your progress.</li>

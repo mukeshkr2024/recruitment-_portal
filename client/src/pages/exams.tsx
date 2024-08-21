@@ -1,9 +1,7 @@
 import { useGetExams } from "@/api/exams/use-get-positions";
 import { useDeletePosition } from "@/api/positions/use-delete-positions";
-import { useGetPositions } from "@/api/positions/use-get-positions";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { CreateExam } from "@/components/exams/create-exam";
-import { CreatePositions } from "@/components/job-position/create-postions";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/components/ui/use-toast";
@@ -15,6 +13,8 @@ interface Position {
     id: string;
     name: string;
     createdAt: string;
+    totalQuestions: number;
+    duration: number;
     assesment: {
         id: string
     }[]
@@ -49,7 +49,6 @@ export const Exams = () => {
                 <h2 className="text-3xl font-bold text-blue-900">
                     Exams
                 </h2>
-
                 <div>
                     <CreateExam />
                 </div>
@@ -68,6 +67,9 @@ export const Exams = () => {
                                 Total Questions
                             </TableHead>
                             <TableHead className="text-gray-700 font-semibold bg-gray-200">
+                                Duration
+                            </TableHead>
+                            <TableHead className="text-gray-700 font-semibold bg-gray-200">
                                 CreatedAt
                             </TableHead>
                             <TableHead className="text-gray-700 font-semibold bg-gray-200">
@@ -81,7 +83,8 @@ export const Exams = () => {
                                 <TableRow key={exam.id} className="hover:bg-gray-100">
                                     <TableCell className="text-gray-600">{idx + 1}</TableCell>
                                     <TableCell className="text-gray-800">{exam?.name}</TableCell>
-                                    <TableCell className="text-gray-800">10</TableCell>
+                                    <TableCell className="text-gray-800">{exam?.totalQuestions}</TableCell>
+                                    <TableCell className="text-gray-800">{exam?.duration} min</TableCell>
                                     <TableCell className="text-gray-600">{formatDate(exam.createdAt)}</TableCell>
                                     <TableCell>
                                         <div className="flex gap-x-5">

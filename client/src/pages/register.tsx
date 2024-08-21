@@ -20,7 +20,7 @@ export const registerFormSchema = z.object({
 export const RegisterPage = () => {
 
     const { data: positions } = useGetJobPositions()
-    const mutation = useRegisterApplicant()
+    const { mutate, isLoading } = useRegisterApplicant()
     const { toast } = useToast()
 
     const form = useForm<z.infer<typeof registerFormSchema>>({
@@ -36,12 +36,18 @@ export const RegisterPage = () => {
 
     function onSubmit(values: z.infer<typeof registerFormSchema>) {
         console.log(values)
-        mutation.mutate(values, {
+        mutate(values, {
             onSuccess: () => {
                 toast({
                     title: "Registered successfully"
                 })
                 form.reset();
+            },
+            onError: (error: any) => {
+                toast({
+                    variant: "destructive",
+                    title: error?.response?.data?.message || "Failed to register",
+                })
             }
         })
 
@@ -144,7 +150,7 @@ export const RegisterPage = () => {
                             )}
                         />
                         <div className="pt-2">
-                            <Button type="submit" className="w-full">Submit</Button>
+                            <Button type="submit" className="w-full" disabled={isLoading}>Submit</Button>
                         </div>
                     </form>
                 </Form>

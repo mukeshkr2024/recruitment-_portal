@@ -1,64 +1,49 @@
-import { and, asc, desc, eq } from "drizzle-orm";
-import { NextFunction, Request, Response } from "express";
+import { and, arrayContains, asc, desc, eq, inArray } from "drizzle-orm";
+import e, { NextFunction, Request, Response } from "express";
 import db from "../db";
-import { applicant, assementRelations, assessment, jobPositionExams, option, question, } from "../db/schema";
+import { applicant, assessment, exam, jobPositionExams, option, position, question, } from "../db/schema";
 import { CatchAsyncError } from "../middleware/catchAsyncError";
 import { generateAccessCode } from "../utils";
 import { ErrorHandler } from "../utils/ErrorHandler";
+import { sendMail } from "../utils/sendMail";
 
 export const getApplicantsAssessmentQuestions = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { assessmentId } = req.params;
+        const { examId } = req.params;
 
-        const assessmentFound = await db.query.assessment.findFirst({
-            where: eq(assessment.id, assessmentId)
-        });
-
-        if (!assessmentFound) {
-            return next(new ErrorHandler("Assessment not found", 404));
-        }
-
-        const jobExams = await db.query.jobPositionExams.findMany({
-            where: and(eq(jobPositionExams.positionId, assessmentFound.positionId), eq(jobPositionExams.isActive, true)),
+        const examFound = await db.query.exam.findFirst({
+            where: eq(exam.id, examId),
+            columns: {
+                name: true,
+                duration: true
+            },
             with: {
-                exam: {
+                questions: {
+                    columns: {
+                        id: true,
+                        questionText: true
+                    },
                     with: {
-                        questions: {
-                            with: {
-                                options: {
-                                    columns: {
-                                        id: true,
-                                        optionText: true
-                                    }
-                                },
-
-                            },
+                        options: {
                             columns: {
                                 id: true,
-                                questionText: true
+                                optionText: true,
                             }
                         }
                     }
                 }
             }
-        });
+        })
 
-        let totalTime = 0;
-        let questions: any[] = [];
-
-        for (const jobExam of jobExams) {
-            if (jobExam.exam) {
-                totalTime += jobExam.exam.duration || 0;
-                if (jobExam.exam.questions) {
-                    questions = questions.concat(jobExam.exam.questions);
-                }
-            }
+        if (!examFound) {
+            throw new Error("Exam not found")
         }
 
         return res.status(200).json({
-            questions,
-            total_time: totalTime
-        });
+            exam_name: examFound.name,
+            questions: examFound.questions,
+            total_time: examFound.duration
+        })
 
     } catch (error) {
         return next(new ErrorHandler(error, 500));
@@ -152,86 +137,166 @@ export const getApplicantsByPositon = CatchAsyncError(async (req: Request, res: 
 
 export const getApplicantAssesment = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
-
         const applicantId = req.id;
 
-        if (!applicantId) return
+        if (!applicantId) {
+            return next(new ErrorHandler("Invalid applicant ID", 400));
+        }
 
-        const assessments = await db.query.assessment.findMany({
-            where: eq(assessment.applicantId, applicantId),
-            columns: {
-                id: true,
-                status: true
-            },
+        const applicantPositions = await db.query.applicant.findFirst({
+            where: eq(applicant.id, applicantId),
             with: {
-                position: {
-                    columns: {
-                        positionName: true,
-                        createdAt: true
+                assements: {
+                    with: {
+                        position: true
                     }
-                },
-            },
-            orderBy: asc(assessment.createdAt)
+                }
+            }
         })
 
-        return res.status(200).json(assessments)
+        const positionIds = applicantPositions?.assements.map(assement => assement.positionId);
+
+        const positionExams = await db.query.jobPositionExams.findMany({
+            // @ts-ignore 
+            where: inArray(jobPositionExams.positionId, positionIds),
+            with: {
+                exam: {
+                    with: {
+                        questions: true
+                    }
+                }
+            }
+        });
+
+        const positionMap = applicantPositions?.assements.reduce((acc, assessment) => {
+            const positionId = assessment.positionId;
+            const positionName = assessment.position.positionName;
+
+            if (!acc[positionId]) {
+                acc[positionId] = {
+                    position_name: positionName,
+                    exams: []
+                };
+            }
+
+            const exams = positionExams.filter(exam => exam.positionId === positionId);
+
+            exams.forEach(exam => {
+                acc[positionId].exams.push({
+                    examId: exam.exam.id,
+                    name: exam.exam.name
+                });
+            });
+
+            return acc;
+        }, {} as Record<string, { position_name: string, exams: { examId: string, name: string }[] }>);
+
+        //@ts-ignore
+        const result = Object.entries(positionMap).map(([id, details]) => ({
+            id,
+            ...details
+        }));
+
+        res.status(200).json(result);
+
     } catch (error) {
         return next(new ErrorHandler(error, 400));
     }
 })
-
 
 export const registerApplicant = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const { firstName, lastName, email, phone, appliedFor } = req.body
+    const { firstName, lastName, email, phone, appliedFor } = req.body;
 
-        if (!firstName || !lastName || !email || !phone || !appliedFor) {
-            throw new Error("All fields are required")
+    // Check for missing fields
+    if (!firstName || !lastName || !email || !phone || !appliedFor) {
+        return next(new ErrorHandler("All fields are required", 400));
+    }
+
+    try {
+        const positionFound = await db.query.position.findFirst({
+            where: eq(position.id, appliedFor),
+        });
+
+        if (!positionFound) {
+            return next(new ErrorHandler("Invalid position ID", 400));
         }
 
-
+        // Check if applicant already exists
         const existingApplicant = await db.query.applicant.findFirst({
-            where: eq(applicant.email, email)
-        })
+            where: eq(applicant.email, email),
+        });
 
-        console.log(existingApplicant);
+        // If applicant exists, check if they're already registered for the position
+        if (existingApplicant) {
+            const isAlreadyRegistered = await db.query.assessment.findFirst({
+                where: and(
+                    eq(assessment.positionId, appliedFor),
+                    eq(assessment.applicantId, existingApplicant.id),
+                ),
+            });
 
+            if (isAlreadyRegistered) {
+                return next(new ErrorHandler("You are already registered for this position", 400));
+            }
+        }
+
+        // Generate a new access code
+        const access_code = generateAccessCode(8);
         let foundApplicant;
 
+        // Update existing applicant or insert a new one
         if (existingApplicant) {
-            foundApplicant = await db.update(applicant).set({
-                accessCode: generateAccessCode(8)
-            }).where(eq(applicant.email, existingApplicant.email)).returning()
-
+            [foundApplicant] = await db.update(applicant)
+                .set({ accessCode: access_code })
+                .where(eq(applicant.email, existingApplicant.email))
+                .returning();
         } else {
-            foundApplicant = await db.insert(applicant).values({
-                firstName,
-                lastName,
-                email,
-                phone,
-                accessCode: generateAccessCode(8)
-            }).returning()
-
+            [foundApplicant] = await db.insert(applicant)
+                .values({
+                    firstName,
+                    lastName,
+                    email,
+                    phone,
+                    accessCode: access_code,
+                })
+                .returning();
         }
 
-        console.log(foundApplicant);
+        // Insert into the assessment table
+        const assessmentEntry = await db.insert(assessment)
+            .values({
+                applicantId: foundApplicant.id,
+                positionId: appliedFor,
+            })
+            .returning();
 
-        const assesment = await db.insert(assessment).values({
-            applicantId: foundApplicant[0].id,
-            positionId: appliedFor
-        }).returning()
+        // Prepare data for the email
+        const emailData = {
+            name: `${foundApplicant.firstName} ${foundApplicant.lastName}`,
+            email: foundApplicant.email,
+            position: positionFound.positionName, // You should replace this with the actual position title
+            access_code: access_code,
+        };
 
-        console.log(assesment);
+        // Send registration email
+        try {
+            await sendMail({
+                email: foundApplicant.email,
+                subject: "Applicant Registration",
+                template: "register-mail.ejs",
+                data: emailData,
+            });
+        } catch (error) {
+            console.error("Error sending email:", error);
+            return next(new ErrorHandler("Failed to send email", 500));
+        }
 
-
-        return res.status(201).json({
-            success: true,
-        })
-
+        // Respond with success
+        return res.status(201).json({ success: true });
     } catch (error) {
-        return next(new ErrorHandler(error, 400));
+        return next(new ErrorHandler(error, 500));
     }
-})
+});
 
 
 export const getJobPostions = CatchAsyncError(async (Req: Request, res: Response, next: NextFunction) => {
@@ -253,46 +318,30 @@ export const getJobPostions = CatchAsyncError(async (Req: Request, res: Response
 
 export const getInstructionsDetails = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { assessmentId } = req.params;
+        const { examId } = req.params;
 
-        const assessmentFound = await db.query.assessment.findFirst({
-            where: eq(assessment.id, assessmentId),
+        console.log("examId: " + examId);
+
+        const examFound = await db.query.exam.findFirst({
+            where: eq(exam.id, examId),
             with: {
-                position: true
+                questions: true
             }
-        });
+        })
 
-        if (!assessmentFound) {
-            return next(new ErrorHandler("Assessment not found", 404));
-        }
+        console.log("examFound", examFound);
 
-        const JobExams = await db.query.jobPositionExams.findMany({
-            where: and(eq(jobPositionExams.positionId, assessmentFound.positionId), eq(jobPositionExams.isActive, true)),
-            with: {
-                exam: {
-                    with: { questions: true }
-                }
-            }
-        });
-
-        let total_time = 0;
-        let total_questions = 0;
-
-        for (const exam of JobExams) {
-            if (exam.exam && exam.exam.duration) {
-                total_time += exam.exam.duration;
-            }
-            if (exam.exam && exam.exam.questions) {
-                total_questions += exam.exam.questions.length;
-            }
+        if (!examFound) {
+            return next(new ErrorHandler("Exam not found", 400));
         }
 
         return res.status(200).json({
-            assessment_name: assessmentFound.position.positionName,
-            total_questions,
-            time: total_time,
-            status: assessmentFound.status
-        });
+            exam_name: examFound.name,
+            total_questions: examFound.questions.length || 0,
+            total_time: examFound.duration,
+            status: "success",
+        })
+
 
     } catch (error) {
         return next(new ErrorHandler(error, 500));
