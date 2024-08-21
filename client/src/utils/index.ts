@@ -5,5 +5,5 @@ export const formatDate = (dateString: string): string => {
     return formattedDate;
 };
 
-// export const siteUrl = "http://careers.codingcommando.in"
-export const siteUrl = "http://localhost:5173"
+export const siteUrl = "http://careers.codingcommando.in"
+// export const siteUrl = "http://localhost:5173"
