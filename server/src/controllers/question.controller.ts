@@ -1,7 +1,7 @@
 import { asc, desc, eq } from "drizzle-orm";
 import { NextFunction, Request, Response } from "express";
 import db from "../db";
-import { assessment, option, position, question, } from "../db/schema";
+import { option, position, question, } from "../db/schema";
 import { CatchAsyncError } from "../middleware/catchAsyncError";
 import { ErrorHandler } from "../utils/ErrorHandler";
 
@@ -11,9 +11,6 @@ export const getQuestionsByPostionId = CatchAsyncError(async (req: Request, res:
 
         const positions = await db.query.position.findFirst({
             where: eq(position.id, positionId),
-            with: {
-                questions: true,
-            },
         })
 
         if (!positions) {

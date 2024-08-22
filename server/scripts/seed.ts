@@ -1,12 +1,11 @@
 import db from "../src/db";
-import { user, position, question, option, applicant, result, assessment, exam, jobPositionExams, examResult } from "../src/db/schema";
+import { user, position, question, option, applicant, assessment, exam, jobPositionExams, examResult } from "../src/db/schema";
 
 const seed = async () => {
     try {
         console.log("Seeding started...");
 
-        // Clear existing data
-        const tables = [assessment, examResult, result, applicant, question, option, position, user, jobPositionExams, exam];
+        const tables = [assessment, examResult, applicant, question, option, position, user, jobPositionExams, exam];
         for (const table of tables) {
             try {
                 await db.delete(table);
@@ -32,12 +31,12 @@ const seed = async () => {
 
         // Create job positions
         const jobPositions = await db.insert(position).values([
-            { positionName: "UI/UX Designer", createdBy: userId },
-            { positionName: "Software Engineer", createdBy: userId },
-            { positionName: "Product Manager", createdBy: userId },
-            { positionName: "Data Scientist", createdBy: userId },
-            { positionName: "DevOps Engineer", createdBy: userId },
-            { positionName: "Quality Assurance Engineer", createdBy: userId },
+            { positionName: "UI/UX Designer" },
+            { positionName: "Software Engineer" },
+            { positionName: "Product Manager" },
+            { positionName: "Data Scientist" },
+            { positionName: "DevOps Engineer" },
+            { positionName: "Quality Assurance Engineer" },
         ]).returning();
 
         if (jobPositions.length === 0) {
