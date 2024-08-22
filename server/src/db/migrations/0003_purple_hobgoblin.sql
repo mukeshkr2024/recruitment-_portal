@@ -1,1 +1,0 @@
-ALTER TABLE "position" ADD COLUMN "duration" integer DEFAULT 0;

@@ -1,6 +1,6 @@
 {
-  "id": "2eed3e64-3e37-4999-9f62-ecc0a5df3f52",
-  "prevId": "574c916b-57c8-4e35-92aa-2086818a4a36",
+  "id": "7581812e-6d81-4cf9-8389-82bd36475e9f",
+  "prevId": "c4bd02b2-888d-445e-9110-4621eff15ce2",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -32,21 +32,22 @@
           "primaryKey": false,
           "notNull": true
         },
-        "applied_for": {
-          "name": "applied_for",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
         "access_code": {
           "name": "access_code",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
         },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'INPROGRESS'"
+        },
         "contact_phone": {
           "name": "contact_phone",
-          "type": "varchar(255)",
+          "type": "varchar(15)",
           "primaryKey": false,
           "notNull": true
         },
@@ -66,21 +67,7 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "applicant_applied_for_position_id_fk": {
-          "name": "applicant_applied_for_position_id_fk",
-          "tableFrom": "applicant",
-          "tableTo": "position",
-          "columnsFrom": [
-            "applied_for"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "applicant_email_unique": {
@@ -91,6 +78,279 @@
           ]
         }
       }
+    },
+    "public.assessment": {
+      "name": "assessment",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "applicant_id": {
+          "name": "applicant_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "position_id": {
+          "name": "position_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'PENDING'"
+        },
+        "score": {
+          "name": "score",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "total_score": {
+          "name": "total_score",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "assessment_applicant_id_applicant_id_fk": {
+          "name": "assessment_applicant_id_applicant_id_fk",
+          "tableFrom": "assessment",
+          "tableTo": "applicant",
+          "columnsFrom": [
+            "applicant_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "assessment_position_id_position_id_fk": {
+          "name": "assessment_position_id_position_id_fk",
+          "tableFrom": "assessment",
+          "tableTo": "position",
+          "columnsFrom": [
+            "position_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.exam": {
+      "name": "exam",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "duration": {
+          "name": "duration",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.exam_result": {
+      "name": "exam_result",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "applicant_id": {
+          "name": "applicant_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "exam_id": {
+          "name": "exam_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'PENDING'"
+        },
+        "score": {
+          "name": "score",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "total_score": {
+          "name": "total_score",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "exam_result_applicant_id_applicant_id_fk": {
+          "name": "exam_result_applicant_id_applicant_id_fk",
+          "tableFrom": "exam_result",
+          "tableTo": "applicant",
+          "columnsFrom": [
+            "applicant_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "exam_result_exam_id_exam_id_fk": {
+          "name": "exam_result_exam_id_exam_id_fk",
+          "tableFrom": "exam_result",
+          "tableTo": "exam",
+          "columnsFrom": [
+            "exam_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.job_position_exams": {
+      "name": "job_position_exams",
+      "schema": "",
+      "columns": {
+        "position_id": {
+          "name": "position_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "exam_id": {
+          "name": "exam_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_active": {
+          "name": "is_active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "job_position_exams_position_id_position_id_fk": {
+          "name": "job_position_exams_position_id_position_id_fk",
+          "tableFrom": "job_position_exams",
+          "tableTo": "position",
+          "columnsFrom": [
+            "position_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "job_position_exams_exam_id_exam_id_fk": {
+          "name": "job_position_exams_exam_id_exam_id_fk",
+          "tableFrom": "job_position_exams",
+          "tableTo": "exam",
+          "columnsFrom": [
+            "exam_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "job_position_exams_exam_id_position_id_pk": {
+          "name": "job_position_exams_exam_id_position_id_pk",
+          "columns": [
+            "exam_id",
+            "position_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
     },
     "public.option": {
       "name": "option",
@@ -220,8 +480,8 @@
           "primaryKey": true,
           "notNull": true
         },
-        "position_id": {
-          "name": "position_id",
+        "exam_id": {
+          "name": "exam_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -249,12 +509,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "question_position_id_position_id_fk": {
-          "name": "question_position_id_position_id_fk",
+        "question_exam_id_exam_id_fk": {
+          "name": "question_exam_id_exam_id_fk",
           "tableFrom": "question",
-          "tableTo": "position",
+          "tableTo": "exam",
           "columnsFrom": [
-            "position_id"
+            "exam_id"
           ],
           "columnsTo": [
             "id"

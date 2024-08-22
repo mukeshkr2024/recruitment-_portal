@@ -2,6 +2,8 @@ import { useGetExams } from "@/api/exams/use-get-positions";
 import { useDeletePosition } from "@/api/positions/use-delete-positions";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { CreateExam } from "@/components/exams/create-exam";
+import { ExamColumnData } from "@/components/exams/exam-data-columns";
+import { ExamsData } from "@/components/exams/exams-data";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/components/ui/use-toast";
@@ -53,7 +55,7 @@ export const Exams = () => {
                     <CreateExam />
                 </div>
             </div>
-            <div className="mt-2">
+            {/* <div className="mt-2">
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -105,6 +107,9 @@ export const Exams = () => {
                         )}
                     </TableBody>
                 </Table>
+            </div> */}
+            <div>
+                <ExamsData data={exams} columns={ExamColumnData} />
             </div>
         </div>
     );

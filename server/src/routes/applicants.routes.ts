@@ -6,7 +6,7 @@ const applicantsRouter = express.Router();
 
 applicantsRouter.get("/", getApplicants)
 applicantsRouter.get("/position/:positionId", getApplicantsByPositon)
-applicantsRouter.get("/assesment-questions/:assessmentId/exam/:examId", getApplicantsAssessmentQuestions)
+applicantsRouter.get("/assesment-questions/:assessmentId/exam/:examId", isApplicantAuthenticated, getApplicantsAssessmentQuestions)
 applicantsRouter.post("/submit-assessment/:assementId/exam/:examId", isApplicantAuthenticated, submitAssessment)
 
 

@@ -1,4 +1,4 @@
-import { deleteApplicant, getApplicantAssesment, getJobPostions, registerApplicant } from "../controllers/applicant.controller";
+import { applicantDetail, deleteApplicant, getApplicantAssesment, getJobPostions, registerApplicant } from "../controllers/applicant.controller";
 import express from "express";
 import { isApplicantAuthenticated } from "../middleware/auth";
 
@@ -8,5 +8,6 @@ applicantRouter.get("/assessments", isApplicantAuthenticated, getApplicantAssesm
 applicantRouter.get("/job-positions", getJobPostions)
 applicantRouter.post("/register/:positionId", registerApplicant)
 applicantRouter.delete("/:applicantId", deleteApplicant)
+applicantRouter.get("/details/:applicantId", applicantDetail)
 
 export { applicantRouter }; 

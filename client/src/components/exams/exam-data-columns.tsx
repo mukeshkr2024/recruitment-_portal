@@ -1,85 +1,63 @@
-import { ArrowUpDown, Trash } from "lucide-react";
+import { useDeleteApplicant } from "@/api/applicants/use-delete-applicant";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/utils";
+import { ColumnDef } from "@tanstack/react-table";
+import { ArrowUpDown, Pencil, Trash } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ConfirmDialog } from "../confirm-dialog";
-import { useDeleteApplicant } from "@/api/applicants/use-delete-applicant";
 import { useToast } from "../ui/use-toast";
-import { ColumnDef } from "@tanstack/react-table";
 
-export type Applicant = {
+export type Exam = {
     id: string;
-    positionName: string;
+    name: string;
     createdAt: string;
-    applicant: {
-        id: string;
-        firstName: string;
-        lastName: string;
-        email: string;
-        phone: string;
-        accessCode: string;
-    };
-    position: {
-        positionName: string;
-    };
+    duration: number;
+    totalQuestions: number;
 };
 
-export const ApplicantColumnData: ColumnDef<Applicant>[] = [
+export const ExamColumnData: ColumnDef<Exam>[] = [
     {
-        accessorKey: "applicant.firstName",
+        accessorKey: "name",
         header: ({ column }) => (
             <Button
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-                Name
+                Exam Name
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
         cell: ({ row }) => (
-            <Link to={`/applicant/${row.original.applicant.id}`}>
-                {row.original.applicant.firstName} {row.original.applicant.lastName}
+            <Link to={`/exams/${row.original.id}/applicants`}>
+                {row.original.name}
             </Link>
         ),
     },
     {
-        accessorKey: "applicant.email",
+        accessorKey: "totalQuestions",
         header: ({ column }) => (
             <Button
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-                Email
+                Total Questions
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
-        cell: ({ row }) => row.original.applicant.email,
+        cell: ({ row }) => row.original.totalQuestions,
     },
     {
-        accessorKey: "applicant.phone",
+        accessorKey: "duration",
         header: ({ column }) => (
             <Button
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-                Phone
+                Duration
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
-        cell: ({ row }) => row.original.applicant.phone,
-    },
-    {
-        accessorKey: "position.positionName",
-        header: ({ column }) => (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            >
-                Applied For
-                <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-        ),
-        cell: ({ row }) => row.original.position.positionName,
+        cell: ({ row }) => row.original.duration,
     },
     {
         accessorKey: "createdAt",
@@ -94,19 +72,7 @@ export const ApplicantColumnData: ColumnDef<Applicant>[] = [
         ),
         cell: ({ row }) => formatDate(row.original.createdAt),
     },
-    {
-        accessorKey: "applicant.accessCode",
-        header: ({ column }) => (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            >
-                Access Code
-                <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-        ),
-        cell: ({ row }) => row.original.applicant.accessCode,
-    },
+
     {
         accessorKey: "id",
         header: ({ column }) => (
@@ -120,22 +86,24 @@ export const ApplicantColumnData: ColumnDef<Applicant>[] = [
         ),
         cell: ({ row }) => {
             const { toast } = useToast();
-            const deleteMutation = useDeleteApplicant()
+            const deleteMutation = useDeleteApplicant() // TODO:
 
-            const onDelete = (applicantId: string) => {
-                deleteMutation.mutate(applicantId, {
+            const onDelete = (positionId: string) => {
+                deleteMutation.mutate(positionId, {
                     onSuccess: () => {
-                        toast(
-                            {
-                                title: "Applicant deleted successfully"
-                            }
-                        )
+                        toast({
+                            title: "Job Position deleted Successfully"
+                        })
                     }
                 })
             }
+
             return (
                 <div className="flex gap-x-5 w-full items-center justify-center">
-                    <ConfirmDialog onConfirm={() => onDelete(row.original.applicant.id)}>
+                    <Link to={`/exams/${row.original.id}`} className="text-blue-500 hover:text-blue-700">
+                        <Pencil size={18} />
+                    </Link>
+                    <ConfirmDialog onConfirm={() => onDelete(row.original.id)}>
                         <Trash size={18} className="text-red-500 cursor-pointer hover:text-red-700" />
                     </ConfirmDialog>
                 </div>

@@ -1,5 +1,5 @@
 import { and, arrayContains, asc, desc, eq, inArray } from "drizzle-orm";
-import e, { NextFunction, Request, Response } from "express";
+import e, { application, NextFunction, Request, Response } from "express";
 import db from "../db";
 import { applicant, assessment, exam, examResult, jobPositionExams, option, position, question, } from "../db/schema";
 import { CatchAsyncError } from "../middleware/catchAsyncError";
@@ -10,6 +10,11 @@ import { sendMail } from "../utils/sendMail";
 export const getApplicantsAssessmentQuestions = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { examId, assessmentId } = req.params;
+
+        console.log("assementId", assessmentId);
+
+
+        const applicantId = req.id;
 
         const examFound = await db.query.exam.findFirst({
             where: eq(exam.id, examId),
@@ -35,6 +40,22 @@ export const getApplicantsAssessmentQuestions = CatchAsyncError(async (req: Requ
             }
         })
 
+        const isExamResultExist = await db.query.examResult.findFirst({
+            where: and(eq(examResult.examId, examId), eq(examResult.applicantId, applicantId!))
+        })
+
+        if (!isExamResultExist) {
+            await db.insert(examResult).values(
+                {
+                    applicantId: applicantId,
+                    examId: examId,
+                    score: 0,
+                    totalScore: 0,
+                    status: "IN_PROGRESS"
+                }
+            ).returning()
+        }
+
         if (!examFound) {
             throw new Error("Exam not found")
         }
@@ -52,8 +73,11 @@ export const getApplicantsAssessmentQuestions = CatchAsyncError(async (req: Requ
 
 export const submitAssessment = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { examId } = req.params;
+        const { examId, assementId } = req.params;
         const answers = req.body;
+
+        console.log("assementId", assementId);
+
 
         if (!Array.isArray(answers) || answers.length === 0) {
             return res.status(400).json({ error: 'Invalid input: answers should be a non-empty array.' });
@@ -80,15 +104,31 @@ export const submitAssessment = CatchAsyncError(async (req: Request, res: Respon
             }
         }
 
-        const insertQuery = await db.insert(examResult).values({
-            applicantId: req.id,
-            examId: examId,
-            score: totalScore,
-            totalScore: maxScore,
-            status: "COMPLETED",
-        }).returning();
 
-        console.log("insertQuery", insertQuery);
+        const isExamResultExist = await db.query.examResult.findFirst({
+            where: and(eq(examResult.examId, examId), eq(examResult.applicantId, req.id!))
+        })
+
+        console.log("assementId", assementId);
+
+
+        if (!isExamResultExist) {
+            await db.insert(examResult).values({
+                applicantId: req.id,
+                examId: examId,
+                score: totalScore,
+                totalScore: maxScore,
+                status: "COMPLETED",
+            }).returning();
+        }
+
+        const result = await db.update(examResult).set({
+            score: totalScore,
+            status: "COMPLETED",
+        }).where(
+            and(eq(examResult.examId, examId), eq(examResult.applicantId, req.id!))
+        ).returning();
+
 
         return res.status(200).json({ success: "true" });
     } catch (error) {
@@ -329,7 +369,7 @@ export const getJobPostions = CatchAsyncError(async (Req: Request, res: Response
 
 export const getInstructionsDetails = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { examId, assementId } = req.params;
+        const { examId } = req.params;
 
         console.log("examId: " + examId);
 
@@ -374,6 +414,63 @@ export const deleteApplicant = CatchAsyncError(async (req: Request, res: Respons
             message: "Deleted successfully"
         })
 
+    } catch (error) {
+        return next(new ErrorHandler(error, 400));
+    }
+})
+
+
+export const applicantDetail = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { applicantId } = req.params;
+
+        const applicantFound = await db.query.applicant.findFirst({
+            where: eq(applicant.id, applicantId),
+            with: {
+                assements: {
+                    columns: {
+                        createdAt: true
+                    },
+                    with: {
+                        position: {
+                            columns: {
+                                positionName: true
+                            }
+                        }
+                    }
+                }
+            }
+        })
+
+        const examResults = await db.query.examResult.findMany(
+            {
+                where: and(eq(examResult.applicantId, applicantId)),
+                with: {
+                    exam: {
+                        columns: {
+                            name: true,
+                            duration: true,
+                        }
+                    },
+                }
+                ,
+                columns: {
+                    id: true,
+                    score: true,
+                    totalScore: true,
+                    status: true
+                }
+            }
+        )
+
+        console.log("examResults", examResults);
+
+        console.log(applicantFound);
+
+        return res.status(200).json({
+            details: applicantFound,
+            result: examResults,
+        });
     } catch (error) {
         return next(new ErrorHandler(error, 400));
     }

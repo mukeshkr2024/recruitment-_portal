@@ -23,5 +23,5 @@ export const positionRelations = relations(position, ({ many, one }) => ({
         references: [user.id],
     }),
     results: many(result),
-    assesment: many(assessment)
+    assesment: many(assessment),
 }));

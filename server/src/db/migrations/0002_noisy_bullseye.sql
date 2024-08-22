@@ -1,0 +1,1 @@
+ALTER TABLE "applicant" ADD COLUMN "status" text DEFAULT 'INPROGRESS';

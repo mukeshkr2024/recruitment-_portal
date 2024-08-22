@@ -5,78 +5,22 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1723180638986,
-      "tag": "0000_orange_mother_askani",
+      "when": 1724317460675,
+      "tag": "0000_short_triathlon",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1723181410395,
-      "tag": "0001_smart_mastermind",
+      "when": 1724317527540,
+      "tag": "0001_clumsy_bedlam",
       "breakpoints": true
     },
     {
       "idx": 2,
       "version": "7",
-      "when": 1723181608788,
-      "tag": "0002_sudden_blue_blade",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1723209126006,
-      "tag": "0003_purple_hobgoblin",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1723448244730,
-      "tag": "0004_zippy_blizzard",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1723460907805,
-      "tag": "0005_faulty_wildside",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1723614154796,
-      "tag": "0006_motionless_morlocks",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1724121299636,
-      "tag": "0007_redundant_rumiko_fujikawa",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "7",
-      "when": 1724136776758,
-      "tag": "0008_dry_stryfe",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "7",
-      "when": 1724225150341,
-      "tag": "0009_serious_big_bertha",
-      "breakpoints": true
-    },
-    {
-      "idx": 10,
-      "version": "7",
-      "when": 1724225192565,
-      "tag": "0010_lean_meltdown",
+      "when": 1724321351221,
+      "tag": "0002_noisy_bullseye",
       "breakpoints": true
     }
   ]
