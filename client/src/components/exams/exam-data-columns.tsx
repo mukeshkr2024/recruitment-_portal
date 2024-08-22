@@ -1,4 +1,3 @@
-import { useDeleteApplicant } from "@/api/applicants/use-delete-applicant";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/utils";
 import { ColumnDef } from "@tanstack/react-table";

@@ -1,5 +1,4 @@
 import { useGetExams } from "@/api/exams/use-get-exams";
-import { useDeletePosition } from "@/api/positions/use-delete-positions";
 import { CreateExam } from "@/components/exams/create-exam";
 import { ExamColumnData } from "@/components/exams/exam-data-columns";
 import { ExamsData } from "@/components/exams/exams-data";

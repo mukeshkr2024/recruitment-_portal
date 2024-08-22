@@ -12,7 +12,6 @@ export const useCreateQuestion = (examId: string) => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries('questions')
-
         },
         onError: (error) => {
             console.log(error);
