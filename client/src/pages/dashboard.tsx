@@ -26,12 +26,12 @@ export const DashboardPage: React.FC = () => {
 
     // Update currentPosition when analytics data is available
     useEffect(() => {
-        if (analytics?.job_positons?.length > 0 && currentPosition === null) {
-            setCurrentPosition(analytics.job_positons[0].id);
+        if (analytics?.jobPositions?.length > 0 && currentPosition === null) {
+            setCurrentPosition(analytics.jobPositions[0].id);
         }
-    }, [analytics?.job_positons, currentPosition]);
+    }, [analytics?.jobPositions, currentPosition]);
 
-    const selectedPosition = analytics?.job_positons?.find((p: Position) => p.id === currentPosition);
+    const selectedPosition = analytics?.jobPositions?.find((p: Position) => p.id === currentPosition);
 
     return (
         <div className="p-8 bg-gray-100 min-h-screen">
@@ -50,7 +50,7 @@ export const DashboardPage: React.FC = () => {
                         ) : analyticsError ? (
                             <p className="text-red-600">Error loading job positions.</p>
                         ) : (
-                            <p className="text-2xl font-bold text-blue-700">{analytics?.job_positons?.length || 0}</p>
+                            <p className="text-2xl font-bold text-blue-700">{analytics?.jobPositions?.length || 0}</p>
                         )}
                     </CardContent>
                 </Card>
@@ -65,7 +65,7 @@ export const DashboardPage: React.FC = () => {
                         ) : analyticsError ? (
                             <p className="text-red-600">Error loading total applicants.</p>
                         ) : (
-                            <p className="text-2xl font-bold text-green-700">{analytics?.total_applicants || 0}</p>
+                            <p className="text-2xl font-bold text-green-700">{analytics?.totalApplicants || 0}</p>
                         )}
                     </CardContent>
                 </Card>
@@ -81,9 +81,9 @@ export const DashboardPage: React.FC = () => {
                             <p className="text-gray-500">Loading...</p>
                         ) : analyticsError ? (
                             <p className="text-red-600">Error loading job positions.</p>
-                        ) : analytics?.job_positons?.length > 0 ? (
+                        ) : analytics?.jobPositions?.length > 0 ? (
                             <ul className="space-y-4">
-                                {analytics.job_positons.map((position: Position) => (
+                                {analytics.jobPositions.map((position: Position) => (
                                     <li
                                         key={position.id}
                                         className="px-4 py-3 border rounded-md bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors duration-150"

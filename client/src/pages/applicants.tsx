@@ -14,6 +14,7 @@ export const ApplicantsPage = () => {
         <div className="p-6">
             <div className="flex w-full justify-between">
                 <h2 className="text-3xl font-bold text-blue-900">Job Applicants</h2>
+                <p className="text-xl font-semibold">Total: {data?.length} Applicants</p>
             </div>
             <div>
                 <ApplicantsData data={data || []} columns={ApplicantColumnData} />

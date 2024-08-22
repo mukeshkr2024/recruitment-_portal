@@ -49,13 +49,7 @@ export const LoginPage = () => {
     })
 
     function onSubmit(values: z.infer<typeof loginSchema>) {
-        console.log(values)
-        // navigate("/assesment");
         loginMutation.mutate(values)
-        if (loginMutation.isSuccess) {
-            console.log("new login");
-
-        }
     }
 
     return (
@@ -77,7 +71,7 @@ bg-[url('/bg_1.png')] bg-cover">
                             <p className="text-[8px] font-medium text-[#0D0925]">Ridge Consulting <br /> Partner</p>
                         </div>
                     </div>
-                    <h2 className="font-semibold text-xl text-[#1A1A1A] mt-4">Welcome</h2>
+                    <h2 className="font-semibold text-xl text-[#1A1A1A] mt-4">Applicant Login</h2>
                     <div>
                         <Form {...form}>
                             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">

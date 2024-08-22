@@ -1,4 +1,4 @@
-import { useGetExams } from "@/api/exams/use-get-positions";
+import { useGetExams } from "@/api/exams/use-get-exams";
 import { useAddPositonExam } from "@/api/position-exam/use-addPositonExam";
 import { Button } from "@/components/ui/button";
 import {

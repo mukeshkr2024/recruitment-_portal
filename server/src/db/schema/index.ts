@@ -5,7 +5,6 @@ export { jobPositionExams, jobPositionExamsRelation } from "./job-position-exams
 export { option, optionRelations } from "./option"
 export { position, positionRelations } from "./postition"
 export { question, questionRelations } from "./question"
-export { result, resultRelations } from "./result"
 export { user, userRelations } from "./user"
 export { examResult, examResultsRelations } from "./exam-result"
 

@@ -7,13 +7,16 @@ export const examResult = pgTable("exam_result", {
     id: text("id")
         .primaryKey()
         .$defaultFn(() => crypto.randomUUID()),
-    applicantId: text("applicant_id").references(() => applicant.id),
-    examId: text("exam_id").references(() => exam.id),
+    applicantId: text("applicant_id").references(() => applicant.id).notNull(),
+    examId: text("exam_id").references(() => exam.id, {
+        onDelete: "cascade"
+    }).notNull(),
+    assessmentId: text("assessment_id").notNull(),
     status: text("status").default("PENDING").notNull(),
     score: integer("score").default(0).notNull(),
     totalScore: integer("total_score").default(0).notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
-})
+});
 
 export const examResultsRelations = relations(examResult, ({ one, many }) => ({
     applicant: one(applicant, {

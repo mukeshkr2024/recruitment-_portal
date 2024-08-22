@@ -1,7 +1,7 @@
 import { and, arrayContains, asc, desc, eq, inArray } from "drizzle-orm";
 import e, { application, NextFunction, Request, Response } from "express";
 import db from "../db";
-import { applicant, assessment, exam, examResult, jobPositionExams, option, position, question, } from "../db/schema";
+import { applicant, assessment, exam, examRelations, examResult, jobPositionExams, option, position, question, } from "../db/schema";
 import { CatchAsyncError } from "../middleware/catchAsyncError";
 import { generateAccessCode } from "../utils";
 import { ErrorHandler } from "../utils/ErrorHandler";
@@ -47,8 +47,9 @@ export const getApplicantsAssessmentQuestions = CatchAsyncError(async (req: Requ
         if (!isExamResultExist) {
             await db.insert(examResult).values(
                 {
-                    applicantId: applicantId,
+                    applicantId: applicantId!,
                     examId: examId,
+                    assessmentId: assessmentId!,
                     score: 0,
                     totalScore: 0,
                     status: "IN_PROGRESS"
@@ -114,8 +115,9 @@ export const submitAssessment = CatchAsyncError(async (req: Request, res: Respon
 
         if (!isExamResultExist) {
             await db.insert(examResult).values({
-                applicantId: req.id,
+                applicantId: req.id!,
                 examId: examId,
+                assessmentId: assementId,
                 score: totalScore,
                 totalScore: maxScore,
                 status: "COMPLETED",
@@ -175,83 +177,78 @@ export const getApplicantsByPositon = CatchAsyncError(async (req: Request, res: 
     }
 })
 
-export const getApplicantAssesment = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const applicantId = req.id;
+export const getApplicantAssessment = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    const applicantId = req.id;
 
-        if (!applicantId) {
-            return next(new ErrorHandler("Invalid applicant ID", 400));
+    if (!applicantId) {
+        return next(new ErrorHandler("Invalid applicant ID", 400));
+    }
+
+    const applicantPositions = await db.query.applicant.findFirst({
+        where: eq(applicant.id, applicantId),
+        with: {
+            assements: {
+                with: { position: true }
+            },
+            examResults: true,
+        }
+    });
+
+    if (!applicantPositions) {
+        return next(new ErrorHandler("Applicant not found", 404));
+    }
+
+    const examResults = applicantPositions.examResults;
+
+    const positionIds = applicantPositions.assements?.map(assessment => assessment.positionId) || [];
+
+    const positionExams = await db.query.jobPositionExams.findMany({
+        where: inArray(jobPositionExams.positionId, positionIds),
+        with: {
+            exam: { with: { questions: true } }
+        }
+    });
+
+    console.log(applicantPositions);
+
+    const positionMap = applicantPositions.assements?.reduce((acc: any, assessment: any) => {
+        const { positionId, position, id: assessmentId } = assessment;
+        const positionName = position.positionName;
+
+        if (!acc[assessmentId]) {
+            acc[assessmentId] = {
+                id: assessmentId,
+                position_name: positionName,
+                exams: []
+            };
         }
 
-        const applicantPositions = await db.query.applicant.findFirst({
-            where: eq(applicant.id, applicantId),
-            with: {
-                assements: {
-                    with: {
-                        position: true,
-                    }
-                },
-                examResults: true,
-            }
-        })
+        const exams = positionExams.filter(exam => exam.positionId === positionId);
 
-        const examResultIds = applicantPositions?.examResults.map(result => result.examId)
+        exams.forEach(exam => {
+            const examId = exam.exam.id;
 
-        const positionIds = applicantPositions?.assements.map(assement => assement.positionId);
+            const examResult = examResults?.find(r => r.examId === examId && r.assessmentId === assessmentId);
+            const status = examResult?.status || "PENDING";
 
-        const positionExams = await db.query.jobPositionExams.findMany({
-            // @ts-ignore 
-            where: inArray(jobPositionExams.positionId, positionIds),
-            with: {
-                exam: {
-                    with: {
-                        questions: true
-                    }
-                }
-            }
+            acc[assessmentId].exams.push({
+                examId,
+                name: exam.exam.name,
+                status
+            });
         });
 
-        const positionMap = applicantPositions?.assements.reduce((acc, assessment) => {
-            const positionId = assessment.positionId;
-            const positionName = assessment.position.positionName;
+        return acc;
+    }, {} as Record<string, { id: string, position_name: string, exams: { examId: string, name: string, status: string }[] }>);
 
-            if (!acc[positionId]) {
-                acc[positionId] = {
-                    position_name: positionName,
-                    exams: []
-                };
-            }
+    console.log(positionMap);
 
-            const exams = positionExams.filter(exam => exam.positionId === positionId);
+    const result = Object.values(positionMap);
 
-            console.log("positionId", positionId);
+    res.status(200).json(result);
+});
 
 
-            exams.forEach(exam => {
-                acc[positionId].exams.push({
-                    examId: exam.exam.id,
-                    name: exam.exam.name,
-                    status: examResultIds?.includes(exam.exam.id)
-                        ? applicantPositions.examResults.find(e => e.examId === exam.exam.id)?.status || "PENDING"
-                        : "PENDING"
-                });
-            });
-
-            return acc;
-        }, {} as Record<string, { position_name: string, exams: { examId: string, name: string, status: string }[] }>);
-
-        //@ts-ignore
-        const result = Object.entries(positionMap).map(([id, details]) => ({
-            id,
-            ...details
-        }));
-
-        res.status(200).json(result);
-
-    } catch (error) {
-        return next(new ErrorHandler(error, 400));
-    }
-})
 
 export const registerApplicant = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     const { firstName, lastName, email, phone } = req.body;

@@ -55,7 +55,6 @@ export const createExam = CatchAsyncError(async (req: Request, res: Response) =>
             throw new Error("Name is required");
         }
 
-
         const newExam = await db.insert(exam).values({
             name,
         }).returning()
@@ -180,6 +179,29 @@ export const createPositionExam = CatchAsyncError(async (req: Request, res: Resp
         console.log(newPositionExam);
 
         return res.status(201).json(newPositionExam);
+
+    } catch (error) {
+        return next(new ErrorHandler(error, 400));
+    }
+})
+
+
+export const deleteExam = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
+        const { examId } = req.params;
+
+        const deleteExam = await db.delete(exam).where(
+            eq(exam.id, examId)
+        )
+
+        if (!deleteExam) {
+            throw new Error("Exam not found")
+        }
+
+        return res.status(200).json({
+            success: true,
+        })
 
     } catch (error) {
         return next(new ErrorHandler(error, 400));

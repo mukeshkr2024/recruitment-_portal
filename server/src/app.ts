@@ -4,10 +4,10 @@ import express, { NextFunction, Request, Response } from "express";
 import morgan from "morgan";
 import { getAnalytics } from "./controllers/analytics.controoler";
 import { getInstructionsDetails } from "./controllers/applicant.controller";
-import { createExam, createPositionExam, deletePositionExam, getExamQuestions, getExams, getPositionExams, updateExamDuration, updatePostionExam } from "./controllers/exams-controller";
+import { createExam, createPositionExam, deleteExam, deletePositionExam, getExamQuestions, getExams, getPositionExams, updateExamDuration, updatePostionExam } from "./controllers/exams-controller";
 import { createPosition, deletePosition, getPosition, getPostions, updatePosition } from "./controllers/position.controller";
 import { createQuestion, deleteQuestion, getQuestion, getQuestionsByPostionId, updateQuestion } from "./controllers/question.controller";
-import { isAdminAuthenticated } from "./middleware/auth";
+import { isAdminAuthenticated, isApplicantAuthenticated } from "./middleware/auth";
 import { ErrorMiddleware } from "./middleware/error";
 import { applicantRouter } from "./routes/applicant.routes";
 import { applicantsRouter } from "./routes/applicants.routes";
@@ -54,8 +54,8 @@ app.delete("/api/v1/questions/:questionId", deleteQuestion)
 app.get("/api/v1/question/:questionId", getQuestion)
 app.put("/api/v1/question/:questionId", updateQuestion)
 app.patch("/api/v1/position/duration-update/:positionId", updatePosition)
-app.get('/api/v1/instructions/:assementId/exam/:examId', getInstructionsDetails)
-app.get("/api/v1/analytics", getAnalytics)
+app.get('/api/v1/instructions/:assementId/exam/:examId', isApplicantAuthenticated, getInstructionsDetails)
+app.get("/api/v1/analytics", isAdminAuthenticated, getAnalytics)
 
 // applicants 
 app.use("/api/v1/applicants", applicantsRouter)
@@ -63,9 +63,10 @@ app.use("/api/v1/applicant", applicantRouter)
 app.use("/api/v1/auth", authRouter)
 
 // exams 
-app.get("/api/v1/exams", getExams);
+app.get("/api/v1/exams", isAdminAuthenticated, getExams);
 app.get("/api/v1/exams/:examId", getExamQuestions);
-app.post("/api/v1/exams", createExam)
+app.post("/api/v1/exams", isAdminAuthenticated, createExam)
+app.delete("/api/v1/exams/:examId", isAdminAuthenticated, deleteExam)
 app.patch("/api/v1/exam/duration-update/:examId", updateExamDuration)
 app.get('/api/v1/position-exams/:positionId', getPositionExams)
 app.patch('/api/v1/position-exams/:examId/:positionId', updatePostionExam)

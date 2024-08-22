@@ -38,8 +38,12 @@ export const CreatePositions = () => {
     });
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values);
-        mutation.mutate(values)
+        mutation.mutate(values, {
+            onSuccess: () => {
+                form.reset()
+                setIsOpen(false)
+            }
+        })
     }
 
     const { isSubmitting, isValid } = form.formState;

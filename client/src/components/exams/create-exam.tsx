@@ -1,4 +1,4 @@
-import { useCreateExam } from "@/api/exams/use-create-postion";
+import { useCreateExam } from "@/api/exams/use-create-exam";
 import {
     Dialog,
     DialogContent,
@@ -39,8 +39,12 @@ export const CreateExam = () => {
     });
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values);
-        mutation.mutate(values)
+        mutation.mutate(values, {
+            onSuccess: () => {
+                form.reset()
+                setIsOpen(false)
+            }
+        })
     }
 
     const { isSubmitting, isValid } = form.formState;

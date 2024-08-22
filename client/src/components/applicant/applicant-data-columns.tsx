@@ -18,6 +18,7 @@ export type Applicant = {
         email: string;
         phone: string;
         accessCode: string;
+        status: string
     };
     position: {
         positionName: string;
@@ -93,6 +94,18 @@ export const ApplicantColumnData: ColumnDef<Applicant>[] = [
             </Button>
         ),
         cell: ({ row }) => formatDate(row.original.createdAt),
+    }, {
+        accessorKey: "applicant.status",
+        header: ({ column }) => (
+            <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+                Status
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+        ),
+        cell: ({ row }) => (row.original.applicant.status),
     },
     {
         accessorKey: "applicant.accessCode",

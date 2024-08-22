@@ -13,8 +13,5 @@ export const useGetPositions = () => {
                 throw new Error("Failed to fetch positions");
             }
         },
-        // staleTime: 5 * 60 * 1000, // Cache the data for 5 minutes
-        // retry: 2, // Retry failed requests up to 2 times
-        // refetchOnWindowFocus: false, // Disable refetching on window focus
     });
 };

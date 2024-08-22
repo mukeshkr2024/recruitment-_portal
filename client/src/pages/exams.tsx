@@ -1,33 +1,13 @@
-import { useGetExams } from "@/api/exams/use-get-positions";
+import { useGetExams } from "@/api/exams/use-get-exams";
 import { useDeletePosition } from "@/api/positions/use-delete-positions";
-import { ConfirmDialog } from "@/components/confirm-dialog";
 import { CreateExam } from "@/components/exams/create-exam";
 import { ExamColumnData } from "@/components/exams/exam-data-columns";
 import { ExamsData } from "@/components/exams/exams-data";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { useToast } from "@/components/ui/use-toast";
-import { formatDate } from "@/utils";
-import { Pencil, Trash } from "lucide-react";
-import { Link } from "react-router-dom";
 
-interface Position {
-    id: string;
-    name: string;
-    createdAt: string;
-    totalQuestions: number;
-    duration: number;
-    assesment: {
-        id: string
-    }[]
-}
-
-// Define the component
 export const Exams = () => {
     const { data, isLoading } = useGetExams();
-    const { toast } = useToast()
 
-    const deleteMutation = useDeletePosition()
 
     if (isLoading) {
         return <LoadingSpinner />
@@ -35,15 +15,6 @@ export const Exams = () => {
 
     const { exams } = data;
 
-    const onDelete = (positionId: string) => {
-        deleteMutation.mutate(positionId, {
-            onSuccess: () => {
-                toast({
-                    title: "Job Position deleted Successfully"
-                })
-            }
-        })
-    }
 
     return (
         <div className="p-6 bg-gray-100">
@@ -55,59 +26,6 @@ export const Exams = () => {
                     <CreateExam />
                 </div>
             </div>
-            {/* <div className="mt-2">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead className="text-gray-700 font-semibold bg-gray-200">
-                                Id
-                            </TableHead>
-                            <TableHead className="text-gray-700 font-semibold bg-gray-200">
-                                Name
-                            </TableHead>
-                            <TableHead className="text-gray-700 font-semibold bg-gray-200">
-                                Total Questions
-                            </TableHead>
-                            <TableHead className="text-gray-700 font-semibold bg-gray-200">
-                                Duration
-                            </TableHead>
-                            <TableHead className="text-gray-700 font-semibold bg-gray-200">
-                                CreatedAt
-                            </TableHead>
-                            <TableHead className="text-gray-700 font-semibold bg-gray-200">
-                                Actions
-                            </TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {exams?.length ? (
-                            exams.map((exam: Position, idx: number) => (
-                                <TableRow key={exam.id} className="hover:bg-gray-100">
-                                    <TableCell className="text-gray-600">{idx + 1}</TableCell>
-                                    <TableCell className="text-gray-800">{exam?.name}</TableCell>
-                                    <TableCell className="text-gray-800">{exam?.totalQuestions}</TableCell>
-                                    <TableCell className="text-gray-800">{exam?.duration} min</TableCell>
-                                    <TableCell className="text-gray-600">{formatDate(exam.createdAt)}</TableCell>
-                                    <TableCell>
-                                        <div className="flex gap-x-5">
-                                            <Link to={`/exams/${exam.id}`} className="text-blue-500 hover:text-blue-700">
-                                                <Pencil size={18} />
-                                            </Link>
-                                            <ConfirmDialog onConfirm={() => onDelete(exam.id)}>
-                                                <Trash size={18} className="text-red-500 cursor-pointer hover:text-red-700" />
-                                            </ConfirmDialog>
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            ))
-                        ) : (
-                            <TableRow>
-                                <TableCell colSpan={4} className="text-gray-500 text-center">No positions available</TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
-            </div> */}
             <div>
                 <ExamsData data={exams} columns={ExamColumnData} />
             </div>

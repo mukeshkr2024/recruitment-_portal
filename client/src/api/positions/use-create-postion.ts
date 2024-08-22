@@ -9,7 +9,7 @@ export const useCreatePosition = () => {
             await apiClient.post("/positions", positionData)
         },
         onSuccess: () => {
-            queryClient.invalidateQueries('todos')
+            queryClient.invalidateQueries('positions')
 
         },
         onError: (error) => {

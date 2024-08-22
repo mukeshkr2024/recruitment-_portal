@@ -22,6 +22,34 @@
       "when": 1724321351221,
       "tag": "0002_noisy_bullseye",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1724324546405,
+      "tag": "0003_faithful_magneto",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1724324903496,
+      "tag": "0004_modern_strong_guy",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1724330671291,
+      "tag": "0005_nosy_smiling_tiger",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1724330735265,
+      "tag": "0006_furry_silk_fever",
+      "breakpoints": true
     }
   ]
 }

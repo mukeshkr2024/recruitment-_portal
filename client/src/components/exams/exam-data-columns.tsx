@@ -6,6 +6,7 @@ import { ArrowUpDown, Pencil, Trash } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ConfirmDialog } from "../confirm-dialog";
 import { useToast } from "../ui/use-toast";
+import { useDeleteExam } from "@/api/exams/use-deleteExam";
 
 export type Exam = {
     id: string;
@@ -86,7 +87,7 @@ export const ExamColumnData: ColumnDef<Exam>[] = [
         ),
         cell: ({ row }) => {
             const { toast } = useToast();
-            const deleteMutation = useDeleteApplicant() // TODO:
+            const deleteMutation = useDeleteExam()
 
             const onDelete = (positionId: string) => {
                 deleteMutation.mutate(positionId, {
