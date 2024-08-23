@@ -1,8 +1,8 @@
 import axios from "axios";
 
 export const apiClient = axios.create({
-    // baseURL: "http://localhost:8080/api/v1",
-    baseURL: "https://cloudprism.in/api/v1",
+    baseURL: "http://localhost:8080/api/v1",
+    // baseURL: "https://cloudprism.in/api/v1",
     withCredentials: true,
 });
 

@@ -28,9 +28,9 @@ export const ExamColumnData: ColumnDef<Exam>[] = [
             </Button>
         ),
         cell: ({ row }) => (
-            <Link to={`/exams/${row.original.id}/applicants`}>
+            <div>
                 {row.original.name}
-            </Link>
+            </div>
         ),
     },
     {

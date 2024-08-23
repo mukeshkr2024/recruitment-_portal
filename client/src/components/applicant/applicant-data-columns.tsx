@@ -1,4 +1,4 @@
-import { ArrowUpDown, Trash } from "lucide-react";
+import { ArrowUpDown, Trash, XCircle, CheckCircle, Hourglass, Loader } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/utils";
 import { Link } from "react-router-dom";
@@ -18,7 +18,7 @@ export type Applicant = {
         email: string;
         phone: string;
         accessCode: string;
-        status: string
+        status: "REJECTED" | "INPROGRESS" | "SELECTED" | "PENDING";
     };
     position: {
         positionName: string;
@@ -94,7 +94,8 @@ export const ApplicantColumnData: ColumnDef<Applicant>[] = [
             </Button>
         ),
         cell: ({ row }) => formatDate(row.original.createdAt),
-    }, {
+    },
+    {
         accessorKey: "applicant.status",
         header: ({ column }) => (
             <Button
@@ -105,7 +106,45 @@ export const ApplicantColumnData: ColumnDef<Applicant>[] = [
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
-        cell: ({ row }) => (row.original.applicant.status),
+        cell: ({ row }) => {
+            const status = row.original.applicant.status;
+
+            // Convert the status to a formatted version, like "Rejected"
+            const formattedStatus =
+                status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+
+            let statusColor, StatusIcon;
+
+            switch (status) {
+                case "REJECTED":
+                    statusColor = "text-red-500";
+                    StatusIcon = XCircle;
+                    break;
+                case "INPROGRESS":
+                    statusColor = "text-yellow-500";
+                    StatusIcon = Loader;
+                    break;
+                case "SELECTED":
+                    statusColor = "text-green-500";
+                    StatusIcon = CheckCircle;
+                    break;
+                case "PENDING":
+                    statusColor = "text-blue-500";
+                    StatusIcon = Hourglass;
+                    break;
+                default:
+                    statusColor = "text-gray-500";
+                    StatusIcon = Loader;
+                    break;
+            }
+
+            return (
+                <div className="flex items-center gap-2">
+                    <StatusIcon className={`w-5 h-5 ${statusColor}`} />
+                    <span className={statusColor}>{formattedStatus}</span>
+                </div>
+            );
+        },
     },
     {
         accessorKey: "applicant.accessCode",
@@ -133,19 +172,18 @@ export const ApplicantColumnData: ColumnDef<Applicant>[] = [
         ),
         cell: ({ row }) => {
             const { toast } = useToast();
-            const deleteMutation = useDeleteApplicant()
+            const deleteMutation = useDeleteApplicant();
 
             const onDelete = (applicantId: string) => {
                 deleteMutation.mutate(applicantId, {
                     onSuccess: () => {
-                        toast(
-                            {
-                                title: "Applicant deleted successfully"
-                            }
-                        )
-                    }
-                })
-            }
+                        toast({
+                            title: "Applicant deleted successfully",
+                        });
+                    },
+                });
+            };
+
             return (
                 <div className="flex gap-x-5 w-full items-center justify-center">
                     <ConfirmDialog onConfirm={() => onDelete(row.original.applicant.id)}>

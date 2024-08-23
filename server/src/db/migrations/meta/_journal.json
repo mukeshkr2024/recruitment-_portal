@@ -50,6 +50,20 @@
       "when": 1724330735265,
       "tag": "0006_furry_silk_fever",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1724416403199,
+      "tag": "0007_steep_random",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1724416457449,
+      "tag": "0008_black_the_call",
+      "breakpoints": true
     }
   ]
 }

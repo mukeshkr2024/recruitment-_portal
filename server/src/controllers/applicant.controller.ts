@@ -1,7 +1,7 @@
-import { and, arrayContains, asc, desc, eq, inArray } from "drizzle-orm";
-import e, { application, NextFunction, Request, Response } from "express";
+import { and, desc, eq, inArray } from "drizzle-orm";
+import { NextFunction, Request, Response } from "express";
 import db from "../db";
-import { applicant, assessment, exam, examRelations, examResult, jobPositionExams, option, position, question, } from "../db/schema";
+import { applicant, assessment, exam, examResult, jobPositionExams, option, position } from "../db/schema";
 import { CatchAsyncError } from "../middleware/catchAsyncError";
 import { generateAccessCode } from "../utils";
 import { ErrorHandler } from "../utils/ErrorHandler";
@@ -141,15 +141,28 @@ export const submitAssessment = CatchAsyncError(async (req: Request, res: Respon
 
 export const getApplicants = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const assesment = await db.query.assessment.findMany({
+
+        const { job, status } = req.query;
+
+        let query;
+
+        if (job) {
+            // @ts-ignore
+            query = eq(assessment.positionId, job);
+        }
+
+        const result = await db.query.assessment.findMany({
             with: {
                 applicant: true,
                 position: true,
             },
-            orderBy: desc(assessment.createdAt)
+            orderBy: desc(assessment.createdAt),
+            where: query
         })
 
-        return res.status(200).json(assesment)
+        const filteredResut = status ? result.filter(assessment => assessment?.applicant?.status.toLowerCase() === status) : result
+
+        return res.status(200).json(filteredResut)
     } catch (error) {
         return next(new ErrorHandler(error, 400));
     }
@@ -468,6 +481,33 @@ export const applicantDetail = CatchAsyncError(async (req: Request, res: Respons
             details: applicantFound,
             result: examResults,
         });
+    } catch (error) {
+        return next(new ErrorHandler(error, 400));
+    }
+})
+
+export const updateApplicantStatus = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
+        const { applicantId } = req.params;
+        const { status } = req.body;
+
+        if (!status) {
+            throw new Error("Status is required")
+        }
+
+        const updateApplicant = await db.update(applicant).set({
+            status: status
+        }).where(eq(applicant.id, applicantId))
+
+        if (!updateApplicant) {
+            throw new Error("Applicant does not exist")
+        }
+
+        return res.status(200).json({
+            message: "Status updated successfully"
+        })
+
     } catch (error) {
         return next(new ErrorHandler(error, 400));
     }

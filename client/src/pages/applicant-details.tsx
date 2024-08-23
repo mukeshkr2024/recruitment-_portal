@@ -9,13 +9,15 @@ import {
 } from "@/components/ui/card";
 import { useParams } from "react-router-dom";
 import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from "@/components/ui/select";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { formatDate } from "@/utils";
+import { useUpdateApplicantStatus } from "@/api/applicants/use-update-applicantStatus";
 
 export const ApplicantDetail = () => {
     const { applicantId } = useParams();
     const { data, isLoading, error } = useGetApplicant(applicantId!);
     const [status, setStatus] = useState("INPROGRESS");
+    const mutation = useUpdateApplicantStatus(applicantId!)
 
     if (isLoading) {
         return <div className="flex justify-center items-center h-screen text-gray-600"><p>Loading...</p></div>;
@@ -31,6 +33,15 @@ export const ApplicantDetail = () => {
 
     const { details, result } = data;
 
+    useEffect(() => {
+        setStatus(data?.details?.status)
+    }, [])
+
+    const handleChange = (value: string) => {
+        setStatus(value)
+        mutation.mutate(value)
+    }
+
     return (
         <div className="container mx-auto p-8 bg-gray-50 min-h-screen">
             <h2 className="text-4xl font-bold text-blue-900 mb-6">Applicant Details</h2>
@@ -44,7 +55,7 @@ export const ApplicantDetail = () => {
                         <p className="text-gray-600">Applied At: <span className="font-medium text-gray-700">{formatDate(details.createdAt)}</span></p>
                     </div>
                     <div className="w-1/4">
-                        <Select value={status} onValueChange={setStatus}>
+                        <Select value={status} onValueChange={handleChange}>
                             <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm">
                                 <SelectValue placeholder="Select status" />
                             </SelectTrigger>
