@@ -5,6 +5,7 @@ import { Trash } from 'lucide-react';
 import { ConfirmDialog } from '../confirm-dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { CreateJobPositionExam } from './create-jobPostion-exam';
+import { toast } from '../ui/use-toast';
 
 interface PositionExam {
     examId: string;
@@ -21,9 +22,13 @@ export const PositionExams = ({ positionId }: { positionId: string }) => {
 
 
     const handleDelete = (examId: string) => {
-        // Implement the delete logic here
-        console.log(`Delete exam with id: ${examId}`);
-        deleteMutation({ examId })
+        deleteMutation({ examId }, {
+            onSuccess: () => {
+                toast({
+                    title: "Exam unassigned successfully"
+                })
+            }
+        })
     };
 
     const handleStatusChange = (examId: string, event: any) => {

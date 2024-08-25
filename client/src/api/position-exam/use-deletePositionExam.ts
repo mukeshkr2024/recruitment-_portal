@@ -14,6 +14,7 @@ export const useDeletePositionExam = (positionId: string) => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries('position-exams');
+
         },
     });
 };

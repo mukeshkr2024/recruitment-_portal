@@ -3,7 +3,7 @@ import { apiClient } from "../api-client";
 
 export const useGetExamQuestions = (examId: string) => {
     return useQuery({
-        queryKey: ["question", examId],
+        queryKey: ["questions", examId],
         queryFn: async () => {
             try {
                 const { data } = await apiClient.get(`/exams/${examId}`);

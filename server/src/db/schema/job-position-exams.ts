@@ -4,7 +4,9 @@ import { exam } from "./exam";
 import { position } from "./postition";
 
 export const jobPositionExams = pgTable("job_position_exams", {
-    positionId: text("position_id").notNull().references(() => position.id),
+    positionId: text("position_id").notNull().references(() => position.id, {
+        onDelete: "cascade"
+    }),
     examId: text("exam_id").notNull().references(() => exam.id, {
         onDelete: "cascade"
     }),

@@ -5,13 +5,9 @@ import { apiClient } from "../api-client"
 import { adminloginSchema } from "@/pages/admin-login"
 import { useToast } from "@/components/ui/use-toast"
 
-
 export const useAdminLogin = () => {
     const { toast } = useToast()
     const navigate = useNavigate()
-
-
-
 
     return useMutation(
         {

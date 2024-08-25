@@ -10,7 +10,6 @@ export const useGetAnalytics = () => {
                     const { data } = await apiClient.get("/analytics")
                     return data;
                 } catch (error) {
-                    console.log(error);
 
                 }
             }

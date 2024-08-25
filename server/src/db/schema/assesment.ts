@@ -10,7 +10,9 @@ export const assessment = pgTable("assessment", {
     applicantId: text("applicant_id").references(() => applicant.id, {
         onDelete: "cascade"
     }).notNull(),
-    positionId: text("position_id").references(() => position.id).notNull(),
+    positionId: text("position_id").references(() => position.id, {
+        onDelete: "cascade"
+    }).notNull(),
     status: text("status").default("PENDING").notNull(),
     score: integer("score").default(0).notNull(),
     totalScore: integer("total_score").default(0).notNull(),
