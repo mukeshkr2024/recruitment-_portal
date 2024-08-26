@@ -177,7 +177,6 @@ export const getApplicants = CatchAsyncError(async (req: Request, res: Response,
 
 export const getApplicantsDownloadData = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
-
         const applicants = await db.query.applicant.findMany({
             with: {
                 examResults: {
@@ -191,27 +190,13 @@ export const getApplicantsDownloadData = CatchAsyncError(async (req: Request, re
                     }
                 },
             }
-        })
-
+        });
 
         console.log(applicants);
 
-
         // @ts-ignore
-        const formattedApplicants = applicants.flatMap(applicant => {
-            const formattedExamResults = applicant.examResults.length > 0 ? applicant.examResults.map(examResult => ({
-                id: applicant.id,
-                firstName: applicant.firstName,
-                lastName: applicant.lastName,
-                email: applicant.email,
-                accessCode: applicant.accessCode,
-                status: applicant.status,
-                phone: applicant.phone,
-                createdAt: new Date(applicant.createdAt).toLocaleDateString('en-GB', {
-                    day: '2-digit',
-                    month: 'long',
-                    year: 'numeric'
-                }),
+        const formattedApplicants = applicants.map(applicant => {
+            const formattedExamResults = applicant.examResults.map(examResult => ({
                 examStatus: examResult.examStatus,
                 exam: {
                     name: examResult.exam.name,
@@ -222,7 +207,9 @@ export const getApplicantsDownloadData = CatchAsyncError(async (req: Request, re
                 },
                 score: examResult.score,
                 totalScore: examResult.totalScore
-            })) : [{
+            }));
+
+            return {
                 id: applicant.id,
                 firstName: applicant.firstName,
                 lastName: applicant.lastName,
@@ -235,19 +222,19 @@ export const getApplicantsDownloadData = CatchAsyncError(async (req: Request, re
                     month: 'long',
                     year: 'numeric'
                 }),
-                examStatus: 'N/A',
-                exam: {
-                    name: 'N/A',
-                    duration: 'N/A'
-                },
-                position: {
-                    positionName: 'N/A'
-                },
-                score: 'N/A',
-                totalScore: 'N/A'
-            }];
-
-            return formattedExamResults;
+                examResults: formattedExamResults.length > 0 ? formattedExamResults : [{
+                    examStatus: 'N/A',
+                    exam: {
+                        name: 'N/A',
+                        duration: 'N/A'
+                    },
+                    position: {
+                        positionName: 'N/A'
+                    },
+                    score: 'N/A',
+                    totalScore: 'N/A'
+                }]
+            };
         });
 
         return res.status(200).json(formattedApplicants);
@@ -255,6 +242,7 @@ export const getApplicantsDownloadData = CatchAsyncError(async (req: Request, re
         return next(new ErrorHandler(error, 400));
     }
 });
+
 
 
 export const getApplicantsByPositon = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {

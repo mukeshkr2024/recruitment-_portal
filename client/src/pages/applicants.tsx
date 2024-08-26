@@ -72,25 +72,73 @@ export const ApplicantsPage = () => {
         await refetch();
 
         if (csvBlob) {
-            const formattedData = csvBlob.map((item: any, idx: number) => ({
-                Id: idx + 1,
-                FullName: item.firstName + " " + item.lastName,
-                Email: item.email,
-                Status: item.status,
-                Phone: item.phone,
-                AppliedAt: item.createdAt,
-                ExamStatus: item.examStatus,
-                ExamName: item.exam?.name || 'N/A',
-                PositionName: item.position?.positionName || 'N/A',
-                Score: item.score,
-                TotalScore: item.totalScore
-            }));
+            // Create an array to hold the formatted data
+            const formattedData: any[] = [];
 
+            // Process each applicant
+            csvBlob.forEach((item: any, idx: number) => {
+                // Create a row for the applicant's general information
+                const generalInfo = {
+                    Id: idx + 1,
+                    FullName: item.firstName + " " + item.lastName,
+                    Email: item.email,
+                    Status: item.status,
+                    Phone: item.phone,
+                    AppliedAt: item.createdAt,
+                    PositionName: 'N/A',
+                    ExamName: 'N/A',
+                    ExamStatus: 'N/A',
+                    Score: 'N/A',
+                    TotalScore: 'N/A'
+                };
 
+                // Add the general info row to the formatted data
+                formattedData.push(generalInfo);
+
+                // If no exam results, add a placeholder row
+                if (item.examResults.length === 0) {
+                    formattedData.push({
+                        Id: '', // Empty Id for exam result rows
+                        FullName: '',
+                        Email: '',
+                        Status: '',
+                        Phone: '',
+                        AppliedAt: '',
+                        PositionName: 'N/A',
+                        ExamName: 'N/A',
+                        ExamStatus: 'N/A',
+                        Score: 'N/A',
+                        TotalScore: 'N/A'
+                    });
+                }
+
+                // Add rows for each exam result
+                item.examResults.forEach((examResult: any) => {
+                    const examInfo = {
+                        Id: '', // Empty Id for exam result rows
+                        FullName: '',
+                        Email: '',
+                        Status: '',
+                        Phone: '',
+                        AppliedAt: '',
+                        PositionName: examResult.position?.positionName || 'N/A',
+                        ExamName: examResult.exam?.name || 'N/A',
+                        ExamStatus: examResult.examStatus || 'N/A',
+                        Score: examResult.score || 'N/A',
+                        TotalScore: examResult.totalScore || 'N/A'
+                    };
+
+                    // Add the exam result row to the formatted data
+                    formattedData.push(examInfo);
+                });
+            });
+
+            // Create the worksheet and workbook
             const worksheet = XLSX.utils.json_to_sheet(formattedData);
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, 'Applicants');
 
+            // Generate the Excel file and initiate download
             const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
             const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
             const url = URL.createObjectURL(blob);
@@ -103,6 +151,8 @@ export const ApplicantsPage = () => {
             URL.revokeObjectURL(url);
         }
     };
+
+
 
 
     if (isLoading) {
