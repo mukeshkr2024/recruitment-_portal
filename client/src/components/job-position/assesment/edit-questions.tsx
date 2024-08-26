@@ -299,6 +299,7 @@ export const EditQuestion = ({ onClose, questionId }: Props) => {
                                     variant="outline"
                                     className="w-28"
                                     type="button"
+                                    onClick={onClose}
                                 >
                                     Cancel
                                 </Button>

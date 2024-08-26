@@ -174,6 +174,89 @@ export const getApplicants = CatchAsyncError(async (req: Request, res: Response,
     }
 });
 
+
+export const getApplicantsDownloadData = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
+        const applicants = await db.query.applicant.findMany({
+            with: {
+                examResults: {
+                    with: {
+                        exam: true,
+                        assessment: {
+                            with: {
+                                position: true
+                            }
+                        },
+                    }
+                },
+            }
+        })
+
+
+        console.log(applicants);
+
+
+        // @ts-ignore
+        const formattedApplicants = applicants.flatMap(applicant => {
+            const formattedExamResults = applicant.examResults.length > 0 ? applicant.examResults.map(examResult => ({
+                id: applicant.id,
+                firstName: applicant.firstName,
+                lastName: applicant.lastName,
+                email: applicant.email,
+                accessCode: applicant.accessCode,
+                status: applicant.status,
+                phone: applicant.phone,
+                createdAt: new Date(applicant.createdAt).toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: 'long',
+                    year: 'numeric'
+                }),
+                examStatus: examResult.examStatus,
+                exam: {
+                    name: examResult.exam.name,
+                    duration: examResult.exam.duration
+                },
+                position: {
+                    positionName: examResult.assessment.position.positionName
+                },
+                score: examResult.score,
+                totalScore: examResult.totalScore
+            })) : [{
+                id: applicant.id,
+                firstName: applicant.firstName,
+                lastName: applicant.lastName,
+                email: applicant.email,
+                accessCode: applicant.accessCode,
+                status: applicant.status,
+                phone: applicant.phone,
+                createdAt: new Date(applicant.createdAt).toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: 'long',
+                    year: 'numeric'
+                }),
+                examStatus: 'N/A',
+                exam: {
+                    name: 'N/A',
+                    duration: 'N/A'
+                },
+                position: {
+                    positionName: 'N/A'
+                },
+                score: 'N/A',
+                totalScore: 'N/A'
+            }];
+
+            return formattedExamResults;
+        });
+
+        return res.status(200).json(formattedApplicants);
+    } catch (error) {
+        return next(new ErrorHandler(error, 400));
+    }
+});
+
+
 export const getApplicantsByPositon = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
         console.log("getApplicantsByPositon");

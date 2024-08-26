@@ -1,11 +1,13 @@
-import { Card } from '@/components/ui/card';
-import { Pencil, Trash } from 'lucide-react';
-import { CreateQuestion } from './create-question-dialog';
+import { useUploadFile } from '@/api/exams/use-upload-file';
 import { useDeleteQuestion } from '@/api/questions/use-delete-question';
-import { useState } from 'preact/hooks';
-import { EditQuestion } from './edit-questions';
 import { ConfirmDialog } from '@/components/confirm-dialog';
+import { Card } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
+import { Loader, Pencil, Trash, Upload } from 'lucide-react';
+import { JSXInternal } from 'node_modules/preact/src/jsx';
+import { useState } from 'preact/hooks';
+import { CreateQuestion } from './create-question-dialog';
+import { EditQuestion } from './edit-questions';
 
 type Question = {
     id: string,
@@ -14,26 +16,73 @@ type Question = {
 }
 
 export const AssesmentQuestions = ({ examId, questions }: { examId: string, questions: any }) => {
-    const { toast } = useToast()
-    const mutation = useDeleteQuestion();
+    const { toast } = useToast();
+    const deleteMutation = useDeleteQuestion();
+    const fileUploadMutation = useUploadFile(examId);
     const [questionToEdit, setQuestionToEdit] = useState<string | null>(null);
+    const [isUploading, setIsUploading] = useState<boolean>(false);
 
     const handleDelete = (questionId: string) => {
-        mutation.mutate(questionId, {
+        deleteMutation.mutate(questionId, {
             onSuccess: () => {
                 toast({
                     title: "Question deleted successfully",
-                })
+                });
             }
         });
     }
+
+    const handleFileChange = async (event: JSXInternal.TargetedEvent<HTMLInputElement>) => {
+        const target = event.target as HTMLInputElement | null;
+
+        if (target && target.files && target.files[0]) {
+            const file = target.files[0];
+
+            try {
+                setIsUploading(true);
+                await fileUploadMutation.mutateAsync(file); // Trigger the file upload
+                toast({
+                    title: "Questions uploaded successfully",
+                });
+            } catch (error) {
+                toast({
+                    variant: "destructive",
+                    title: "Failed to upload the file",
+                    description: "Please try again",
+                });
+            } finally {
+                setIsUploading(false);
+            }
+        }
+    };
+
 
     return (
         <div className="w-full">
             <Card className="w-full p-6">
                 <div className="flex w-full justify-between">
                     <h2 className="text-2xl font-semibold">Questions</h2>
-                    <CreateQuestion examId={examId} />
+                    <div className="flex gap-x-2 items-center">
+                        {/* Upload Button */}
+                        <label htmlFor="upload-file" className="cursor-pointer flex items-center bg-blue-500 text-white px-3 py-1.5 rounded-md shadow-md hover:bg-blue-600 transition text-sm h-10">
+                            {isUploading ? (
+                                <Loader className="animate-spin mr-2" size={16} />
+                            ) : (
+                                <Upload size={16} className="mr-1.5" />
+                            )}
+                            {isUploading ? "Uploading..." : "Upload Word File"}
+                        </label>
+                        <input
+                            id="upload-file"
+                            type="file"
+                            accept=".doc,.docx"
+                            className="hidden"
+                            onChange={handleFileChange}
+                        />
+
+                        <CreateQuestion examId={examId} />
+
+                    </div>
                 </div>
                 <div className="mt-5">
                     {

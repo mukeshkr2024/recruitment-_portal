@@ -1,4 +1,5 @@
 import { useGetApplicants } from "@/api/applicants/use-get-applicants";
+import { useGetApplicantsDownloadData } from "@/api/applicants/use-get-applicants-downloadData";
 import { useGetPositions } from "@/api/positions/use-get-positions";
 import { ApplicantsData } from "@/components/applicant/applicant-data";
 import { ApplicantColumnData } from "@/components/applicant/applicant-data-columns";
@@ -8,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useEffect, useState } from "preact/hooks";
 import { useLocation, useNavigate } from "react-router-dom";
+import * as XLSX from 'xlsx';
 
 const statusOptions = [
     { id: "all-statuses", name: "All Statuses" },
@@ -26,6 +28,8 @@ export const ApplicantsPage = () => {
     const { data: positions } = useGetPositions();
     const [isClearDisabled, setIsClearDisabled] = useState<boolean>(true);
 
+    const { refetch, data: csvBlob } = useGetApplicantsDownloadData(selectedJobOption, selectedStatusOption);
+
     useEffect(() => {
         const query = new URLSearchParams(location.search);
         const jobOption = query.get('job') || "all-positions";
@@ -33,11 +37,7 @@ export const ApplicantsPage = () => {
         setSelectedJobOption(jobOption);
         setSelectedStatusOption(statusOption);
 
-        if (jobOption !== "all-positions" || statusOption !== "all-statuses") {
-            setIsClearDisabled(false);
-        } else {
-            setIsClearDisabled(true);
-        }
+        setIsClearDisabled(jobOption === "all-positions" && statusOption === "all-statuses");
     }, [location.search]);
 
     const handleJobSelectChange = (value: string) => {
@@ -64,9 +64,46 @@ export const ApplicantsPage = () => {
     const handleClearFilters = () => {
         setSelectedJobOption("all-positions");
         setSelectedStatusOption("all-statuses");
-        setIsClearDisabled(true); // Disable the button after clearing
-        navigate(`/applicants`); // Clear all query params
+        setIsClearDisabled(true);
+        navigate(`/applicants`);
     };
+
+    const handleDownloadXLSX = async () => {
+        await refetch();
+
+        if (csvBlob) {
+            const formattedData = csvBlob.map((item: any, idx: number) => ({
+                Id: idx + 1,
+                FullName: item.firstName + " " + item.lastName,
+                Email: item.email,
+                Status: item.status,
+                Phone: item.phone,
+                AppliedAt: item.createdAt,
+                ExamStatus: item.examStatus,
+                ExamName: item.exam?.name || 'N/A',
+                PositionName: item.position?.positionName || 'N/A',
+                Score: item.score,
+                TotalScore: item.totalScore
+            }));
+
+
+            const worksheet = XLSX.utils.json_to_sheet(formattedData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Applicants');
+
+            const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+            const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'applicants.xlsx';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+    };
+
 
     if (isLoading) {
         return <LoadingSpinner />;
@@ -124,6 +161,13 @@ export const ApplicantsPage = () => {
                     disabled={isClearDisabled} // Disable button when no filters are applied
                 >
                     Clear Filters
+                </Button>
+
+                <Button
+                    onClick={handleDownloadXLSX}
+                    className="ml-4 mt-5"
+                >
+                    Download CSV
                 </Button>
             </div>
             <div>

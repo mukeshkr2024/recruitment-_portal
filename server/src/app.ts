@@ -4,7 +4,7 @@ import express, { NextFunction, Request, Response } from "express";
 import morgan from "morgan";
 import { getAnalytics } from "./controllers/analytics.controoler";
 import { getInstructionsDetails } from "./controllers/applicant.controller";
-import { createExam, createPositionExam, deleteExam, deletePositionExam, getExamQuestions, getExams, getPositionExams, updateExamDuration, updateExamResultStatus, updatePostionExam } from "./controllers/exams-controller";
+import { createExam, createPositionExam, deleteExam, deletePositionExam, getExamQuestions, getExams, getFileAndCreateQuestions, getPositionExams, updateExamDuration, updateExamResultStatus, updatePostionExam } from "./controllers/exams-controller";
 import { createPosition, deletePosition, getPosition, getPostions, updatePosition } from "./controllers/position.controller";
 import { createQuestion, deleteQuestion, getQuestion, getQuestionsByPostionId, updateQuestion } from "./controllers/question.controller";
 import { isAdminAuthenticated, isApplicantAuthenticated } from "./middleware/auth";
@@ -12,11 +12,14 @@ import { ErrorMiddleware } from "./middleware/error";
 import { applicantRouter } from "./routes/applicant.routes";
 import { applicantsRouter } from "./routes/applicants.routes";
 import { authRouter } from "./routes/auth.routes";
+import { fileRouter } from "./controllers/file-upload.controller";
 
 export const app = express()
 
 // cookie parser
 app.use(cookieParser());
+
+
 
 // logging 
 app.use(morgan("dev"));
@@ -56,6 +59,7 @@ app.put("/api/v1/question/:questionId", updateQuestion)
 app.patch("/api/v1/position/duration-update/:positionId", updatePosition)
 app.get('/api/v1/instructions/:assementId/exam/:examId', isApplicantAuthenticated, getInstructionsDetails)
 app.get("/api/v1/analytics", isAdminAuthenticated, getAnalytics)
+app.use("/api/v1/exam", fileRouter)
 
 // applicants 
 app.use("/api/v1/applicants", applicantsRouter)

@@ -4,6 +4,10 @@ import { CatchAsyncError } from "../middleware/catchAsyncError";
 import { and, count, eq, sql } from "drizzle-orm";
 import { exam, examResult, jobPositionExams, position, question } from "../db/schema";
 import { ErrorHandler } from "../utils/ErrorHandler";
+import path from "path"
+import { Document, Packer, Paragraph, TextRun } from "docx"
+import fs from "fs"
+
 
 export const getExams = CatchAsyncError(async (req: Request, res: Response) => {
     try {
@@ -235,3 +239,9 @@ export const updateExamResultStatus = CatchAsyncError(async (req: Request, res: 
 
     }
 })
+
+
+export const getFileAndCreateQuestions = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+
+});
+
