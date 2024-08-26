@@ -16,6 +16,12 @@ export const getApplicantsAssessmentQuestions = CatchAsyncError(async (req: Requ
 
         const applicantId = req.id;
 
+        await db.update(applicant).set({
+            status: "INPROGRESS"
+        }).where(
+            eq(applicant.id, applicantId!)
+        )
+
         const examFound = await db.query.exam.findFirst({
             where: eq(exam.id, examId),
             columns: {
@@ -51,8 +57,8 @@ export const getApplicantsAssessmentQuestions = CatchAsyncError(async (req: Requ
                     examId: examId,
                     assessmentId: assessmentId!,
                     score: 0,
-                    totalScore: 0,
-                    status: "IN_PROGRESS"
+                    totalScore: examFound?.questions.length || 0,
+                    status: "INPROGRESS"
                 }
             ).returning()
         }
@@ -80,13 +86,13 @@ export const submitAssessment = CatchAsyncError(async (req: Request, res: Respon
         console.log("assementId", assementId);
 
 
-        if (!Array.isArray(answers) || answers.length === 0) {
+        if (!Array.isArray(answers) || answers?.length === 0) {
             return res.status(400).json({ error: 'Invalid input: answers should be a non-empty array.' });
         }
 
         let totalScore = 0;
 
-        const maxScore = answers.length;
+        const maxScore = answers?.length;
 
         for (let answer of answers) {
             const correctOption = await db.query.option.findFirst({
@@ -160,7 +166,7 @@ export const getApplicants = CatchAsyncError(async (req: Request, res: Response,
             where: query
         })
 
-        const filteredResut = status ? result.filter(assessment => assessment?.applicant?.status.toLowerCase() === status) : result
+        const filteredResut = status ? result.filter(assessment => assessment?.applicant?.status!.toLowerCase() === status) : result
 
         return res.status(200).json(filteredResut)
     } catch (error) {
@@ -216,7 +222,7 @@ export const getApplicantAssessment = CatchAsyncError(async (req: Request, res: 
     const positionIds = applicantPositions.assements?.map(assessment => assessment.positionId) || [];
 
     const positionExams = await db.query.jobPositionExams.findMany({
-        where: inArray(jobPositionExams.positionId, positionIds),
+        where: and(inArray(jobPositionExams.positionId, positionIds), eq(jobPositionExams.isActive, true)),
         with: {
             exam: { with: { questions: true } }
         }
@@ -398,7 +404,7 @@ export const getInstructionsDetails = CatchAsyncError(async (req: Request, res: 
 
         return res.status(200).json({
             exam_name: examFound.name,
-            total_questions: examFound.questions.length || 0,
+            total_questions: examFound.questions?.length || 0,
             total_time: examFound.duration,
             status: "success",
         })
@@ -460,15 +466,26 @@ export const applicantDetail = CatchAsyncError(async (req: Request, res: Respons
                         columns: {
                             name: true,
                             duration: true,
-                        }
+                        },
                     },
+                    assessment: {
+                        columns: {},
+                        with: {
+                            position: {
+                                columns: {
+                                    positionName: true
+                                }
+                            }
+                        }
+                    }
                 }
                 ,
                 columns: {
                     id: true,
                     score: true,
                     totalScore: true,
-                    status: true
+                    status: true,
+                    examStatus: true
                 }
             }
         )

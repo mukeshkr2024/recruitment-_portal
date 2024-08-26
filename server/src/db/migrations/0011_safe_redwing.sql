@@ -1,0 +1,1 @@
+ALTER TABLE "exam_result" ADD COLUMN "exam_status" text DEFAULT 'PENDING' NOT NULL;

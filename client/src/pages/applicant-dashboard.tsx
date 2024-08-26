@@ -91,7 +91,7 @@ export const ApplicantDashboard = () => {
                             Start
                           </Button>
                         )}
-                        {exam?.status === "IN_PROGRESS" && (
+                        {exam?.status === "INPROGRESS" && (
                           <Button
                             onClick={() => handleStart(assessment.id, exam.examId)}
                             className="px-6 py-2 font-semibold rounded-full shadow-md transition duration-300 bg-blue-500 text-white hover:bg-blue-600"

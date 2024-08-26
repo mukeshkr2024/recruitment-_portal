@@ -15,6 +15,7 @@ export const examResult = pgTable("exam_result", {
         onDelete: "cascade"
     }).notNull(),
     assessmentId: text("assessment_id").references(() => assessment.id).notNull(),
+    examStatus: text("exam_status").default("PENDING").notNull(),
     status: text("status").default("PENDING").notNull(),
     score: integer("score").default(0).notNull(),
     totalScore: integer("total_score").default(0).notNull(),

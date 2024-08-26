@@ -1,8 +1,8 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, raw, Request, Response } from "express";
 import db from "../db";
 import { CatchAsyncError } from "../middleware/catchAsyncError";
 import { and, count, eq, sql } from "drizzle-orm";
-import { exam, jobPositionExams, position, question } from "../db/schema";
+import { exam, examResult, jobPositionExams, position, question } from "../db/schema";
 import { ErrorHandler } from "../utils/ErrorHandler";
 
 export const getExams = CatchAsyncError(async (req: Request, res: Response) => {
@@ -205,5 +205,33 @@ export const deleteExam = CatchAsyncError(async (req: Request, res: Response, ne
 
     } catch (error) {
         return next(new ErrorHandler(error, 400));
+    }
+})
+
+export const updateExamResultStatus = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
+        const { examId } = req.params;
+        const { status } = req.body;
+
+        if (!status) {
+            throw new Error("Status is required")
+        }
+
+        const data = await db.update(examResult).set({
+            examStatus: status
+        }).where(eq(examResult.id, examId))
+
+        if (!data) {
+            throw new Error("Exam not found")
+        }
+
+        return res.status(200).json({
+            message: "Status updated successfully"
+        })
+
+    } catch (error) {
+        return next(new ErrorHandler(error, 400));
+
     }
 })

@@ -1,0 +1,1 @@
+ALTER TABLE "applicant" ALTER COLUMN "status" SET DEFAULT 'PENDING';
