@@ -63,7 +63,7 @@ export const editQuestionSchema = z.object({
 
 export const EditQuestion = ({ onClose, questionId }: Props) => {
 
-    const { data: question, isLoading } = useGetQuestion(questionId);
+    const { data: question } = useGetQuestion(questionId);
     const mutation = useUpdateQuestion(questionId);
 
     const form = useForm<z.infer<typeof editQuestionSchema>>({
