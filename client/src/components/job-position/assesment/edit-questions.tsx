@@ -1,5 +1,6 @@
 import { useGetQuestion } from "@/api/questions/use-get-question";
 import { useUpdateQuestion } from "@/api/questions/use-update-question";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -62,45 +63,47 @@ export const editQuestionSchema = z.object({
 
 export const EditQuestion = ({ onClose, questionId }: Props) => {
 
-    const { data: question } = useGetQuestion(questionId);
-
-    const mutation = useUpdateQuestion(questionId)
+    const { data: question, isLoading } = useGetQuestion(questionId);
+    const mutation = useUpdateQuestion(questionId);
 
     const form = useForm<z.infer<typeof editQuestionSchema>>({
         resolver: zodResolver(editQuestionSchema),
         defaultValues: {
             questionText: "",
+            answer1: { text: "", isCorrect: false },
+            answer2: { text: "", isCorrect: false },
+            answer3: { text: "", isCorrect: false },
+            answer4: { text: "", isCorrect: false },
         },
     });
 
     useEffect(() => {
         if (question) {
             form.reset({
-                questionText: question?.questionText,
+                questionText: question?.questionText || "",
                 answer1: {
-                    text: question?.options[0].optionText,
-                    isCorrect: question?.options[0].isCorrect
+                    text: question?.options[0]?.optionText || "",
+                    isCorrect: question?.options[0]?.isCorrect || false,
                 },
                 answer2: {
-                    text: question?.options[1].optionText,
-                    isCorrect: question?.options[1].isCorrect
+                    text: question?.options[1]?.optionText || "",
+                    isCorrect: question?.options[1]?.isCorrect || false,
                 },
                 answer3: {
-                    text: question?.options[2].optionText,
-                    isCorrect: question?.options[2].isCorrect
+                    text: question?.options[2]?.optionText || "",
+                    isCorrect: question?.options[2]?.isCorrect || false,
                 },
                 answer4: {
-                    text: question?.options[3].optionText,
-                    isCorrect: question?.options[3].isCorrect
-                }
-            })
+                    text: question?.options[3]?.optionText || "",
+                    isCorrect: question?.options[3]?.isCorrect || false,
+                },
+            });
         }
-    }, [question])
+    }, [question, form]);
 
     function onSubmit(values: z.infer<typeof editQuestionSchema>) {
-        console.log(values);
-        mutation.mutate(values)
-        onClose()
+        mutation.mutate(values);
+        onClose();
     }
 
     const { isSubmitting, isValid } = form.formState;

@@ -14,7 +14,10 @@ export const registerFormSchema = z.object({
     firstName: z.string().nonempty("First Name is required"),
     lastName: z.string().nonempty("Last Name is required"),
     email: z.string().email("Invalid email address").nonempty("Email is required"),
-    phone: z.string().nonempty("Phone number is required"),
+    phone: z
+        .string()
+        .nonempty("Phone number is required")
+        .regex(/^[0-9]{10}$/, "Phone number must be exactly 10 digits"),
 })
 
 export const RegisterPage = () => {

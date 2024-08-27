@@ -81,7 +81,7 @@ export const ApplicantDetail = () => {
                             <SelectContent>
                                 <SelectItem value="SELECTED">Selected</SelectItem>
                                 <SelectItem value="REJECTED">Rejected</SelectItem>
-                                <SelectItem value="INPROGRESS">In Progress</SelectItem>
+                                <SelectItem value="INPROGRESS">InProgress</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>

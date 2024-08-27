@@ -1,4 +1,4 @@
-import { useState } from "preact/hooks";
+import { useCreatePosition } from "@/api/positions/use-create-postion";
 import {
     Dialog,
     DialogContent,
@@ -6,8 +6,6 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "../ui/button";
-import { PlusCircle } from "lucide-react";
 import {
     Form,
     FormControl,
@@ -16,14 +14,20 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { PlusCircle } from "lucide-react";
+import { useState } from "preact/hooks";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { useCreatePosition } from "@/api/positions/use-create-postion";
 
 const formSchema = z.object({
-    positionName: z.string().min(4, "Position name must be at least 4 characters long").max(255, "Position name must be at most 255 characters long"),
+    positionName: z
+        .string()
+        .min(4, { message: "Job Title must be at least 4 characters long." })
+        .max(255, { message: "Job Title must be at most 255 characters long." })
+        .refine((value) => value.trim().length > 0, { message: "Job Title cannot contain only space characters." })
 });
 
 export const CreatePositions = () => {
@@ -88,7 +92,10 @@ export const CreatePositions = () => {
                                 <Button
                                     variant="outline"
                                     className="w-28"
-                                    onClick={() => setIsOpen((prevValue) => !prevValue)}
+                                    onClick={() => {
+                                        setIsOpen((prevValue) => !prevValue)
+                                        form.reset()
+                                    }}
                                     type="button"
                                 >
                                     Cancel

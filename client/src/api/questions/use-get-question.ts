@@ -13,5 +13,7 @@ export const useGetQuestion = (questionId: string) => {
                 throw new Error("Failed to fetch question");
             }
         },
+        cacheTime: 0,
+        staleTime: 0,
     });
 };

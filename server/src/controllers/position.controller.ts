@@ -46,7 +46,6 @@ export const createPosition = CatchAsyncError(async (req: Request, res: Response
 
         const newPosition = await db.insert(position).values({
             positionName,
-            createdBy: userId
         }).returning()
 
         return res.status(201).json(newPosition)

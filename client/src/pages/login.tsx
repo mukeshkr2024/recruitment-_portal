@@ -115,11 +115,11 @@ bg-[url('/bg_1.png')] bg-cover">
                     </div>
 
                     <div className="w-full bg-[#E5E5E5] h-[1px]"></div>
-
-                    <div className="flex text-center items-center justify-center gap-x-3 text-sm font-normal">
+                    {/* <div className="flex text-center items-center justify-center gap-x-3 text-sm font-normal">
                         <p>Didn’t recieved an access?</p>
                         <span className="text-[#007AFF]">Raise issue</span>
-                    </div>
+                    </div> */}
+                    {/* TODO: unable this */}
                 </div>
             </div>
         </div>

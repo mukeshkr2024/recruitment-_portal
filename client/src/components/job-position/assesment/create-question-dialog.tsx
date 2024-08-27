@@ -279,7 +279,10 @@ export const CreateQuestion = ({ examId }: { examId: string }) => {
                                 <Button
                                     variant="outline"
                                     className="w-28"
-                                    onClick={() => setIsOpen((prevValue) => !prevValue)}
+                                    onClick={() => {
+                                        setIsOpen((prevValue) => !prevValue)
+                                        form.reset()
+                                    }}
                                     type="button"
                                 >
                                     Cancel

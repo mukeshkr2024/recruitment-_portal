@@ -33,10 +33,10 @@ export const Sidebar = () => {
 
     return (
         <div className="w-16 md:w-56 fixed left-0 top-0 z-10 h-screen boder-r pt-8 px-4 bg-white">
-            <div className="mb-8 flex items-center justify-center">
+            <Link to="/dashboard" className="mb-8 flex items-center justify-center">
                 <img src="/cp_logo.svg" alt="logo" className="" />
                 <p className="text-sm font-semibold">Cloudprism Solutions</p>
-            </div>
+            </Link>
 
             <ul className="mt-6 space-y-6">
                 {SIDEBAR_LINKS.map((link, index) => (

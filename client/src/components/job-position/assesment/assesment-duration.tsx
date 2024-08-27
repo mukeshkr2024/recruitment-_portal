@@ -7,10 +7,14 @@ import { useState } from 'react';
 
 export const AssessmentDuration = ({ duration: initialDuration, examId }: { duration: number, examId: string }) => {
     const [duration, setDuration] = useState(initialDuration);
-    const { mutate, isLoading, } = useUpdateExamDuration(examId)
-    const { toast } = useToast()
+    const { mutate, isLoading } = useUpdateExamDuration(examId);
+    const { toast } = useToast();
+
     const handleInputChange = (event: any) => {
-        setDuration(Number(event.target.value));
+        const value = Number(event.target.value);
+        if (value >= 0) {
+            setDuration(value);
+        }
     };
 
     const handleUpdateClick = () => {
@@ -20,9 +24,10 @@ export const AssessmentDuration = ({ duration: initialDuration, examId }: { dura
                     title: "Assessment duration updated successfully"
                 });
             },
-
         });
     };
+
+    const isButtonDisabled = isLoading || duration === initialDuration;
 
     return (
         <div>
@@ -38,7 +43,7 @@ export const AssessmentDuration = ({ duration: initialDuration, examId }: { dura
                         onChange={handleInputChange}
                         required={true}
                     />
-                    <Button disabled={isLoading} onClick={handleUpdateClick}>Update</Button>
+                    <Button disabled={isButtonDisabled} onClick={handleUpdateClick}>Update</Button>
                 </CardContent>
             </Card>
         </div>

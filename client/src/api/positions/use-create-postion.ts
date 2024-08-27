@@ -1,8 +1,10 @@
+import { useToast } from "@/components/ui/use-toast"
 import { useMutation, useQueryClient } from "react-query"
 import { apiClient } from "../api-client"
 
 export const useCreatePosition = () => {
     const queryClient = useQueryClient()
+    const { toast } = useToast()
 
     return useMutation({
         mutationFn: async (positionData: any) => {
@@ -10,10 +12,15 @@ export const useCreatePosition = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries('positions')
-
+            toast({
+                title: "Position created successfully"
+            })
         },
-        onError: (error) => {
+        onError: (error: any) => {
             console.log(error);
+            toast({
+                title: error?.response?.data?.message || "Something went wrong "
+            })
         }
     })
 }
