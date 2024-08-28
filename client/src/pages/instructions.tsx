@@ -3,12 +3,12 @@ import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useState } from "preact/hooks";
 import { useNavigate, useParams } from "react-router-dom";
 
 export const InstructionPage = () => {
+    const [isChecked, setisChecked] = useState(false)
     const { assesmentId, examId } = useParams();
-    console.log(assesmentId);
-
     const { data, isLoading } = getInstructions(assesmentId!, examId!,);
     const navigate = useNavigate();
 
@@ -58,13 +58,17 @@ export const InstructionPage = () => {
             <div className="max-w-4xl lg:max-w-5xl  mx-auto mt-6 flex-none">
                 <div className="flex flex-col md:flex-row mt-5 gap-4 items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <Checkbox className="w-4 h-4" />
+                        <Checkbox className="w-4 h-4"
+                            checked={isChecked}
+                            onCheckedChange={() => setisChecked(!isChecked)}
+                        />
                         <p className="text-base md:text-lg pr-4">I have read and understood the instructions and guidelines for this assessment.</p>
                     </div>
                     <Button
-                        disabled={data.status === "COMPLETED"}
+                        disabled={data.status === "COMPLETED" || !isChecked}
                         className="bg-blue-600 text-white px-6 py-2 md:px-10 md:py-3 hover:bg-blue-700"
                         onClick={handleClick}
+
                     >
                         Start Assessment
                     </Button>

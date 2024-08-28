@@ -16,67 +16,84 @@
 
         .email-container {
             max-width: 600px;
-            margin: 0 auto;
+            margin: 20px auto;
             background-color: #fff;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         .header {
             text-align: center;
-            padding: 20px 0;
+            padding: 10px 0;
             background-color: #007bff;
             color: white;
             border-radius: 8px 8px 0 0;
+            font-size: 18px;
+            font-weight: bold;
         }
 
         .content {
             padding: 20px;
-            line-height: 1.6;
+            line-height: 1.5;
         }
 
         .access-code {
             font-weight: bold;
             background-color: #007bff;
             color: white;
-            padding: 10px;
+            padding: 8px;
             text-align: center;
             border-radius: 4px;
             margin: 20px 0;
-            font-size: 18px;
+            font-size: 16px;
         }
 
         .footer {
             text-align: center;
-            padding: 20px;
+            padding: 10px;
             font-size: 12px;
             color: #999;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 
 <body>
     <div class="email-container">
-        <!-- <div class="header">
-            <h1>Welcome to [Your Company]</h1>
-        </div> -->
+        <div class="header">
+            Applicant Registration
+        </div>
         <div class="content">
             <p>Hi <%= name %>,</p>
             <p>Thank you for applying for the <strong>
                     <%= position %>
-                </strong> position. We have successfully registered your application.</p>
+                </strong> position. Your application has been successfully registered.</p>
+            <p>Your email address is: <strong>
+                    <%= email %>
+                </strong></p>
             <p>Here is your access code:</p>
             <div class="access-code">
                 <%= access_code %>
             </div>
             <p>Please keep this code safe as it will be required during the application process.</p>
-            <p>Best of luck!</p>
-            <!-- <p>Regards,<br>Cloudpr</p> -->
+            <p>You can log in to your account using the following link:</p>
+            <p><a href="<%= login_link %>">Login Here</a></p>
+            <p>Best regards,</p>
+            <p>The Cloudprism Solutions Team</p>
         </div>
         <div class="footer">
-            <p>This email was sent from [Your Company]. If you have any questions, feel free to contact us at
-                support@[cloudprism].com.</p>
+            <p>This email was sent by Cloudprism Solutions. If you have any questions, please contact us at
+                support@cloudprism.com.</p>
         </div>
     </div>
 </body>

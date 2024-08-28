@@ -12,6 +12,7 @@ const EnvSchema = z.object({
     DATABASE_URL: z.string(),
     PORT: z.coerce.number(),
     JWT_KEY: z.string(),
+    SITE_URL: z.string(),
 })
 
 export type EnvSchema = z.infer<typeof EnvSchema>;

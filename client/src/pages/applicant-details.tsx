@@ -89,9 +89,9 @@ export const ApplicantDetail = () => {
 
                 <div className="mt-6">
                     <h4 className="text-xl font-semibold text-gray-700 mb-4">Assessments</h4>
-                    {details.assessments?.length > 0 ? (
+                    {details.assements?.length > 0 ? (
                         <div className="gap-6 grid grid-cols-2">
-                            {details.assessments.map((assessment: any, index: number) => (
+                            {details.assements.map((assessment: any, index: number) => (
                                 <div key={index} className="bg-gray-100 p-4 rounded-md shadow-sm border border-gray-200">
                                     <p className="text-gray-800 font-medium">{assessment?.position?.positionName}</p>
                                     <p className="text-gray-600">{formatDate(assessment?.createdAt)}</p>

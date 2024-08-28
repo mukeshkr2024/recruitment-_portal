@@ -78,6 +78,7 @@ export const ExamResultCard = ({ examResult }: ExamResultCardProps) => {
                                 <SelectValue placeholder="Select status" />
                             </SelectTrigger>
                             <SelectContent>
+                                <SelectItem value="PENDING">Pending</SelectItem>
                                 <SelectItem value="PASSED">Passed</SelectItem>
                                 <SelectItem value="FAILED">Failed</SelectItem>
                             </SelectContent>

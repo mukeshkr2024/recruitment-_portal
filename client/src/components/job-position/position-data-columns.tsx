@@ -1,12 +1,13 @@
-import { ArrowUpDown, Pencil, Trash } from "lucide-react";
+import { useDeletePosition } from "@/api/positions/use-delete-positions";
 import { Button } from "@/components/ui/button";
-import { formatDate, siteUrl } from "@/utils";
+import { formatDate } from "@/utils";
+import { SITE_URL } from "@/utils/config";
+import { ColumnDef } from "@tanstack/react-table";
+import { ArrowUpDown, Pencil, Trash } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ConfirmDialog } from "../confirm-dialog";
-import { useDeletePosition } from "@/api/positions/use-delete-positions";
-import { useToast } from "../ui/use-toast";
-import { ColumnDef } from "@tanstack/react-table";
 import { ShareLink } from "../share-link";
+import { useToast } from "../ui/use-toast";
 
 export type Position = {
     id: string;
@@ -110,7 +111,7 @@ export const PositionColumnData: ColumnDef<Position>[] = [
         ),
         cell: ({ row }) => {
             const title = row.original.positionName;
-            return <ShareLink link={`${siteUrl}/applicant-register/${row.original.id}`} title={title} />;
+            return <ShareLink link={`${SITE_URL}/applicant-register/${row.original.id}`} title={title} />;
         },
     },
 ];

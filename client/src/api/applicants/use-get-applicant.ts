@@ -7,7 +7,9 @@ export const useGetApplicant = (applicantId: string) => {
         queryFn: async () => {
             const { data } = await apiClient.get(`/applicant/details/${applicantId}`)
             return data
-        }
-
+        },
+        staleTime: 0,
+        cacheTime: 0,
+        refetchOnWindowFocus: false
     })
 }

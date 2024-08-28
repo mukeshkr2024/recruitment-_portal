@@ -17,8 +17,8 @@ export const useCreatePosition = () => {
             })
         },
         onError: (error: any) => {
-            console.log(error);
             toast({
+                variant: "destructive",
                 title: error?.response?.data?.message || "Something went wrong "
             })
         }

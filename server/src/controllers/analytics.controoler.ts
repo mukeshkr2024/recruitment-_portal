@@ -12,11 +12,11 @@ export const getAnalytics = CatchAsyncError(async (req: Request, res: Response, 
             }
         });
 
-        const applicants = await db.query.applicant.findMany({});
+        const assesments = await db.query.assessment.findMany({});
 
         return res.status(200).json({
             jobPositions,
-            totalApplicants: applicants.length
+            totalApplicants: assesments.length
         });
     } catch (error) {
         return next(new ErrorHandler(error, 400));

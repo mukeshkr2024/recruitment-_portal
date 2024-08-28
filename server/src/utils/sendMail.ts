@@ -13,18 +13,19 @@ interface MailOptions {
     data: Record<string, unknown>;
 }
 
-// Create a nodemailer transporter
 const createTransporter = (): Transporter => {
     return nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: parseInt(process.env.SMTP_PORT || "587", 10),
-        service: process.env.SMTP_SERVICE,
+        service: 'Office365', // Office365 uses the service name 'Office365'
         auth: {
-            user: process.env.SMTP_MAIL,
-            pass: process.env.SMTP_PASSWORD,
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASS
         },
+        host: process.env.SMTP_HOST,
+        port: Number(process.env.SMTP_PORT),
+        secure: process.env.SMTP_SECURE === 'true', // Convert to boolean
     });
 };
+
 
 // Send an email using the specified template and data
 export const sendMail = async (options: MailOptions): Promise<void> => {

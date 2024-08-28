@@ -55,7 +55,10 @@ export const CreatePositions = () => {
     return (
         <Dialog
             open={isOpen}
-            onOpenChange={() => setIsOpen((prevValue) => !prevValue)}
+            onOpenChange={() => {
+                setIsOpen((prevValue) => !prevValue)
+                form.reset()
+            }}
         >
             <DialogTrigger asChild>
                 <div className="flex items-center gap-2 p-2">

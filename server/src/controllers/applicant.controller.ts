@@ -6,6 +6,7 @@ import { CatchAsyncError } from "../middleware/catchAsyncError";
 import { generateAccessCode } from "../utils";
 import { ErrorHandler } from "../utils/ErrorHandler";
 import { sendMail } from "../utils/sendMail";
+import env from '../config/env'
 
 export const getApplicantsAssessmentQuestions = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -400,7 +401,6 @@ export const registerApplicant = CatchAsyncError(async (req: Request, res: Respo
                 .returning();
         }
 
-        // Insert into the assessment table
         const assessmentEntry = await db.insert(assessment)
             .values({
                 applicantId: foundApplicant.id,
@@ -408,15 +408,17 @@ export const registerApplicant = CatchAsyncError(async (req: Request, res: Respo
             })
             .returning();
 
-        // Prepare data for the email
+
+        const login_link = env.SITE_URL + "/applicant-login";
+
         const emailData = {
-            name: `${foundApplicant.firstName} ${foundApplicant.lastName}`,
+            name: `${firstName} ${lastName}`,
             email: foundApplicant.email,
-            position: positionFound.positionName, // You should replace this with the actual position title
+            position: positionFound.positionName,
             access_code: access_code,
+            login_link: login_link
         };
 
-        // Send registration email
         try {
             await sendMail({
                 email: foundApplicant.email,
