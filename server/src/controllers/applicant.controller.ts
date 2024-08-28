@@ -12,8 +12,6 @@ export const getApplicantsAssessmentQuestions = CatchAsyncError(async (req: Requ
     try {
         const { examId, assessmentId } = req.params;
 
-
-
         const applicantId = req.id;
 
         await db.update(applicant).set({
@@ -83,7 +81,6 @@ export const submitAssessment = CatchAsyncError(async (req: Request, res: Respon
         const { examId, assementId } = req.params;
         const answers = req.body;
 
-
         if (!Array.isArray(answers) || answers?.length === 0) {
             return res.status(400).json({ error: 'Invalid input: answers should be a non-empty array.' });
         }
@@ -113,9 +110,6 @@ export const submitAssessment = CatchAsyncError(async (req: Request, res: Respon
         const isExamResultExist = await db.query.examResult.findFirst({
             where: and(eq(examResult.examId, examId), eq(examResult.applicantId, req.id!))
         })
-
-            ("assementId", assementId);
-
 
         if (!isExamResultExist) {
             await db.insert(examResult).values({
@@ -294,6 +288,7 @@ export const getApplicantAssessment = CatchAsyncError(async (req: Request, res: 
         }
     });
 
+
     const positionMap = applicantPositions.assements?.reduce((acc: any, assessment: any) => {
         const { positionId, position, id: assessmentId } = assessment;
         const positionName = position.positionName;
@@ -450,6 +445,7 @@ export const getJobPostions = CatchAsyncError(async (Req: Request, res: Response
 export const getInstructionsDetails = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { examId } = req.params;
+
 
         const examFound = await db.query.exam.findFirst({
             where: eq(exam.id, examId),
