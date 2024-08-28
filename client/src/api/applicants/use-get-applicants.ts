@@ -18,6 +18,9 @@ export const useGetApplicants = (job?: string, status?: string) => {
             }
             const { data } = await apiClient.get(url);
             return data;
-        }
+        },
+        cacheTime: 0,
+        staleTime: 0,
+        refetchOnWindowFocus: true,
     });
 };

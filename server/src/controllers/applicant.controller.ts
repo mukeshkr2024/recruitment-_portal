@@ -12,7 +12,6 @@ export const getApplicantsAssessmentQuestions = CatchAsyncError(async (req: Requ
     try {
         const { examId, assessmentId } = req.params;
 
-        console.log("assementId", assessmentId);
 
 
         const applicantId = req.id;
@@ -84,8 +83,6 @@ export const submitAssessment = CatchAsyncError(async (req: Request, res: Respon
         const { examId, assementId } = req.params;
         const answers = req.body;
 
-        console.log("assementId", assementId);
-
 
         if (!Array.isArray(answers) || answers?.length === 0) {
             return res.status(400).json({ error: 'Invalid input: answers should be a non-empty array.' });
@@ -117,7 +114,7 @@ export const submitAssessment = CatchAsyncError(async (req: Request, res: Respon
             where: and(eq(examResult.examId, examId), eq(examResult.applicantId, req.id!))
         })
 
-        console.log("assementId", assementId);
+            ("assementId", assementId);
 
 
         if (!isExamResultExist) {
@@ -193,7 +190,6 @@ export const getApplicantsDownloadData = CatchAsyncError(async (req: Request, re
             }
         });
 
-        console.log(applicants);
 
         // @ts-ignore
         const formattedApplicants = applicants.map(applicant => {
@@ -248,7 +244,6 @@ export const getApplicantsDownloadData = CatchAsyncError(async (req: Request, re
 
 export const getApplicantsByPositon = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log("getApplicantsByPositon");
 
         const { positionId } = req.params
 
@@ -260,7 +255,6 @@ export const getApplicantsByPositon = CatchAsyncError(async (req: Request, res: 
             }
         })
 
-        console.log(applicants);
 
         return res.status(200).json(applicants)
     } catch (error) {
@@ -300,8 +294,6 @@ export const getApplicantAssessment = CatchAsyncError(async (req: Request, res: 
         }
     });
 
-    console.log(applicantPositions);
-
     const positionMap = applicantPositions.assements?.reduce((acc: any, assessment: any) => {
         const { positionId, position, id: assessmentId } = assessment;
         const positionName = position.positionName;
@@ -332,7 +324,6 @@ export const getApplicantAssessment = CatchAsyncError(async (req: Request, res: 
         return acc;
     }, {} as Record<string, { id: string, position_name: string, exams: { examId: string, name: string, status: string }[] }>);
 
-    console.log(positionMap);
 
     const result = Object.values(positionMap);
 
@@ -460,16 +451,12 @@ export const getInstructionsDetails = CatchAsyncError(async (req: Request, res: 
     try {
         const { examId } = req.params;
 
-        console.log("examId: " + examId);
-
         const examFound = await db.query.exam.findFirst({
             where: eq(exam.id, examId),
             with: {
                 questions: true
             }
         })
-
-        console.log("examFound", examFound);
 
         if (!examFound) {
             return next(new ErrorHandler("Exam not found", 400));
@@ -495,9 +482,6 @@ export const deleteApplicant = CatchAsyncError(async (req: Request, res: Respons
         const deleteApplicant = await db.delete(applicant).where(eq(
             applicant.id, applicantId
         )).returning();
-
-        console.log("deleteApplicant", deleteApplicant);
-
 
         return res.status(200).json({
             message: "Deleted successfully"
@@ -562,10 +546,6 @@ export const applicantDetail = CatchAsyncError(async (req: Request, res: Respons
                 }
             }
         )
-
-        console.log("examResults", examResults);
-
-        console.log(applicantFound);
 
         return res.status(200).json({
             details: applicantFound,

@@ -8,11 +8,5 @@ export const useRegisterApplicant = (positionId: string) => {
         mutationFn: async (data: z.infer<typeof registerFormSchema>) => {
             await apiClient.post(`/applicant/register/${positionId}`, data)
         },
-        onSuccess: () => {
-            console.log("Assessment submitted successfully");
-        },
-        onError: (error) => {
-            console.error("Error submitting assessment:", error);
-        }
     })
 }

@@ -1,8 +1,10 @@
 import { useMutation, useQueryClient } from "react-query"
 import { apiClient } from "../api-client"
+import { useToast } from "@/components/ui/use-toast"
 
 export const useDeleteApplicant = () => {
     const queryClient = useQueryClient()
+    const { toast } = useToast()
 
     return useMutation({
         mutationFn: async (positionId: string) => {
@@ -11,8 +13,11 @@ export const useDeleteApplicant = () => {
         onSuccess: () => {
             queryClient.invalidateQueries('applicants')
         },
-        onError: (error) => {
-            console.log(error);
+        onError: () => {
+            toast({
+                variant: "destructive",
+                title: "Failed to deleted Applicant"
+            })
         }
     })
 }

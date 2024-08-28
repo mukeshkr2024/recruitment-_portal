@@ -22,7 +22,6 @@ expand(config());
 let parsedEnv: EnvSchema;
 try {
     parsedEnv = EnvSchema.parse(process.env);
-    console.log("Parsed environment variables:", parsedEnv);
 } catch (error) {
     if (error instanceof ZodError) {
         let message = "Missing required values in .env:\n";

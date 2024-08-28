@@ -50,7 +50,6 @@ export const sendMail = async (options: MailOptions): Promise<void> => {
         // Send the email
         const response = await transporter.sendMail(mailOptions);
 
-        console.log(response);
 
     } catch (error) {
         console.error("Error sending email:", error);

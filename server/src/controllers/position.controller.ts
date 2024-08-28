@@ -20,7 +20,6 @@ export const getPostions = CatchAsyncError(async (req: Request, res: Response, n
             orderBy: asc(position.createdAt)
         })
 
-        console.log("postions", postions);
 
         return res.status(200).json(postions)
     } catch (error) {
@@ -74,12 +73,10 @@ export const deletePosition = CatchAsyncError(async (req: Request, res: Response
 
 export const updatePosition = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log("updatePosition");
 
         const { positionId } = req.params;
 
         const updatePosition = await db.update(position).set({
-            duration: req.body.duration,
         }).where(
             eq(position.id, positionId)
         )

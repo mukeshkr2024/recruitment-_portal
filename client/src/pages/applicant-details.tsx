@@ -12,7 +12,7 @@ import { useParams } from "react-router-dom";
 export const ApplicantDetail = () => {
     const { applicantId } = useParams();
     const { data, isLoading, error } = useGetApplicant(applicantId!);
-    const [status, setStatus] = useState("INPROGRESS");
+    const [status, setStatus] = useState("");
     const mutation = useUpdateApplicantStatus(applicantId!)
 
     if (isLoading) {
@@ -46,6 +46,8 @@ export const ApplicantDetail = () => {
                 return 'bg-red-100 border-red-300 text-red-800';
             case 'INPROGRESS':
                 return 'bg-yellow-100 border-yellow-300 text-yellow-800';
+            case 'PENDING':
+                return 'bg-blue-100 border-blue-300 text-blue-800';
             default:
                 return 'bg-white border-gray-200 text-gray-800';
         }
@@ -79,9 +81,10 @@ export const ApplicantDetail = () => {
                                 <SelectValue placeholder="Select status" />
                             </SelectTrigger>
                             <SelectContent>
+                                <SelectItem value="PENDING">Pending</SelectItem>
+                                <SelectItem value="INPROGRESS">InProgress</SelectItem>
                                 <SelectItem value="SELECTED">Selected</SelectItem>
                                 <SelectItem value="REJECTED">Rejected</SelectItem>
-                                <SelectItem value="INPROGRESS">InProgress</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>

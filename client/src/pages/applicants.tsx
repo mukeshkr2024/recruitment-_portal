@@ -72,12 +72,9 @@ export const ApplicantsPage = () => {
         await refetch();
 
         if (csvBlob) {
-            // Create an array to hold the formatted data
             const formattedData: any[] = [];
 
-            // Process each applicant
             csvBlob.forEach((item: any, idx: number) => {
-                // Create a row for the applicant's general information
                 const generalInfo = {
                     Id: idx + 1,
                     FullName: item.firstName + " " + item.lastName,
@@ -92,13 +89,11 @@ export const ApplicantsPage = () => {
                     TotalScore: 'N/A'
                 };
 
-                // Add the general info row to the formatted data
                 formattedData.push(generalInfo);
 
-                // If no exam results, add a placeholder row
                 if (item.examResults.length === 0) {
                     formattedData.push({
-                        Id: '', // Empty Id for exam result rows
+                        Id: '',
                         FullName: '',
                         Email: '',
                         Status: '',
@@ -112,10 +107,9 @@ export const ApplicantsPage = () => {
                     });
                 }
 
-                // Add rows for each exam result
                 item.examResults.forEach((examResult: any) => {
                     const examInfo = {
-                        Id: '', // Empty Id for exam result rows
+                        Id: '',
                         FullName: '',
                         Email: '',
                         Status: '',

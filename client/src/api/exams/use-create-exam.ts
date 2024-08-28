@@ -16,8 +16,11 @@ export const useCreateExam = () => {
                 title: "Exam created successfully"
             })
         },
-        onError: (error) => {
-            console.log(error);
+        onError: () => {
+            toast({
+                variant: "destructive",
+                title: "Failed to create exam",
+            })
         }
     })
 }

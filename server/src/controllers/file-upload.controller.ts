@@ -60,7 +60,6 @@ fileRouter.post('/upload/:examId', upload.single('file'), async (req: Request, r
         }
 
         const questions = parseQuestions(text);
-        console.log('Extracted Questions and Answers:', questions);
 
         // Save the questions to the database
         const { createdQuestions, count } = await saveQuestions(questions, examId);

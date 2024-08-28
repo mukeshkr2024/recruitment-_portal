@@ -9,7 +9,7 @@ import { Document, Packer, Paragraph, TextRun } from "docx"
 import fs from "fs"
 
 
-export const getExams = CatchAsyncError(async (req: Request, res: Response) => {
+export const getExams = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const examsWithQuestionCount = await db
             .select({
@@ -25,12 +25,12 @@ export const getExams = CatchAsyncError(async (req: Request, res: Response) => {
             .orderBy(exam.name);
         return res.status(200).json({ exams: examsWithQuestionCount });
     } catch (error) {
-        console.log(error);
+        return next(new ErrorHandler(error, 400));
     }
 })
 
 
-export const getExamQuestions = CatchAsyncError(async (req: Request, res: Response) => {
+export const getExamQuestions = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
 
         const { examId } = req.params;
@@ -42,15 +42,14 @@ export const getExamQuestions = CatchAsyncError(async (req: Request, res: Respon
             }
         })
 
-        console.log(examId);
 
         return res.status(200).json(query)
     } catch (error) {
-        console.log(error);
+        return next(new ErrorHandler(error, 400));
     }
 })
 
-export const createExam = CatchAsyncError(async (req: Request, res: Response) => {
+export const createExam = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
 
         const { name } = req.body;
@@ -65,7 +64,7 @@ export const createExam = CatchAsyncError(async (req: Request, res: Response) =>
 
         return res.status(201).json(newExam)
     } catch (error) {
-        console.log(error);
+        return next(new ErrorHandler(error, 400));
     }
 })
 
@@ -119,7 +118,6 @@ export const updatePostionExam = CatchAsyncError(async (req: Request, res: Respo
 
         const { isActive } = req.body
 
-        console.log(isActive);
 
         const updatePositionExam = await db.update(jobPositionExams).set({
             isActive: isActive
@@ -155,7 +153,6 @@ export const createPositionExam = CatchAsyncError(async (req: Request, res: Resp
     try {
         const { examId, positionId } = req.params;
 
-        console.log(examId);
 
         const examFound = await db.query.exam.findFirst({
             where: eq(exam.id, examId)
@@ -180,7 +177,6 @@ export const createPositionExam = CatchAsyncError(async (req: Request, res: Resp
         }).returning()
 
 
-        console.log(newPositionExam);
 
         return res.status(201).json(newPositionExam);
 

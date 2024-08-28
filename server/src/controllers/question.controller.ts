@@ -132,7 +132,6 @@ export const updateQuestion = CatchAsyncError(async (req: Request, res: Response
             throw new Error("Question not found")
         }
 
-        console.log("questionExist", questionExist);
 
         const updatedQuestion = await db.update(question).set({
             questionText: questionText

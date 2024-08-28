@@ -1,24 +1,21 @@
 import { useMutation } from "react-query";
 import { apiClient } from "../api-client";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "@/components/ui/use-toast";
 
 export const useSubmitAssessment = (assementId: string, examId: string) => {
+    const { toast } = useToast()
     const navigate = useNavigate()
     return useMutation({
         mutationFn: async (data: any) => {
-            try {
-                await apiClient.post(`/applicants/submit-assessment/${assementId}/exam/${examId}`, data)
-                console.log("Assessment submitted successfully");
-                navigate("/submitted")
-            } catch (error) {
-                console.error("Error submitting assessment:", error);
-            }
+            await apiClient.post(`/applicants/submit-assessment/${assementId}/exam/${examId}`, data)
+            navigate("/submitted")
         },
-        onSuccess: () => {
-            console.log("Assessment submitted successfully");
-        },
-        onError: (error) => {
-            console.error("Error submitting assessment:", error);
+        onError: () => {
+            toast({
+                variant: "destructive",
+                title: "Submission Failed,"
+            })
         }
     })
 }
