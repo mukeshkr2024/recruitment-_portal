@@ -20,7 +20,6 @@ export const DashboardPage = () => {
         to: today,
     })
 
-
     const { data, isLoading } = useGetAnalytics(date)
 
     if (isLoading) {

@@ -20,12 +20,11 @@ interface ChartProps {
     data: ChartData[];
 }
 
-export const Chart: React.FC<ChartProps> = ({ data }) => {
-    // Define custom tick formatter
-    const tickFormatter = (value: number) => {
-        return value % 10 === 0 ? value : '';
-    };
+const tickFormatter = (value: number) => {
+    return value % 10 === 0 ? value.toString() : '';
+};
 
+export const Chart: React.FC<ChartProps> = ({ data }) => {
     return (
         <Card className="rounded-md bg-white p-4 shadow-md flex-1">
             <CardHeader>
