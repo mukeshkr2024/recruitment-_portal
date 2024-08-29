@@ -154,7 +154,7 @@ export const ApplicantsPage = () => {
     }
 
     return (
-        <div className="px-6 space-y-4 -mt-4">
+        <div className="px-6 space-y-4 -mt-2">
             <div className="flex items-center justify-between">
                 <h2 className="text-3xl font-bold text-blue-900">Job Applicants</h2>
                 <p className="text-xl font-semibold">Total: {data?.length} Applicants</p>

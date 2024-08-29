@@ -2,7 +2,6 @@ import crypto from "crypto";
 import { relations } from "drizzle-orm";
 import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { assessment } from "./assesment";
-import { user } from "./user";
 
 export const position = pgTable("position", {
     id: text("id")

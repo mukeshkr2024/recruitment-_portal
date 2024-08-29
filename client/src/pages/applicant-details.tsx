@@ -89,13 +89,12 @@ export const ApplicantDetail = () => {
                         </Select>
                     </div>
                 </div>
-
-                <div className="mt-6">
+                <div className={`mt-6 ${getCardBackgroundColor}p-6 rounded-lg`}>
                     <h4 className="text-xl font-semibold text-gray-700 mb-4">Assessments</h4>
                     {details.assements?.length > 0 ? (
                         <div className="gap-6 grid grid-cols-2">
                             {details.assements.map((assessment: any, index: number) => (
-                                <div key={index} className="bg-gray-100 p-4 rounded-md shadow-sm border border-gray-200">
+                                <div key={index} className=" p-4 rounded-md shadow-sm ">
                                     <p className="text-gray-800 font-medium">{assessment?.position?.positionName}</p>
                                     <p className="text-gray-600">{formatDate(assessment?.createdAt)}</p>
                                 </div>
@@ -105,6 +104,7 @@ export const ApplicantDetail = () => {
                         <p className="text-gray-500">No assessments found.</p>
                     )}
                 </div>
+
             </Card>
             <h2 className="text-3xl font-bold text-gray-800 mb-6">Exam Results</h2>
             {result?.length > 0 ? (

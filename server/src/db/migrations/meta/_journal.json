@@ -5,85 +5,15 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1724317460675,
-      "tag": "0000_short_triathlon",
+      "when": 1724908881703,
+      "tag": "0000_kind_lizard",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1724317527540,
-      "tag": "0001_clumsy_bedlam",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1724321351221,
-      "tag": "0002_noisy_bullseye",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1724324546405,
-      "tag": "0003_faithful_magneto",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1724324903496,
-      "tag": "0004_modern_strong_guy",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1724330671291,
-      "tag": "0005_nosy_smiling_tiger",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1724330735265,
-      "tag": "0006_furry_silk_fever",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1724416403199,
-      "tag": "0007_steep_random",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "7",
-      "when": 1724416457449,
-      "tag": "0008_black_the_call",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "7",
-      "when": 1724598156461,
-      "tag": "0009_useful_emma_frost",
-      "breakpoints": true
-    },
-    {
-      "idx": 10,
-      "version": "7",
-      "when": 1724651031937,
-      "tag": "0010_sad_bucky",
-      "breakpoints": true
-    },
-    {
-      "idx": 11,
-      "version": "7",
-      "when": 1724653542619,
-      "tag": "0011_safe_redwing",
+      "when": 1724922365504,
+      "tag": "0001_overconfident_joseph",
       "breakpoints": true
     }
   ]

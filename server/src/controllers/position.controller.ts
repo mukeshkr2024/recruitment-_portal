@@ -73,7 +73,6 @@ export const deletePosition = CatchAsyncError(async (req: Request, res: Response
 
 export const updatePosition = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
-
         const { positionId } = req.params;
 
         const updatePosition = await db.update(position).set({

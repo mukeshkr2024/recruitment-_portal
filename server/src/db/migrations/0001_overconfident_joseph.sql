@@ -1,0 +1,1 @@
+ALTER TABLE "job_position_exams" ADD COLUMN "created_at" timestamp DEFAULT now() NOT NULL;

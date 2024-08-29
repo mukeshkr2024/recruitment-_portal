@@ -40,14 +40,14 @@ export function ExamsData({ columns, data }: PositionDataProps) {
 
     return (
         <div>
-            <div className="flex items-center justify-between py-4" />
-            <div className="rounded-md border">
+            <div className="flex items-center justify-between py-2" />
+            <div className="rounded-md border overflow-hidden">
                 <Table>
-                    <TableHeader>
+                    <TableHeader className="bg-white">
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
-                                    <TableHead key={header.id} className="text-center">
+                                    <TableHead key={header.id} className="text-center font-bold text-2xl">
                                         {header.isPlaceholder
                                             ? null
                                             : flexRender(header.column.columnDef.header, header.getContext())}

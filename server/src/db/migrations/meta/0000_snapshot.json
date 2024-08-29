@@ -1,5 +1,5 @@
 {
-  "id": "0b1f38a4-9b3f-4c6c-afef-720a7345dda3",
+  "id": "bea57545-ff77-41c6-bfa7-d70b66866e5b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -37,6 +37,13 @@
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'PENDING'"
         },
         "contact_phone": {
           "name": "contact_phone",
@@ -155,7 +162,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -212,19 +219,26 @@
           "name": "applicant_id",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
-        },
-        "assessment_id": {
-          "name": "assessment_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "exam_id": {
           "name": "exam_id",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
+        },
+        "assessment_id": {
+          "name": "assessment_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "exam_status": {
+          "name": "exam_status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'PENDING'"
         },
         "status": {
           "name": "status",
@@ -267,20 +281,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "exam_result_assessment_id_assessment_id_fk": {
-          "name": "exam_result_assessment_id_assessment_id_fk",
-          "tableFrom": "exam_result",
-          "tableTo": "assessment",
-          "columnsFrom": [
-            "assessment_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "exam_result_exam_id_exam_id_fk": {
@@ -289,6 +290,19 @@
           "tableTo": "exam",
           "columnsFrom": [
             "exam_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "exam_result_assessment_id_assessment_id_fk": {
+          "name": "exam_result_assessment_id_assessment_id_fk",
+          "tableFrom": "exam_result",
+          "tableTo": "assessment",
+          "columnsFrom": [
+            "assessment_id"
           ],
           "columnsTo": [
             "id"
@@ -336,7 +350,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "job_position_exams_exam_id_exam_id_fk": {
@@ -349,7 +363,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -442,21 +456,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "created_by": {
-          "name": "created_by",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
         "created_at": {
           "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
@@ -464,21 +465,7 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "position_created_by_user_id_fk": {
-          "name": "position_created_by_user_id_fk",
-          "tableFrom": "position",
-          "tableTo": "user",
-          "columnsFrom": [
-            "created_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
@@ -532,93 +519,6 @@
             "id"
           ],
           "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "public.result": {
-      "name": "result",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "applicant_id": {
-          "name": "applicant_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "applied_positon_id": {
-          "name": "applied_positon_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "score": {
-          "name": "score",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "total_scrole": {
-          "name": "total_scrole",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "overall_grade": {
-          "name": "overall_grade",
-          "type": "varchar(5)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "result_applicant_id_applicant_id_fk": {
-          "name": "result_applicant_id_applicant_id_fk",
-          "tableFrom": "result",
-          "tableTo": "applicant",
-          "columnsFrom": [
-            "applicant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "result_applied_positon_id_position_id_fk": {
-          "name": "result_applied_positon_id_position_id_fk",
-          "tableFrom": "result",
-          "tableTo": "position",
-          "columnsFrom": [
-            "applied_positon_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
           "onUpdate": "no action"
         }
       },

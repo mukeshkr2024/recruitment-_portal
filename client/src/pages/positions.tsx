@@ -12,7 +12,7 @@ export const PositionPage = () => {
     }
 
     return (
-        <div className="p-6 bg-gray-100">
+        <div className="px-6 bg-gray-100">
             <div className="flex w-full justify-between">
                 <h2 className="text-3xl font-bold text-blue-900">
                     Job Positions
