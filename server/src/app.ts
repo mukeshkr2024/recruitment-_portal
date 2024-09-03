@@ -37,8 +37,8 @@ app.use(cors({
         "http://82.112.227.200:4173",
         "http://careers.codingcommando.in",
         "https://careers.codingcommando.in",
-        "https://www.careers.cloudprism.in/",
-        "https://careers.cloudprism.in/"
+        "https://www.careers.cloudprism.in",
+        "https://careers.cloudprism.in"
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
