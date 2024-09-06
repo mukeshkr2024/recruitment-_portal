@@ -7,9 +7,6 @@ import { LoadingSpinner } from '../LoadingSpinner';
 export const AdminDashboardLayout = () => {
     const { checkAuth, admin, loading } = useAdminAuth();
 
-    console.log(admin);
-
-
     useEffect(() => {
         checkAuth()
     }, [])

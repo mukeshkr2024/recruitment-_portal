@@ -72,7 +72,6 @@ export const CreateQuestion = ({ examId }: { examId: string }) => {
     });
 
     function onSubmit(values: z.infer<typeof questionFormSchema>) {
-        console.log(values);
         mutate(values, {
             onSuccess: () => {
                 form.reset();

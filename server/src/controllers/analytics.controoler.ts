@@ -7,7 +7,6 @@ import { and, count, desc, gte, lte } from "drizzle-orm";
 
 export const getAnalytics = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log(req.query);
 
         const { start, end } = req.query;
 

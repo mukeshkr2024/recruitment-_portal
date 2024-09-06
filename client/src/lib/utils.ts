@@ -7,10 +7,6 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const logOutSession = () => {
-  // Retrieve the token from localStorage
-  const token = localStorage.getItem('access_token');
 
-  console.log(token);
-  // Remove the token from localStorage
   localStorage.removeItem('access_token');
 };

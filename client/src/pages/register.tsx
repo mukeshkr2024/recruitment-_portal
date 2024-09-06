@@ -38,7 +38,6 @@ export const RegisterPage = () => {
     })
 
     function onSubmit(values: z.infer<typeof registerFormSchema>) {
-        console.log(values)
         mutate(values, {
             onSuccess: () => {
                 setShowSuccessMessage(true);

@@ -5,10 +5,8 @@ import { Navigate, Outlet } from "react-router-dom"
 export const ApplicantProtectLayout = () => {
     const { checkAuth, applicant, loading } = useApplicantAuth();
 
-    console.log(applicant);
 
     const token = localStorage.getItem('access_token');
-    console.log("token" + token);
 
     useEffect(() => {
         checkAuth()

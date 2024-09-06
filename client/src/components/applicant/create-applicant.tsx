@@ -38,7 +38,6 @@ export const CreateApplicant = () => {
     });
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values);
         mutation.mutate(values)
     }
 

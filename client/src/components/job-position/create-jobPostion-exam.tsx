@@ -61,11 +61,8 @@ export const CreateJobPositionExam = ({ positionId }: { positionId: string }) =>
     const exams = data?.exams
 
     const handleValueChange = (value: string) => {
-        console.log("Selected value:", value); // Log the selected value
         setSelectedExam(value); // Update the state with the selected value
     };
-
-    console.log("setselectedExam", selectedExam);
 
 
     const onSumit = () => {
