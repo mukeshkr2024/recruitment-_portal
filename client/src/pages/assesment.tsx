@@ -234,7 +234,7 @@ export const AssessmentPage = () => {
                                 timeLeft={formatTime(timeLeft)}
                             />
                         </div>
-                        <div className="flex-grow mx-auto w-full max-w-7xl flex items-center">
+                        <div className="flex-grow mx-auto w-full max-w-7xl flex items-center px-4">
                             <div className="">
                                 <section className="text-2xl flex items-start gap-x-1.5 font-semibold">
                                     <span>{currentQuestionIndex + 1}.</span>
@@ -244,7 +244,7 @@ export const AssessmentPage = () => {
                                     {currentQuestion.options.map((option, idx) => (
                                         <div className="flex gap-x-2.5" key={option.id}>
                                             <input
-                                                type="checkbox"  // Changed from "radio" to "checkbox"
+                                                type="checkbox"
                                                 id={`option-${option.id}`}
                                                 name={`question-${currentQuestion.id}`}
                                                 value={option.id}
