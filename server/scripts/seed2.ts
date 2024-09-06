@@ -11,7 +11,7 @@ const seed = async () => {
             firstName: "Admin",
             lastName: "Cloudprism",
             email: "admin@cloudprism.in",
-            password: "Cloudprism@24",
+            password: "Cloudprism24",
             role: "admin"
         }])
 
