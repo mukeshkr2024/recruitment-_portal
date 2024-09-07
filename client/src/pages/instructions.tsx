@@ -35,7 +35,7 @@ export const InstructionPage = () => {
                     Assessment Instructions
                 </h3>
                 <ul className="mt-3 text-base md:text-lg space-y-2">
-                    <li>This assessment is designed to evaluate your knowledge and practical skills in UI/UX design through a series of multiple-choice questions (MCQs).</li>
+                    <li>This assessment is designed to evaluate your knowledge and practical skills in {data?.exam_name} through a series of multiple-choice questions (MCQs).</li>
                     <li>The assessment consists of {data?.total_questions} questions, and you will have a total of {data?.total_time} minutes to complete it. Please make sure to manage your time effectively.</li>
                     <li>Each question has four possible answers. Select the option that you believe is most accurate.</li>
                     <li>Once you have answered all the questions, click on the "Submit" button to finalize your responses. Please note that you will not be able to return to the assessment after submission.</li>
