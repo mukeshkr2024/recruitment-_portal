@@ -28,19 +28,19 @@ import { z } from "zod";
 export const questionFormSchema = z.object({
     questionText: z.string().min(10, "Question Title is required"),
     answer1: z.object({
-        text: z.string().min(4, "Option 1 is required"),
+        text: z.string().min(1, "Option 1 is required"),
         isCorrect: z.boolean(),
     }),
     answer2: z.object({
-        text: z.string().min(4, "Option 2 is required"),
+        text: z.string().min(1, "Option 2 is required"),
         isCorrect: z.boolean(),
     }),
     answer3: z.object({
-        text: z.string().min(4, "Option 3 is required"),
+        text: z.string().min(1, "Option 3 is required"),
         isCorrect: z.boolean(),
     }),
     answer4: z.object({
-        text: z.string().min(4, "Option 4 is required"),
+        text: z.string().min(1, "Option 4 is required"),
         isCorrect: z.boolean(),
     }),
 }).refine(
