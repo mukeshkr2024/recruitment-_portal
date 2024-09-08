@@ -98,6 +98,8 @@ export const AssessmentPage = () => {
 
         submitMuttation.mutate(formattedData, {
             onSuccess: () => {
+                localStorage.removeItem(`selectedOptions-${assesmentId}`);
+                localStorage.removeItem(`currentQuestionIndex-${assesmentId}`);
                 localStorage.removeItem('secondsLeft');
                 localStorage.removeItem('pageSwitchAttempts');
             }
