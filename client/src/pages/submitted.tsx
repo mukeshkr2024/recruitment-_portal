@@ -10,6 +10,8 @@ export const SubmittedPage = () => {
     }
 
     useEffect(() => {
+        localStorage.removeItem('secondsLeft');
+        localStorage.removeItem('pageSwitchAttempts');
         const timer = setTimeout(() => {
             handleClick();
         }, 10000);
