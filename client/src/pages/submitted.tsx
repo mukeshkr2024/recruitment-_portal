@@ -1,12 +1,12 @@
 import { Button } from '@/components/ui/button';
-import { logOutSession } from '@/lib/utils';
+// import { logOutSession } from '@/lib/utils';
 import { useEffect } from 'preact/hooks';
 
 export const SubmittedPage = () => {
 
     const handleClick = () => {
-        logOutSession()
-        window.location.href = '/applicant-login';
+        // logOutSession()
+        window.location.href = '/applicant-dashboard';
     }
 
     useEffect(() => {
