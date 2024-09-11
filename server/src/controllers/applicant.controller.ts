@@ -169,6 +169,17 @@ export const getApplicants = CatchAsyncError(async (req: Request, res: Response,
 
 export const getApplicantsDownloadData = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
+
+        const { job, status } = req.query;
+
+        let query;
+
+        if (job) {
+            // @ts-ignore
+            query = eq(applicant.status, status);
+        }
+
+
         const applicants = await db.query.applicant.findMany({
             with: {
                 examResults: {
@@ -181,7 +192,8 @@ export const getApplicantsDownloadData = CatchAsyncError(async (req: Request, re
                         },
                     }
                 },
-            }
+            },
+            where: query
         });
 
 
