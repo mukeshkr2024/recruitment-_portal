@@ -19,6 +19,8 @@ const statusOptions = [
     { id: "pending", name: "Pending" },
 ];
 
+
+
 export const ApplicantsPage = () => {
     const location = useLocation();
     const navigate = useNavigate();
@@ -82,57 +84,55 @@ export const ApplicantsPage = () => {
                     Status: item.status,
                     Phone: item.phone,
                     AppliedAt: item.createdAt,
-                    PositionName: 'N/A',
-                    ExamName: 'N/A',
-                    ExamStatus: 'N/A',
-                    Score: 'N/A',
-                    TotalScore: 'N/A'
                 };
 
-                formattedData.push(generalInfo);
-
+                // If no exam results exist, push a row with default values
                 if (item.examResults.length === 0) {
                     formattedData.push({
-                        Id: '',
-                        FullName: '',
-                        Email: '',
-                        Status: '',
-                        Phone: '',
-                        AppliedAt: '',
+                        ...generalInfo,
                         PositionName: 'N/A',
                         ExamName: 'N/A',
                         ExamStatus: 'N/A',
                         Score: 'N/A',
-                        TotalScore: 'N/A'
+                        TotalScore: 'N/A',
+                    });
+                } else {
+                    // Iterate through each exam result and create corresponding rows
+                    item.examResults.forEach((examResult: any, examIdx: number) => {
+                        const examInfo = {
+                            PositionName: examResult.position?.positionName || ' ',
+                            ExamName: examResult.exam?.name || ' ',
+                            ExamStatus: examResult.examStatus || ' ',
+                            Score: examResult.score || ' ',
+                            TotalScore: examResult.totalScore || ' ',
+                        };
+
+                        // If it's the first exam result, include the applicant's general info
+                        if (examIdx === 0) {
+                            formattedData.push({
+                                ...generalInfo,
+                                ...examInfo,
+                            });
+                        } else {
+                            // For subsequent exam results, leave general info empty
+                            formattedData.push({
+                                Id: '',
+                                FullName: '',
+                                Email: '',
+                                Status: '',
+                                Phone: '',
+                                AppliedAt: '',
+                                ...examInfo,
+                            });
+                        }
                     });
                 }
-
-                item.examResults.forEach((examResult: any) => {
-                    const examInfo = {
-                        Id: '',
-                        FullName: '',
-                        Email: '',
-                        Status: '',
-                        Phone: '',
-                        AppliedAt: '',
-                        PositionName: examResult.position?.positionName || 'N/A',
-                        ExamName: examResult.exam?.name || 'N/A',
-                        ExamStatus: examResult.examStatus || 'N/A',
-                        Score: examResult.score || 'N/A',
-                        TotalScore: examResult.totalScore || 'N/A'
-                    };
-
-                    // Add the exam result row to the formatted data
-                    formattedData.push(examInfo);
-                });
             });
 
-            // Create the worksheet and workbook
             const worksheet = XLSX.utils.json_to_sheet(formattedData);
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, 'Applicants');
 
-            // Generate the Excel file and initiate download
             const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
             const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
             const url = URL.createObjectURL(blob);
@@ -145,8 +145,6 @@ export const ApplicantsPage = () => {
             URL.revokeObjectURL(url);
         }
     };
-
-
 
 
     if (isLoading) {

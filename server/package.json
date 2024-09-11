@@ -9,7 +9,7 @@
     "db:studio": "npx drizzle-kit studio",
     "db:push": "npx drizzle-kit push",
     "db:generate": "npx drizzle-kit generate",
-    "db:seed": "tsx ./scripts/seed2.ts"
+    "db:seed": "tsx ./scripts/seed.ts"
   },
   "keywords": [],
   "author": "",
