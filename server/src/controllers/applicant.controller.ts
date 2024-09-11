@@ -174,9 +174,9 @@ export const getApplicantsDownloadData = CatchAsyncError(async (req: Request, re
 
         let query;
 
-        if (job) {
+        if (status) {
             // @ts-ignore
-            query = eq(applicant.status, status);
+            query = eq(applicant.status, status.toUpperCase());
         }
 
 
