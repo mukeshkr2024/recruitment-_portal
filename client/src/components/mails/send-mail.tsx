@@ -53,7 +53,7 @@ export const SendMail = ({ positions, statusOptions }: SendMailProps) => {
         },
     });
 
-    const { handleSubmit, control, watch, setValue, formState: { isSubmitting, isValid, errors } } = form;
+    const { handleSubmit, control, watch, setValue, formState: { isSubmitting } } = form;
 
     const onSubmit = (values: z.infer<typeof formSchema>) => {
         mutation.mutate(values, {
@@ -225,7 +225,9 @@ export const SendMail = ({ positions, statusOptions }: SendMailProps) => {
                                     Cancel
                                 </Button>
                                 <Button type="submit" disabled={isSubmitting} className="w-full">
-                                    Send
+                                    {
+                                        isSubmitting ? "Sending..." : "Send Email"
+                                    }
                                 </Button>
                             </div>
                         </form>

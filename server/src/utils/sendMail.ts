@@ -80,7 +80,6 @@ export const sendMailWithCustomBody = async (options: MailOptions): Promise<void
 
         console.log(result);
 
-
     } catch (error) {
         console.error("Error sending email with custom body:", error);
         throw new Error("Error sending email with custom body");
