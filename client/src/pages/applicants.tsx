@@ -4,7 +4,9 @@ import { useGetPositions } from "@/api/positions/use-get-positions";
 import { ApplicantsData } from "@/components/applicant/applicant-data";
 import { ApplicantColumnData } from "@/components/applicant/applicant-data-columns";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { SendMail } from "@/components/mails/send-mail";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useEffect, useState } from "preact/hooks";
@@ -20,7 +22,6 @@ const statusOptions = [
 ];
 
 
-
 export const ApplicantsPage = () => {
     const location = useLocation();
     const navigate = useNavigate();
@@ -29,6 +30,7 @@ export const ApplicantsPage = () => {
     const { data, isLoading } = useGetApplicants(selectedJobOption, selectedStatusOption);
     const { data: positions } = useGetPositions();
     const [isClearDisabled, setIsClearDisabled] = useState<boolean>(true);
+    const [searchQuery, setSearchQuery] = useState<string>("");
 
     const { refetch, data: csvBlob } = useGetApplicantsDownloadData(selectedJobOption, selectedStatusOption);
 
@@ -86,7 +88,6 @@ export const ApplicantsPage = () => {
                     AppliedAt: item.createdAt,
                 };
 
-                // If no exam results exist, push a row with default values
                 if (item.examResults.length === 0) {
                     formattedData.push({
                         ...generalInfo,
@@ -97,7 +98,6 @@ export const ApplicantsPage = () => {
                         TotalScore: 'N/A',
                     });
                 } else {
-                    // Iterate through each exam result and create corresponding rows
                     item.examResults.forEach((examResult: any, examIdx: number) => {
                         const examInfo = {
                             PositionName: examResult.position?.positionName || ' ',
@@ -107,14 +107,12 @@ export const ApplicantsPage = () => {
                             TotalScore: examResult.totalScore || ' ',
                         };
 
-                        // If it's the first exam result, include the applicant's general info
                         if (examIdx === 0) {
                             formattedData.push({
                                 ...generalInfo,
                                 ...examInfo,
                             });
                         } else {
-                            // For subsequent exam results, leave general info empty
                             formattedData.push({
                                 Id: '',
                                 FullName: '',
@@ -151,13 +149,20 @@ export const ApplicantsPage = () => {
         return <LoadingSpinner />;
     }
 
+    const filteredData = data?.filter((item: any) => {
+        const fullName = `${item?.applicant.firstName} ${item?.applicant.lastName}`.toLowerCase();
+        const query = searchQuery.toLowerCase();
+        return item?.applicant?.email?.toLowerCase().includes(query) || fullName.includes(query)
+    }
+    );
+
     return (
         <div className="px-6 space-y-4 -mt-2">
             <div className="flex items-center justify-between">
                 <h2 className="text-3xl font-bold text-blue-900">Job Applicants</h2>
                 <p className="text-xl font-semibold">Total: {data?.length} Applicants</p>
             </div>
-            <div className="flex gap-6 items-center">
+            <div className="flex gap-4 items-center w-full">
                 <div className="flex-1">
                     <Label htmlFor="job-select">Job Position</Label>
                     <Select
@@ -196,24 +201,38 @@ export const ApplicantsPage = () => {
                         </SelectContent>
                     </Select>
                 </div>
-
+                <div className="flex-1">
+                    <Label htmlFor="search">Search </Label>
+                    <Input
+                        id="search"
+                        type="text"
+                        placeholder="Search"
+                        value={searchQuery}
+                        onChange={(e: any) => setSearchQuery(e.target.value)}
+                    />
+                </div>
                 <Button
                     onClick={handleClearFilters}
                     className="ml-auto mt-5"
-                    disabled={isClearDisabled} // Disable button when no filters are applied
+                    disabled={isClearDisabled}
                 >
                     Clear Filters
                 </Button>
 
+                <SendMail
+                    positions={positions}
+                    statusOptions={statusOptions}
+                />
+
                 <Button
                     onClick={handleDownloadXLSX}
-                    className="ml-4 mt-5"
+                    className="mt-5"
                 >
                     Download CSV
                 </Button>
             </div>
             <div>
-                <ApplicantsData data={data || []} columns={ApplicantColumnData} />
+                <ApplicantsData data={filteredData || []} columns={ApplicantColumnData} />
             </div>
         </div>
     );

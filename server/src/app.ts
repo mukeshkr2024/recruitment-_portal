@@ -13,6 +13,7 @@ import { applicantRouter } from "./routes/applicant.routes";
 import { applicantsRouter } from "./routes/applicants.routes";
 import { authRouter } from "./routes/auth.routes";
 import { fileRouter } from "./controllers/file-upload.controller";
+import { mailRouter } from "./routes/mail.routes";
 
 export const app = express()
 
@@ -68,6 +69,9 @@ app.patch("/api/v1/position/duration-update/:positionId", updatePosition)
 app.get('/api/v1/instructions/:assementId/exam/:examId', isApplicantAuthenticated, getInstructionsDetails)
 app.get("/api/v1/analytics", isAdminAuthenticated, getAnalytics)
 app.use("/api/v1/exam", fileRouter)
+
+// mails routes
+app.use("/api/v1/mails", mailRouter)
 
 // applicants 
 app.use("/api/v1/applicants", applicantsRouter)
