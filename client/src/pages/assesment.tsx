@@ -258,7 +258,7 @@ export const AssessmentPage = () => {
                                                 <div className="w-full mt-2 -ml-2">
                                                     <CodeHighlighter
                                                         code={currentQuestion?.code}
-                                                        language={currentQuestion.language || "cpp"}
+                                                        language={currentQuestion?.language || "cpp"}
                                                     />
                                                 </div>
                                             )
