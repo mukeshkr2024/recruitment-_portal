@@ -11,6 +11,8 @@ export const question = pgTable("question", {
         onDelete: "cascade"
     }).notNull(),
     questionText: text("question_text").notNull(),
+    language: text("language").default("text"),
+    code: text("code"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow(),
 });

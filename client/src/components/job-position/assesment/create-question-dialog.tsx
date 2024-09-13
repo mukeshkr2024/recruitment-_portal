@@ -21,9 +21,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PlusCircle } from "lucide-react";
-import { useState } from "preact/hooks";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue, } from "@/components/ui/select";
+import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
+import js from "react-syntax-highlighter/dist/esm/languages/hljs/javascript";
+
+SyntaxHighlighter.registerLanguage("javascript", js);
 
 export const questionFormSchema = z.object({
     questionText: z.string().min(10, "Question Title is required"),
@@ -43,6 +48,8 @@ export const questionFormSchema = z.object({
         text: z.string().min(1, "Option 4 is required"),
         isCorrect: z.boolean(),
     }),
+    language: z.string().nonempty("Language is required"),
+    code: z.string().optional(),
 }).refine(
     (data) =>
         data.answer1.isCorrect ||
@@ -68,6 +75,8 @@ export const CreateQuestion = ({ examId }: { examId: string }) => {
             answer2: { text: "", isCorrect: false },
             answer3: { text: "", isCorrect: false },
             answer4: { text: "", isCorrect: false },
+            language: "",
+            code: "",
         },
     });
 
@@ -77,19 +86,23 @@ export const CreateQuestion = ({ examId }: { examId: string }) => {
                 form.reset();
                 setIsOpen(false);
                 toast({
-                    title: "Question added successfully"
-                })
-            }
+                    title: "Question added successfully",
+                });
+            },
         });
     }
 
     const { isSubmitting, isValid } = form.formState;
 
+    const options = [
+        { label: "JavaScript", value: "javascript" },
+        { label: "Python", value: "python" },
+        { label: "Java", value: "java" },
+        { label: "C++", value: "cpp" },
+    ];
+
     return (
-        <Dialog
-            open={isOpen}
-            onOpenChange={() => setIsOpen((prevValue) => !prevValue)}
-        >
+        <Dialog open={isOpen} onOpenChange={() => setIsOpen((prevValue) => !prevValue)}>
             <DialogTrigger asChild>
                 <div className="flex items-center gap-2 p-2">
                     <Button className="flex gap-x-2">
@@ -105,6 +118,7 @@ export const CreateQuestion = ({ examId }: { examId: string }) => {
                 <div className="flex flex-col gap-y-4">
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)}>
+                            {/* Question Title */}
                             <FormField
                                 control={form.control}
                                 name="questionText"
@@ -112,15 +126,58 @@ export const CreateQuestion = ({ examId }: { examId: string }) => {
                                     <FormItem>
                                         <FormLabel>Question Title</FormLabel>
                                         <FormControl>
-                                            <Textarea
-                                                placeholder="e.g., What is UI/UX Design?"
-                                                {...field}
-                                            />
+                                            <Textarea placeholder="e.g., What is UI/UX Design?" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
+
+                            {/* Language Selection */}
+                            <FormField
+                                control={form.control}
+                                name="language"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Programming Language</FormLabel>
+                                        <FormControl>
+                                            <Select onValueChange={field.onChange}>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select Language" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectGroup>
+                                                        <SelectLabel>Language</SelectLabel>
+                                                        {options.map((option) => (
+                                                            <SelectItem key={option.value} value={option.value}>
+                                                                {option.label}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectGroup>
+                                                </SelectContent>
+                                            </Select>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {/* Code Input */}
+                            <FormField
+                                control={form.control}
+                                name="code"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Code</FormLabel>
+                                        <FormControl>
+                                            <Textarea placeholder="Insert code here" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {/* Answers */}
                             <div className="mt-4 flex flex-col gap-y-4">
                                 <div>
                                     <h3 className="font-medium">Options</h3>
@@ -273,14 +330,14 @@ export const CreateQuestion = ({ examId }: { examId: string }) => {
 
                             </div>
 
-
-                            <div className="mb-4 mt-4 flex gap-x-4">
+                            {/* Submit and Cancel Buttons */}
+                            <div className="mt-4 flex gap-x-4">
                                 <Button
                                     variant="outline"
                                     className="w-28"
                                     onClick={() => {
-                                        setIsOpen((prevValue) => !prevValue)
-                                        form.reset()
+                                        setIsOpen((prevValue) => !prevValue);
+                                        form.reset();
                                     }}
                                     type="button"
                                 >
@@ -296,8 +353,10 @@ export const CreateQuestion = ({ examId }: { examId: string }) => {
                             </div>
                         </form>
                     </Form>
-                </div >
-            </DialogContent >
-        </Dialog >
+                </div>
+            </DialogContent>
+        </Dialog>
     );
 };
+
+
