@@ -56,11 +56,11 @@ export const sendMail = CatchAsyncError(async (req: Request, res: Response, next
 
             for (const assessment of assessments) {
                 if (assessment.applicant.status?.toLowerCase() === status.toLowerCase()) {
-                    // await sendMailWithCustomBody({
-                    //     email: assessment.applicant.email,
-                    //     subject,
-                    //     html: body,
-                    // }); 
+                    await sendMailWithCustomBody({
+                        email: assessment.applicant.email,
+                        subject,
+                        html: body,
+                    });
                     // TODO: sendMailWithCustomBody
                     console.log("email sent", assessment.applicant.email);
                 }
