@@ -24,6 +24,7 @@ import { PlusCircle } from "lucide-react";
 import { useEffect } from "preact/hooks";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue, } from "@/components/ui/select";
 
 type Props = {
     onClose: () => void
@@ -48,6 +49,8 @@ export const editQuestionSchema = z.object({
         text: z.string().min(1, "Option 4 is required"),
         isCorrect: z.boolean(),
     }),
+    language: z.string().nonempty("Language is required"),
+    code: z.string().optional(),
 }).refine(
     (data) =>
         data.answer1.isCorrect ||
@@ -59,6 +62,14 @@ export const editQuestionSchema = z.object({
         path: ["answer1", "answer2", "answer3", "answer4"],
     }
 );
+
+const options = [
+    { label: "JavaScript", value: "javascript" },
+    { label: "Python", value: "python" },
+    { label: "Java", value: "java" },
+    { label: "C++", value: "cpp" },
+    { label: "Text", value: "text" },
+];
 
 export const EditQuestion = ({ onClose, questionId }: Props) => {
 
@@ -73,6 +84,8 @@ export const EditQuestion = ({ onClose, questionId }: Props) => {
             answer2: { text: "", isCorrect: false },
             answer3: { text: "", isCorrect: false },
             answer4: { text: "", isCorrect: false },
+            language: "",
+            code: "",
         },
     });
 
@@ -96,6 +109,8 @@ export const EditQuestion = ({ onClose, questionId }: Props) => {
                     text: question?.options[3]?.optionText || "",
                     isCorrect: question?.options[3]?.isCorrect || false,
                 },
+                language: question?.language || "",
+                code: question?.code || "",
             });
         }
     }, [question, form]);
@@ -143,6 +158,52 @@ export const EditQuestion = ({ onClose, questionId }: Props) => {
                                     </FormItem>
                                 )}
                             />
+
+
+                            {/* Language Selection */}
+                            <FormField
+                                control={form.control}
+                                name="language"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Programming Language</FormLabel>
+                                        <FormControl>
+                                            <Select onValueChange={field.onChange}>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select Language" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectGroup>
+                                                        <SelectLabel>Language</SelectLabel>
+                                                        {options.map((option) => (
+                                                            <SelectItem key={option.value} value={option.value}>
+                                                                {option.label}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectGroup>
+                                                </SelectContent>
+                                            </Select>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {/* Code Input */}
+                            <FormField
+                                control={form.control}
+                                name="code"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Code</FormLabel>
+                                        <FormControl>
+                                            <Textarea placeholder="Insert code here" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
                             <div className="mt-4 flex flex-col gap-y-4">
                                 <div>
                                     <h3 className="font-medium">Options</h3>
