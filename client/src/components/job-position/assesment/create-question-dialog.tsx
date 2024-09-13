@@ -99,6 +99,7 @@ export const CreateQuestion = ({ examId }: { examId: string }) => {
         { label: "Python", value: "python" },
         { label: "Java", value: "java" },
         { label: "C++", value: "cpp" },
+        { label: "Text", value: "text" },
     ];
 
     return (

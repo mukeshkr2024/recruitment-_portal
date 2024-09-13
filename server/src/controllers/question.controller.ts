@@ -28,7 +28,8 @@ export const createQuestion = CatchAsyncError(async (req: Request, res: Response
 
         const { examId } = req.params;
 
-        const { questionText, answer1, answer2, answer3, answer4 } = req.body;
+        const { questionText, answer1, answer2, answer3, answer4, language, code } = req.body;
+
 
         const isAlreadyQuestionExist = await db.query.question.findFirst({
             where: eq(question.questionText, questionText)
@@ -41,6 +42,8 @@ export const createQuestion = CatchAsyncError(async (req: Request, res: Response
         const createdQuestion = await db.insert(question).values([{
             examId: examId,
             questionText: questionText,
+            code: code,
+            language: language
         }]).returning()
 
         const options = await db.insert(option).values([{

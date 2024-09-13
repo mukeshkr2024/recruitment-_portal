@@ -3,6 +3,7 @@ import { useSubmitAssessment } from "@/api/applicants/use-submit-assesment";
 import { AssessmentFooter } from "@/components/assesments/assement-footer";
 import { AssessmentHeader } from "@/components/assesments/assesment-header";
 import { ConfirmSubmit } from "@/components/assesments/confirm-submit";
+import CodeHighlighter from "@/components/code-highlighter";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { useEffect, useState } from "preact/hooks";
 import { useParams } from "react-router-dom";
@@ -14,6 +15,8 @@ type Question = {
         id: string,
         optionText: string
     }[]
+    language: string;
+    code: string
 }
 
 type SelectedOption = {
@@ -225,6 +228,8 @@ export const AssessmentPage = () => {
     //     };
     // }, []);
 
+
+
     return (
         <div className="flex flex-col min-h-screen pt-4 pb-12">
             {
@@ -242,11 +247,23 @@ export const AssessmentPage = () => {
                                 timeLeft={formatTime(timeLeft)}
                             />
                         </div>
-                        <div className="flex-grow mx-auto w-full max-w-7xl flex items-center px-4">
-                            <div className="">
+                        <div className="flex-grow mx-auto w-full max-w-7xl flex items-center px-4"  >
+                            <div className="w-full">
                                 <section className="text-2xl flex items-start gap-x-1.5 font-semibold">
                                     <span>{currentQuestionIndex + 1}.</span>
-                                    <p>{currentQuestion.questionText}</p>
+                                    <div className="flex flex-col w-full">
+                                        <p>{currentQuestion.questionText}</p>
+                                        {
+                                            currentQuestion?.language !== "text" && (
+                                                <div className="w-full mt-2 -ml-2">
+                                                    <CodeHighlighter
+                                                        code={currentQuestion?.code}
+                                                        language={currentQuestion.language || "cpp"}
+                                                    />
+                                                </div>
+                                            )
+                                        }
+                                    </div>
                                 </section>
                                 <section className="mt-4 ml-4 flex flex-col gap-y-2">
                                     {currentQuestion.options.map((option, idx) => (
@@ -256,7 +273,7 @@ export const AssessmentPage = () => {
                                                 id={`option-${option.id}`}
                                                 name={`question-${currentQuestion.id}`}
                                                 value={option.id}
-                                                checked={selectedOptions[currentQuestionIndex].selectedOptionId === option.id}
+                                                checked={selectedOptions[currentQuestionIndex]?.selectedOptionId === option.id}
                                                 onChange={() => handleOptionChange(currentQuestion.id, option.id)}
                                                 className="transform scale-125"
                                             />
@@ -267,10 +284,10 @@ export const AssessmentPage = () => {
                                     ))}
                                 </section>
                             </div>
-                        </div >
+                        </div>
 
                         {/* Bottom Card */}
-                        <div className="flex-none" >
+                        <div className="flex-none">
                             <AssessmentFooter
                                 totalQuestions={totalQuestions}
                                 handleBack={handlePrev}
@@ -280,10 +297,11 @@ export const AssessmentPage = () => {
                                 isNextDisabled={isNextDisabled}
                                 answered={selectedOptions.filter(option => option.isSelected).length}
                             />
-                        </div >
+                        </div>
                     </>
                 )
             }
-        </div >
+        </div>
+
     );
 };

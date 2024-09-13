@@ -30,7 +30,9 @@ export const getApplicantsAssessmentQuestions = CatchAsyncError(async (req: Requ
                 questions: {
                     columns: {
                         id: true,
-                        questionText: true
+                        questionText: true,
+                        code: true,
+                        language: true,
                     },
                     with: {
                         options: {
