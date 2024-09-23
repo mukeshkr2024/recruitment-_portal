@@ -1,6 +1,6 @@
 import { eq, desc } from "drizzle-orm";
 import db from "../src/db";
-import { examResult } from "../src/db/schema";
+import { applicant, examResult } from "../src/db/schema";
 
 const main = async () => {
     try {
@@ -9,18 +9,24 @@ const main = async () => {
         const topStudents = await db.query.examResult.findMany({
             where: eq(examResult.examId, examId),
             orderBy: desc(examResult.score),
-            limit: 50
-        })
-
-        // Extracting IDs of the top 50 students
-        const students = topStudents.map(result => {
-            return {
-                id: result.id,
-                score: result.score,
-            }
+            limit: 50 // Use 'take' instead of 'limit'
         });
 
-        console.log("Top 50 Students' IDs:", students);
+        // Extracting details of the top 50 students
+        const students = await Promise.all(topStudents.map(async (result) => {
+            const student = await db.query.applicant.findFirst({
+                where: eq(applicant.id, result.applicantId)
+            });
+
+            return {
+                name: `${student?.firstName} ${student?.lastName}`, // Corrected syntax for string concatenation
+                email: student?.email,
+                phone: student?.phone,
+                score: result.score,
+            };
+        }));
+
+        console.log("Top 50 Students:", students);
 
     } catch (error) {
         console.error("Error processing exam results:", error);
