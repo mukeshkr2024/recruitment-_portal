@@ -14,18 +14,18 @@ const main = async () => {
         let totalApplicantsHaving35 = 0;
 
         for (const exam of examResults) {
-            if (exam.score >= 30) {
+            if (exam.score > 30) {
                 totalApplicantsHaving30++;
             }
 
-            if (exam.score >= 35) {
+            if (exam.score > 35) {
                 totalApplicantsHaving35++;
             }
         }
 
         console.log("Total results: " + examResults.length);
-        console.log("Total having score 30 or more: " + totalApplicantsHaving30);
-        console.log("Total having score 35 or more: " + totalApplicantsHaving35);
+        console.log("Total having score more than 30: " + totalApplicantsHaving30);
+        console.log("Total having score more than 35 " + totalApplicantsHaving35);
 
     } catch (error) {
         console.error("Error processing exam results:", error);
