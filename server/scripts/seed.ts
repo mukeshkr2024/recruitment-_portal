@@ -19,7 +19,9 @@ const main = async () => {
 
         // Filter applicants with only one exam result
         const applicantsWithOneExamResult = assessments
-            .filter(({ applicant }) => applicant.examResults.length === 1) // Destructure applicant for clarity
+            .filter(({ applicant }) =>
+                applicant.examResults?.length === 1 && applicant.status === "INPROGRESS" // Use '===' for comparison
+            )
             .map(({ applicant }) => ({
                 name: `${applicant.firstName} ${applicant.lastName}`,
                 email: applicant.email
@@ -31,7 +33,7 @@ const main = async () => {
             console.log(applicantsWithOneExamResult);
         }
     } catch (error) {
-        console.error("Error processing exam results:", error);
+        console.error("Error processing exam results:", error.message || error);
     }
 };
 
