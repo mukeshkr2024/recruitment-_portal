@@ -33,7 +33,7 @@ const main = async () => {
             console.log(applicantsWithOneExamResult);
         }
     } catch (error) {
-        console.error("Error processing exam results:", error.message || error);
+        console.error("Error processing exam results:", error);
     }
 };
 
