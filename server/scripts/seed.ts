@@ -1,33 +1,35 @@
-import { eq, desc } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import db from "../src/db";
-import { applicant, examResult } from "../src/db/schema";
+import { assessment } from "../src/db/schema";
 
 const main = async () => {
     try {
-        const examId = "d34888b3-8b75-4659-852d-0a6bc27439c3";
+        const positionId = "eeeffd6f-7269-41e8-9343-f311397ef4f4"; // Fixed typo in variable name
 
-        const topStudents = await db.query.examResult.findMany({
-            where: eq(examResult.examId, examId),
-            orderBy: desc(examResult.score),
-            limit: 50 // Use 'take' instead of 'limit'
+        const assessments = await db.query.assessment.findMany({
+            where: eq(assessment.positionId, positionId), // Use corrected variable name
+            with: {
+                applicant: {
+                    with: {
+                        examResults: true
+                    }
+                }
+            }
         });
 
-        // Extracting details of the top 50 students
-        const students = await Promise.all(topStudents.map(async (result) => {
-            const student = await db.query.applicant.findFirst({
-                where: eq(applicant.id, result.applicantId)
-            });
+        // Filter applicants with only one exam result
+        const applicantsWithOneExamResult = assessments
+            .filter(({ applicant }) => applicant.examResults.length === 1) // Destructure applicant for clarity
+            .map(({ applicant }) => ({
+                name: `${applicant.firstName} ${applicant.lastName}`,
+                email: applicant.email
+            }));
 
-            return {
-                name: `${student?.firstName} ${student?.lastName}`, // Corrected syntax for string concatenation
-                email: student?.email,
-                phone: student?.phone,
-                score: result.score,
-            };
-        }));
-
-        console.log("Top 50 Students:", students);
-
+        if (applicantsWithOneExamResult.length === 0) {
+            console.log("No applicants found with only one exam result.");
+        } else {
+            console.log(applicantsWithOneExamResult);
+        }
     } catch (error) {
         console.error("Error processing exam results:", error);
     }
