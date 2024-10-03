@@ -17,20 +17,20 @@ const main = async () => {
             }
         });
 
-        // Filter applicants with fewer than 3 exam results and 'INPROGRESS' status
-        const applicantsWithLessThanThreeExamResults = assessments
+        // Filter SELECTED applicants with fewer than 3 exam results
+        const selectedApplicantsWithLessThanThreeExamResults = assessments
             .filter(({ applicant }) =>
-                applicant.examResults?.length < 3 && applicant.status === "INPROGRESS" // Use '===' for comparison and check examResults length
+                applicant.examResults?.length < 3 && applicant.status === "SELECTED" // Check for SELECTED status and examResults length
             )
             .map(({ applicant }) => ({
                 name: `${applicant.firstName} ${applicant.lastName}`,
                 email: applicant.email
             }));
 
-        if (applicantsWithLessThanThreeExamResults.length === 0) {
-            console.log("No applicants found with fewer than 3 exam results.");
+        if (selectedApplicantsWithLessThanThreeExamResults.length === 0) {
+            console.log("No selected applicants found with fewer than 3 exam results.");
         } else {
-            console.log(applicantsWithLessThanThreeExamResults);
+            console.log(selectedApplicantsWithLessThanThreeExamResults);
         }
     } catch (error) {
         console.error("Error processing exam results:", error);
