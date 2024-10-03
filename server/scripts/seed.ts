@@ -20,7 +20,7 @@ const main = async () => {
         // Filter SELECTED applicants with fewer than 3 exam results
         const selectedApplicantsWithLessThanThreeExamResults = assessments
             .filter(({ applicant }) =>
-                applicant.examResults?.length < 3 && applicant.status === "SELECTED" // Check for SELECTED status and examResults length
+                applicant.examResults?.length === 3 && applicant.status === "SELECTED" // Check for SELECTED status and examResults length
             )
             .map(({ applicant }) => ({
                 name: `${applicant.firstName} ${applicant.lastName}`,
