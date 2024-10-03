@@ -17,20 +17,20 @@ const main = async () => {
             }
         });
 
-        // Filter applicants with only one exam result
-        const applicantsWithOneExamResult = assessments
+        // Filter applicants with fewer than 3 exam results and 'INPROGRESS' status
+        const applicantsWithLessThanThreeExamResults = assessments
             .filter(({ applicant }) =>
-                applicant.examResults?.length === 1 && applicant.status === "INPROGRESS" // Use '===' for comparison
+                applicant.examResults?.length < 3 && applicant.status === "INPROGRESS" // Use '===' for comparison and check examResults length
             )
             .map(({ applicant }) => ({
                 name: `${applicant.firstName} ${applicant.lastName}`,
                 email: applicant.email
             }));
 
-        if (applicantsWithOneExamResult.length === 0) {
-            console.log("No applicants found with only one exam result.");
+        if (applicantsWithLessThanThreeExamResults.length === 0) {
+            console.log("No applicants found with fewer than 3 exam results.");
         } else {
-            console.log(applicantsWithOneExamResult);
+            console.log(applicantsWithLessThanThreeExamResults);
         }
     } catch (error) {
         console.error("Error processing exam results:", error);
