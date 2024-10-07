@@ -33,6 +33,7 @@
   "dependencies": {
     "@types/multer": "^1.4.12",
     "@types/nodemailer": "^6.4.15",
+    "axios": "^1.7.7",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "docx": "^8.5.0",
