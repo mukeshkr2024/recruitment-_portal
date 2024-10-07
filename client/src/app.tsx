@@ -18,6 +18,7 @@ import { PositionDetailPage } from "./pages/postion-detail"
 import { RegisterPage } from "./pages/register"
 import { SubmittedPage } from "./pages/submitted"
 import { ApplicantDetail } from "./pages/applicant-details"
+import { Editor } from "./components/editor/editor"
 
 const queryClient = new QueryClient()
 
@@ -37,7 +38,7 @@ export const App = () => {
               <Route path="/applicant-dashboard" element={<ApplicantDashboard />} />
             </Route>
 
-            {/* Addmin Routes  */}
+            {/* Admin Routes  */}
             <Route element={<AdminDashboardLayout />}>
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/positions" element={<PositionPage />} />
@@ -50,6 +51,7 @@ export const App = () => {
               <Route path="/exams" element={<Exams />} />
             </Route>
             <Route />
+            <Route path="/editor" element={<Editor />} />
           </Routes>
         </BrowserRouter>
         <Toaster />
