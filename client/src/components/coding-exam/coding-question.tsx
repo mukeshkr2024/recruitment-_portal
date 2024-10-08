@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from "react"
-import { Loader, Play, TriangleAlert, Code2, Terminal, Save, Send, ChevronRight, ChevronLeft, TriangleAlertIcon } from "lucide-react"
+import { Loader, Play, Code2, Terminal, Save, Send, ChevronRight, ChevronLeft, TriangleAlertIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable"
@@ -10,6 +10,7 @@ import MonacoEditor from "@monaco-editor/react"
 import { useCompileCode } from "@/api/editor/use-compile-code"
 import { codeSnippets, languageOptions } from "@/utils/config"
 import { motion, AnimatePresence } from "framer-motion"
+import { useSaveCodingQuestion } from "@/api/applicants/coding-exam/use-save-coding-question"
 
 type LanguageOption = {
     language: string
@@ -26,9 +27,12 @@ type CodingQuestionProps = {
     isPrevDisabled: boolean;
     currentIndex: number;
     totalQuestions: number;
+    timeLeft: number;
+    assesmentId: string
+    examId: string
 }
 
-export const CodingQuestion = ({ data, handleNextQuestion, handlePrevQuestion, isNextDisabled, isPrevDisabled, currentIndex, totalQuestions }: CodingQuestionProps) => {
+export const CodingQuestion = ({ data, handleNextQuestion, handlePrevQuestion, isNextDisabled, isPrevDisabled, currentIndex, totalQuestions, timeLeft, assesmentId, examId }: CodingQuestionProps) => {
     const [sourceCode, setSourceCode] = React.useState(codeSnippets["javascript"])
     const [languageOption, setLanguageOption] = React.useState<LanguageOption>(languageOptions[0])
     const [loading, setLoading] = React.useState(false)
@@ -36,6 +40,13 @@ export const CodingQuestion = ({ data, handleNextQuestion, handlePrevQuestion, i
     const [errorOccurred, setErrorOccurred] = React.useState(false)
     const editorRef = React.useRef(null)
     const compileMutation = useCompileCode()
+    const saveMutation = useSaveCodingQuestion(
+        assesmentId,
+        examId
+    )
+
+    console.log(data);
+
 
     function handleEditorDidMount(editor: any) {
         editorRef.current = editor
@@ -83,9 +94,28 @@ export const CodingQuestion = ({ data, handleNextQuestion, handlePrevQuestion, i
         }
     }
 
-    const handleSave = () => { }
+    console.log(data);
+
+
+    const handleSave = (
+    ) => {
+
+        if (!data?.id) return;
+
+        saveMutation.mutate({
+            answer: sourceCode,
+            codingQuestionId: data?.id
+        })
+    }
 
     const handleSubmit = () => { }
+
+    const formatTime = (time: number) => {
+        const minutes = Math.floor(time / 60);
+        const seconds = time % 60;
+        return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
+    };
+
 
     return (
         <Card className="h-full w-full overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900 text-gray-100 shadow-xl">
@@ -98,7 +128,7 @@ export const CodingQuestion = ({ data, handleNextQuestion, handlePrevQuestion, i
                                     <Code2 className="w-6 h-6 mr-2 text-blue-400" />
                                     Question {data?.questionNumber || '01'}
                                 </div>
-                                002
+                                {formatTime(timeLeft)}
                             </CardTitle>
                         </CardHeader>
 

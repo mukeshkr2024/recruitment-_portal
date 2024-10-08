@@ -8,5 +8,5 @@ export { question, questionRelations } from "./question"
 export { user } from "./user"
 export { examResult, examResultsRelations } from "./exam-result"
 export { codingQuestion, codingQuestionRelations } from "./coding-questions"
-
-
+export { submission, submissionRelations } from "./submission"
+export { examSubmission, examSubmissionRelations } from "./exam-submission"
