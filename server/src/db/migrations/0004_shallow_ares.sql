@@ -1,0 +1,1 @@
+ALTER TABLE "exam" ALTER COLUMN "exam_type" SET NOT NULL;

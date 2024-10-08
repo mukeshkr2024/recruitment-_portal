@@ -22,6 +22,41 @@
       "when": 1726247833777,
       "tag": "0002_loose_hedge_knight",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1728305566655,
+      "tag": "0003_whole_surge",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1728305673534,
+      "tag": "0004_shallow_ares",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1728305751038,
+      "tag": "0005_salty_wrecking_crew",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1728305876650,
+      "tag": "0006_lethal_kinsey_walden",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1728369403859,
+      "tag": "0007_organic_black_bolt",
+      "breakpoints": true
     }
   ]
 }

@@ -8,6 +8,7 @@ import { JSXInternal } from 'node_modules/preact/src/jsx';
 import { useState } from 'preact/hooks';
 import { CreateQuestion } from './create-question-dialog';
 import { EditQuestion } from './edit-questions';
+import { CreateCodingQuestion } from './create-coding-questions';
 
 type Question = {
     id: string,
@@ -15,12 +16,14 @@ type Question = {
     questionText: string
 }
 
-export const AssesmentQuestions = ({ examId, questions }: { examId: string, questions: any }) => {
+export const AssesmentQuestions = ({ examId, questions, type }: { examId: string, questions: any, type: "mcq" | "coding" }) => {
     const { toast } = useToast();
     const deleteMutation = useDeleteQuestion();
     const fileUploadMutation = useUploadFile(examId);
     const [questionToEdit, setQuestionToEdit] = useState<string | null>(null);
     const [isUploading, setIsUploading] = useState<boolean>(false);
+
+
 
     const handleDelete = (questionId: string) => {
         deleteMutation.mutate(questionId, {
@@ -64,24 +67,28 @@ export const AssesmentQuestions = ({ examId, questions }: { examId: string, ques
                     <h2 className="text-2xl font-semibold">Questions</h2>
                     <div className="flex gap-x-2 items-center">
                         {/* Upload Button */}
-                        <label htmlFor="upload-file" className="cursor-pointer flex items-center bg-blue-500 text-white px-3 py-1.5 rounded-md shadow-md hover:bg-blue-600 transition text-sm h-10">
-                            {isUploading ? (
-                                <Loader className="animate-spin mr-2" size={16} />
-                            ) : (
-                                <Upload size={16} className="mr-1.5" />
-                            )}
-                            {isUploading ? "Uploading..." : "Upload Word File"}
-                        </label>
-                        <input
-                            id="upload-file"
-                            type="file"
-                            accept=".doc,.docx"
-                            className="hidden"
-                            onChange={handleFileChange}
-                        />
-
-                        <CreateQuestion examId={examId} />
-
+                        {type !== "coding" && <>
+                            <label htmlFor="upload-file" className="cursor-pointer flex items-center bg-blue-500 text-white px-3 py-1.5 rounded-md shadow-md hover:bg-blue-600 transition text-sm h-10">
+                                {isUploading ? (
+                                    <Loader className="animate-spin mr-2" size={16} />
+                                ) : (
+                                    <Upload size={16} className="mr-1.5" />
+                                )}
+                                {isUploading ? "Uploading..." : "Upload Word File"}
+                            </label>
+                            <input
+                                id="upload-file"
+                                type="file"
+                                accept=".doc,.docx"
+                                className="hidden"
+                                onChange={handleFileChange}
+                            />
+                        </>
+                        }
+                        {type === "coding" ? <>
+                            <CreateCodingQuestion examId={examId} type={type} />
+                        </> :
+                            <CreateQuestion examId={examId} type={type} />}
                     </div>
                 </div>
                 <div className="mt-5">

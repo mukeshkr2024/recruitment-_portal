@@ -10,6 +10,7 @@ interface Exam {
   examId: string;
   name: string;
   status: string;
+  exam_type: "mcq" | "coding"
 }
 
 interface Assessment {
@@ -30,9 +31,15 @@ export const ApplicantDashboard = () => {
   // @ts-ignore
   const { firstName, lastName, email, phone } = applicant;
 
-  const handleStart = (positionId: string, examId: string) => {
+  const handleStart = (positionId: string, examId: string, type: "mcq" | "coding") => {
     console.log(`Starting exam with id: ${examId}`);
-    navigate(`/instructions/${positionId}/exam/${examId}`);
+    if (type === "coding") {
+      // Redirect to coding instructions page
+      navigate(`/coding-instructions/${positionId}/exam/${examId}`);
+      return;
+    } else {
+      navigate(`/instructions/${positionId}/exam/${examId}`);
+    }
   };
 
   const handleLogout = () => {
@@ -84,7 +91,7 @@ export const ApplicantDashboard = () => {
                               {
                                 exam.status === "PENDING" && (
                                   <button
-                                    onClick={() => handleStart(assessment.id, exam.examId)}
+                                    onClick={() => handleStart(assessment.id, exam.examId, exam?.exam_type)}
                                     className="bg-[#000000] h-9 w-32 text-white rounded-[48px]"
                                   >Start</button>
                                 )
@@ -92,7 +99,7 @@ export const ApplicantDashboard = () => {
                               {
                                 exam.status === "INPROGRESS" && (
                                   <button
-                                    onClick={() => handleStart(assessment.id, exam.examId)}
+                                    onClick={() => handleStart(assessment.id, exam.examId, exam.exam_type)}
                                     className="bg-[#000000] h-9 w-32 text-white rounded-[48px]"
                                   >Continue</button>
                                 )

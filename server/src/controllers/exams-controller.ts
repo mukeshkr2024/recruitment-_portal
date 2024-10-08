@@ -38,7 +38,8 @@ export const getExamQuestions = CatchAsyncError(async (req: Request, res: Respon
         const query = await db.query.exam.findFirst({
             where: eq(exam.id, examId),
             with: {
-                questions: true
+                questions: true,
+                codingQuestions: true
             }
         })
 
@@ -52,7 +53,7 @@ export const getExamQuestions = CatchAsyncError(async (req: Request, res: Respon
 export const createExam = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
 
-        const { name } = req.body;
+        const { name, examType } = req.body;
 
         if (!name) {
             throw new Error("Name is required");
@@ -60,6 +61,7 @@ export const createExam = CatchAsyncError(async (req: Request, res: Response, ne
 
         const newExam = await db.insert(exam).values({
             name,
+            examType
         }).returning()
 
         return res.status(201).json(newExam)

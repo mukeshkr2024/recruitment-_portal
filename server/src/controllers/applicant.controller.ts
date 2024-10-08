@@ -326,7 +326,8 @@ export const getApplicantAssessment = CatchAsyncError(async (req: Request, res: 
             acc[assessmentId].exams.push({
                 examId,
                 name: exam.exam.name,
-                status
+                status,
+                exam_type: exam.exam.examType,
             });
         });
 
@@ -476,6 +477,7 @@ export const getInstructionsDetails = CatchAsyncError(async (req: Request, res: 
             exam_name: examFound.name,
             total_questions: examFound.questions?.length || 0,
             total_time: examFound.duration,
+            exam_type: examFound.examType,
             status: "success",
         })
 

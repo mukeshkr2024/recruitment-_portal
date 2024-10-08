@@ -32,12 +32,12 @@ export const SelectLanguages: React.FC<SelectLanguagesProps> = ({
     };
 
     return (
-        <Select onValueChange={handleValueChange} value={selectedLanguageOption.language}>
-            <SelectTrigger className="w-[180px]">
+        <Select onValueChange={handleValueChange} value={selectedLanguageOption.language} >
+            <SelectTrigger className="w-[180px] h-9 bg-slate-700 text-white">
                 <SelectValue placeholder="Select a language" />
             </SelectTrigger>
-            <SelectContent>
-                <SelectGroup>
+            <SelectContent className="bg-slate-700 text-white">
+                <SelectGroup >
                     <SelectLabel>Languages</SelectLabel>
                     {languageOptions.map(option => (
                         <SelectItem key={option.language} value={option.language}>

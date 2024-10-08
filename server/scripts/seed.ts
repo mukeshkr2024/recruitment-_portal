@@ -1,39 +1,24 @@
-import { eq } from "drizzle-orm";
 import db from "../src/db";
-import { assessment } from "../src/db/schema";
+import { user } from "../src/db/schema";
 
 const main = async () => {
+    console.log("Starting database seed...");
     try {
-        const positionId = "eeeffd6f-7269-41e8-9343-f311397ef4f4"; // Fixed typo in variable name
+        // Delete all existing users
+        await db.delete(user).execute();
 
-        const assessments = await db.query.assessment.findMany({
-            where: eq(assessment.positionId, positionId), // Use corrected variable name
-            with: {
-                applicant: {
-                    with: {
-                        examResults: true
-                    }
-                }
-            }
-        });
+        // Create a new user
+        const createdUser = await db.insert(user).values({
+            firstName: "John",
+            lastName: "Doe",
+            email: "john.doe@example.com",
+            password: "password123",
+            role: "user"
+        }).returning();
 
-        // Filter SELECTED applicants with fewer than 3 exam results
-        const selectedApplicantsWithLessThanThreeExamResults = assessments
-            .filter(({ applicant }) =>
-                applicant.examResults?.length === 3 && applicant.status === "SELECTED" // Check for SELECTED status and examResults length
-            )
-            .map(({ applicant }) => ({
-                name: `${applicant.firstName} ${applicant.lastName}`,
-                email: applicant.email
-            }));
-
-        if (selectedApplicantsWithLessThanThreeExamResults.length === 0) {
-            console.log("No selected applicants found with fewer than 3 exam results.");
-        } else {
-            console.log(selectedApplicantsWithLessThanThreeExamResults);
-        }
+        console.log("Created User:", createdUser);
     } catch (error) {
-        console.error("Error processing exam results:", error);
+        console.error("Error seeding database:", error);
     }
 };
 

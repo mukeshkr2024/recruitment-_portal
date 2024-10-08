@@ -12,6 +12,9 @@ export const ExamDetail = () => {
         return <div>Loadig....</div>
     }
 
+    console.log(data);
+
+
     return (
         <div className="p-6">
             <div className="flex flex-col space-y-4">
@@ -23,7 +26,9 @@ export const ExamDetail = () => {
                     examId={examId!}
                     duration={data?.duration}
                 />
-                <AssesmentQuestions examId={examId!} questions={data?.questions} />
+                <AssesmentQuestions examId={examId!} questions={data?.questions}
+                    type={data?.examType}
+                />
             </div>
         </div>
     )

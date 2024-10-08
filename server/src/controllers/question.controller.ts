@@ -1,7 +1,7 @@
 import { asc, desc, eq } from "drizzle-orm";
 import { NextFunction, Request, Response } from "express";
 import db from "../db";
-import { option, position, question, } from "../db/schema";
+import { codingQuestion, exam, option, position, question, } from "../db/schema";
 import { CatchAsyncError } from "../middleware/catchAsyncError";
 import { ErrorHandler } from "../utils/ErrorHandler";
 
@@ -28,46 +28,88 @@ export const createQuestion = CatchAsyncError(async (req: Request, res: Response
 
         const { examId } = req.params;
 
-        const { questionText, answer1, answer2, answer3, answer4, language, code } = req.body;
+        console.log(req.query);
 
+        if (req.query.type && req.query.type === 'coding') {
+            console.log("called");
 
-        const isAlreadyQuestionExist = await db.query.question.findFirst({
-            where: eq(question.questionText, questionText)
-        })
+            const examFound = await db.query.exam.findFirst(
+                {
+                    where: eq(exam.id, examId),
+                    with: {
+                        codingQuestions: true
+                    }
+                }
+            )
 
-        if (isAlreadyQuestionExist) {
-            throw new Error("Question already exist")
+            console.log("examFound", examFound);
+
+            const { questionText, questionCode, haveQuestionCode, language } = req.body;
+
+            const createdQuestion = await db.insert(codingQuestion).values({
+                examId: examId,
+                questionText: questionText,
+                questionCode: questionCode,
+                haveQuestionCode: haveQuestionCode,
+                language: language
+            }).returning();
+
+            const examFounds = await db.query.exam.findFirst(
+                {
+                    where: eq(exam.id, examId),
+                    with: {
+                        codingQuestions: true
+                    }
+                }
+            )
+
+            console.log("examFounds", examFounds);
+
+            return res.status(200).json({
+                createdQuestion
+            })
+
+        } else {
+            const { questionText, answer1, answer2, answer3, answer4, language, code } = req.body;
+
+            const isAlreadyQuestionExist = await db.query.question.findFirst({
+                where: eq(question.questionText, questionText)
+            })
+
+            if (isAlreadyQuestionExist) {
+                throw new Error("Question already exist")
+            }
+
+            const createdQuestion = await db.insert(question).values([{
+                examId: examId,
+                questionText: questionText,
+                code: code,
+                language: language
+            }]).returning()
+
+            const options = await db.insert(option).values([{
+                questionId: createdQuestion[0].id,
+                optionText: answer1?.text,
+                isCorrect: answer1?.isCorrect,
+            }, {
+                questionId: createdQuestion[0].id,
+                optionText: answer2?.text,
+                isCorrect: answer2?.isCorrect,
+            }, {
+                questionId: createdQuestion[0].id,
+                optionText: answer3?.text,
+                isCorrect: answer3?.isCorrect,
+            }, {
+                questionId: createdQuestion[0].id,
+                optionText: answer4?.text,
+                isCorrect: answer4?.isCorrect,
+            }]).returning()
+
+            return res.status(200).json({
+                question: createdQuestion[0],
+                options: options
+            })
         }
-
-        const createdQuestion = await db.insert(question).values([{
-            examId: examId,
-            questionText: questionText,
-            code: code,
-            language: language
-        }]).returning()
-
-        const options = await db.insert(option).values([{
-            questionId: createdQuestion[0].id,
-            optionText: answer1?.text,
-            isCorrect: answer1?.isCorrect,
-        }, {
-            questionId: createdQuestion[0].id,
-            optionText: answer2?.text,
-            isCorrect: answer2?.isCorrect,
-        }, {
-            questionId: createdQuestion[0].id,
-            optionText: answer3?.text,
-            isCorrect: answer3?.isCorrect,
-        }, {
-            questionId: createdQuestion[0].id,
-            optionText: answer4?.text,
-            isCorrect: answer4?.isCorrect,
-        }]).returning()
-
-        return res.status(200).json({
-            question: createdQuestion[0],
-            options: options
-        })
 
     } catch (error) {
         return next(new ErrorHandler(error, 400));

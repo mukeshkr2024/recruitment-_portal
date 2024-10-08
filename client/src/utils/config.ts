@@ -1,4 +1,4 @@
-import { CodeSnippetsProps } from "@/components/editor/editor";
+import { CodeSnippetsProps } from "@/components/coding-exam/editor";
 
 export const API_URL = import.meta.env.VITE_API_URL
 export const SITE_URL = import.meta.env.VITE_SITE_URL

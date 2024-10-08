@@ -1,12 +1,15 @@
 import { QueryClient, QueryClientProvider } from "react-query"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
+import { Editor } from "./components/coding-exam/editor"
 import { AdminDashboardLayout } from "./components/layouts/admin-dashboard-layout"
 import { ApplicantProtectLayout } from "./components/layouts/applicant-protect-layout"
 import { Toaster } from "./components/ui/toaster"
 import { AdminLoginPage } from "./pages/admin-login"
 import { ApplicantDashboard } from "./pages/applicant-dashboard"
+import { ApplicantDetail } from "./pages/applicant-details"
 import { ApplicantsPage } from "./pages/applicants"
 import { AssessmentPage } from "./pages/assesment"
+import { CodingInstructionPage } from "./pages/coding-instructions"
 import { DashboardPage } from "./pages/dashboard"
 import { ExamDetail } from "./pages/exam-detail"
 import { Exams } from "./pages/exams"
@@ -17,8 +20,7 @@ import { PositionPage } from "./pages/positions"
 import { PositionDetailPage } from "./pages/postion-detail"
 import { RegisterPage } from "./pages/register"
 import { SubmittedPage } from "./pages/submitted"
-import { ApplicantDetail } from "./pages/applicant-details"
-import { Editor } from "./components/editor/editor"
+import { CodingAssessmentPage } from "./pages/coding-assessment"
 
 const queryClient = new QueryClient()
 
@@ -33,7 +35,9 @@ export const App = () => {
             <Route path="/applicant-register/:positionId" element={<RegisterPage />} />
             <Route element={<ApplicantProtectLayout />}>
               <Route path="/instructions/:assesmentId/exam/:examId" element={<InstructionPage />} />
+              <Route path="/coding-instructions/:assesmentId/exam/:examId" element={<CodingInstructionPage />} />
               <Route path="/assesment/:assesmentId/exam/:examId" element={<AssessmentPage />} />
+              <Route path="/coding-assesment/:assesmentId/exam/:examId" element={<CodingAssessmentPage />} />
               <Route path="/submitted" element={<SubmittedPage />} />
               <Route path="/applicant-dashboard" element={<ApplicantDashboard />} />
             </Route>
