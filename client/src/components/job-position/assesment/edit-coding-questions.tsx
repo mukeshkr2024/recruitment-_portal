@@ -1,6 +1,5 @@
 "use client";
 
-import { useCreateQuestion } from "@/api/questions/use-create-question";
 import { useGetQuestion } from "@/api/questions/use-get-question";
 import { useUpdateQuestion } from "@/api/questions/use-update-question";
 import { Button } from "@/components/ui/button";
