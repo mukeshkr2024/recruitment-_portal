@@ -285,6 +285,7 @@ export const getApplicantAssessment = CatchAsyncError(async (req: Request, res: 
                 with: { position: true }
             },
             examResults: true,
+            codingResults: true,
         }
     });
 
@@ -294,6 +295,7 @@ export const getApplicantAssessment = CatchAsyncError(async (req: Request, res: 
 
     const examResults = applicantPositions.examResults;
     const assessments = applicantPositions.assements || [];
+    const codingResults = applicantPositions.codingResults || []
 
     if (!assessments.length) {
         return res.status(200).json([]); // No assessments, return empty array
@@ -327,11 +329,11 @@ export const getApplicantAssessment = CatchAsyncError(async (req: Request, res: 
 
                     // Determine exam status based on type and results
                     if (exam.exam.examType === "coding") {
-                        const examsSubmissionData = await db.query.examSubmission.findFirst({
-                            where: eq(examSubmission.applicantId, applicantId)
-                        });
-                        // status = examsSubmissionData?.status || "PENDING";
-                        status = "PENDING"; // TODO : Fix later
+                        const codingResult = codingResults?.find(r => r.examId === examId && r.assessmentId === assessmentId);
+                        status = codingResult?.status || "PENDING";
+
+                        console.log(codingResults);
+
                     } else {
                         const examResult = examResults?.find(r => r.examId === examId && r.assessmentId === assessmentId);
                         status = examResult?.status || "PENDING";
