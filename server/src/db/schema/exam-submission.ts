@@ -13,7 +13,8 @@ export const examSubmission = pgTable("exam_submission", {
     applicantId: text("applicant_id").references(() => applicant.id, {
         onDelete: "cascade"
     }).notNull(),
-    status: text("status").default("PENDING"),
+    examStatus: text("exam_status").default("PENDING").notNull(),
+    status: text("status").default("PENDING").notNull(),
     assessmentId: text("assessment_id").references(() => assessment.id, {
         onDelete: "cascade"
     }).notNull(),

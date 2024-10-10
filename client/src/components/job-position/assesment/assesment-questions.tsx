@@ -9,21 +9,17 @@ import { useState } from 'preact/hooks';
 import { CreateQuestion } from './create-question-dialog';
 import { EditQuestion } from './edit-questions';
 import { CreateCodingQuestion } from './create-coding-questions';
+import CodeHighlighter from '@/components/code-highlighter';
 
-type Question = {
-    id: string,
-    examId: string,
-    questionText: string
-}
 
-export const AssesmentQuestions = ({ examId, questions, type }: { examId: string, questions: any, type: "mcq" | "coding" }) => {
+export const AssesmentQuestions = ({ examId, codingQuestion, type }: { examId: string, codingQuestion: any, questions: any, type: "mcq" | "coding" }) => {
+    console.log(codingQuestion);
+
     const { toast } = useToast();
     const deleteMutation = useDeleteQuestion();
     const fileUploadMutation = useUploadFile(examId);
     const [questionToEdit, setQuestionToEdit] = useState<string | null>(null);
     const [isUploading, setIsUploading] = useState<boolean>(false);
-
-
 
     const handleDelete = (questionId: string) => {
         deleteMutation.mutate(questionId, {
@@ -92,7 +88,7 @@ export const AssesmentQuestions = ({ examId, questions, type }: { examId: string
                     </div>
                 </div>
                 <div className="mt-5">
-                    {
+                    {/* {
                         questions?.length > 0 ? (
                             questions.map((question: Question, idx: number) => (
                                 <div key={question.id} className="flex items-center gap-x-2 bg-slate-200 border-slate-200 border text-slate-700 mb-4 text-base rounded-md px-2 justify-between">
@@ -109,6 +105,40 @@ export const AssesmentQuestions = ({ examId, questions, type }: { examId: string
                                 </div>
                             ))
                         ) : <div>No Questions</div>
+                    } */}
+                    {
+                        type === "coding" && codingQuestion?.length > 0 ? (
+                            codingQuestion?.map((question: any, idx: number) => <div key={idx} className="flex items-start gap-x-2 bg-slate-200 border-slate-200 border text-slate-700 mb-4 text-base rounded-md px-2 justify-between">
+                                <div className="flex gap-x-2 px-2 py-3 w-full">
+                                    <div>{idx + 1}.</div>
+                                    <div className="flex flex-col gap-y-3 w-full">
+                                        <div
+                                            dangerouslySetInnerHTML={{
+                                                __html: question?.questionText
+                                            }}
+                                        />
+                                        {
+                                            question?.haveQuestionCode && (
+                                                <CodeHighlighter
+                                                    code={question?.questionCode}
+                                                    language={question?.language}
+
+                                                />
+                                            )
+                                        }
+                                    </div>
+
+                                </div>
+                                <div className="flex gap-x-2.5 p-3">
+                                    <Pencil size={18} className="cursor-pointer" onClick={() => setQuestionToEdit(question.id)} />
+                                    <ConfirmDialog onConfirm={() => handleDelete(question.id)}>
+                                        <Trash size={18} className="text-red-500 cursor-pointer" />
+                                    </ConfirmDialog>
+                                </div>
+                            </div>)
+                        ) : <div className="text-center text-muted-foreground">
+                            No Questions
+                        </div>
                     }
                 </div>
             </Card>

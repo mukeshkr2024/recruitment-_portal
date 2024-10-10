@@ -54,7 +54,7 @@ export const CreateCodingQuestion = ({ examId, type }: { examId: string; type: "
         })
     };
 
-    const { isSubmitting, isValid } = form.formState;
+    const { isSubmitting } = form.formState;
 
     return (
         <Dialog open={isOpen} onOpenChange={() => setIsOpen((prevValue) => !prevValue)}>
@@ -159,6 +159,7 @@ export const CreateCodingQuestion = ({ examId, type }: { examId: string; type: "
                                                         lineNumbers: true,
                                                         lineWrapping: true,
                                                     }}
+                                                    //@ts-ignore 
                                                     onBeforeChange={(editor, data, value) => {
                                                         field.onChange(value);
                                                     }}

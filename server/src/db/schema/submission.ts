@@ -4,6 +4,7 @@ import { applicant } from "./applicant";
 import { question } from "./question";
 import { relations } from "drizzle-orm";
 import { codingQuestion } from "./coding-questions";
+import { examSubmission } from "./exam-submission";
 
 export const submission = pgTable("submission", {
     id: text("id")
@@ -18,6 +19,7 @@ export const submission = pgTable("submission", {
     codingQuestionId: text("question_id").references(() => codingQuestion.id, {
         onDelete: "cascade"
     }).notNull(),
+    submissionId: text("submission_id").references(() => examSubmission.id),
     submittedAnswer: text("submitted_answer")
 });
 
@@ -30,8 +32,12 @@ export const submissionRelations = relations(submission, ({ many, one }) => ({
         fields: [submission.applicantId],
         references: [applicant.id]
     }),
-    question: one(question, {
+    question: one(codingQuestion, {
         fields: [submission.codingQuestionId],
-        references: [question.id]
+        references: [codingQuestion.id]
     }),
+    examSubmission: one(examSubmission, {
+        fields: [submission.submissionId],
+        references: [examSubmission.id]
+    })
 }));

@@ -1,4 +1,4 @@
-import { applicantDetail, deleteApplicant, getApplicantAssessment, getJobPostions, registerApplicant, updateApplicantStatus } from "../controllers/applicant.controller";
+import { applicantDetail, deleteApplicant, getApplicantAssessment, getJobPostions, registerApplicant, updateApplicantStatus, getCodingSubmissionDetails } from "../controllers/applicant.controller";
 import express from "express";
 import { isApplicantAuthenticated } from "../middleware/auth";
 import { codingExamRouter } from "./coding-exam.routes";
@@ -12,5 +12,6 @@ applicantRouter.delete("/:applicantId", deleteApplicant)
 applicantRouter.get("/details/:applicantId", applicantDetail)
 applicantRouter.patch("/:applicantId", updateApplicantStatus)
 applicantRouter.use("/coding-questions", codingExamRouter)
+applicantRouter.get("/coding-result/:submissionId", getCodingSubmissionDetails)
 
 export { applicantRouter }; 

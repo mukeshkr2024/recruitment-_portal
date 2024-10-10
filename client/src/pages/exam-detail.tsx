@@ -8,12 +8,12 @@ export const ExamDetail = () => {
     const { examId } = useParams()
     const { data, isLoading } = useGetExamQuestions(examId!);
 
-    if (isLoading) {
-        return <div>Loadig....</div>
-    }
-
     console.log(data);
 
+
+    if (isLoading) {
+        return <div>Loading....</div>
+    }
 
     return (
         <div className="p-6">
@@ -26,7 +26,9 @@ export const ExamDetail = () => {
                     examId={examId!}
                     duration={data?.duration}
                 />
-                <AssesmentQuestions examId={examId!} questions={data?.questions}
+                <AssesmentQuestions examId={examId!}
+                    questions={data?.questions || []}
+                    codingQuestion={data?.codingQuestions || []}
                     type={data?.examType}
                 />
             </div>

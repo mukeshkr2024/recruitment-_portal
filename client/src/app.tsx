@@ -21,6 +21,7 @@ import { PositionDetailPage } from "./pages/postion-detail"
 import { RegisterPage } from "./pages/register"
 import { SubmittedPage } from "./pages/submitted"
 import { CodingAssessmentPage } from "./pages/coding-assessment"
+import { CodingSubmissionDetails } from "./pages/coding-submission-result"
 
 const queryClient = new QueryClient()
 
@@ -52,6 +53,7 @@ export const App = () => {
               <Route path="/exams/:examId" element={<ExamDetail />} />
               <Route path="/applicants" element={<ApplicantsPage />} />
               <Route path="/applicant/:applicantId" element={<ApplicantDetail />} />
+              <Route path="/applicant/:applicantId/coding-result/:submissionId" element={<CodingSubmissionDetails />} />
               <Route path="/exams" element={<Exams />} />
             </Route>
             <Route />

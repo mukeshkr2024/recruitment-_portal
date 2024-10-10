@@ -1,16 +1,18 @@
-'use client'
-
-import * as React from "react"
-import { Loader, Play, Code2, Terminal, Save, Send, ChevronRight, ChevronLeft, TriangleAlertIcon } from "lucide-react"
+import { useSaveCodingQuestion } from "@/api/applicants/coding-exam/use-save-coding-question"
+import { useCompileCode } from "@/api/editor/use-compile-code"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
-import MonacoEditor from "@monaco-editor/react"
-import { useCompileCode } from "@/api/editor/use-compile-code"
 import { codeSnippets, languageOptions } from "@/utils/config"
-import { motion, AnimatePresence } from "framer-motion"
-import { useSaveCodingQuestion } from "@/api/applicants/coding-exam/use-save-coding-question"
+import MonacoEditor from "@monaco-editor/react"
+import { AnimatePresence, motion } from "framer-motion"
+import { ChevronLeft, ChevronRight, Code2, Loader, Play, Save, Send, Terminal, TriangleAlertIcon } from "lucide-react"
+import * as React from "react"
+import { useEffect } from "react"
+import CodeHighlighter from "../code-highlighter"
+import { toast } from "../ui/use-toast"
+import ConfirmSubmitDialog from "./confirm-submit-dialog"
 
 type LanguageOption = {
     language: string
@@ -27,12 +29,13 @@ type CodingQuestionProps = {
     isPrevDisabled: boolean;
     currentIndex: number;
     totalQuestions: number;
-    timeLeft: number;
+    timeLeft: string;
     assesmentId: string
-    examId: string
+    examId: string;
+    handleSubmit: () => void;
 }
 
-export const CodingQuestion = ({ data, handleNextQuestion, handlePrevQuestion, isNextDisabled, isPrevDisabled, currentIndex, totalQuestions, timeLeft, assesmentId, examId }: CodingQuestionProps) => {
+export const CodingQuestion = ({ data, handleNextQuestion, handlePrevQuestion, isNextDisabled, isPrevDisabled, currentIndex, totalQuestions, timeLeft, assesmentId, examId, handleSubmit }: CodingQuestionProps) => {
     const [sourceCode, setSourceCode] = React.useState(codeSnippets["javascript"])
     const [languageOption, setLanguageOption] = React.useState<LanguageOption>(languageOptions[0])
     const [loading, setLoading] = React.useState(false)
@@ -45,7 +48,18 @@ export const CodingQuestion = ({ data, handleNextQuestion, handlePrevQuestion, i
         examId
     )
 
+
     console.log(data);
+
+    useEffect(() => {
+        if (data?.language) {
+            const selectedLanguage = languageOptions.find(option => option.language === data.language)
+            if (selectedLanguage) {
+                setLanguageOption(selectedLanguage)
+                setSourceCode(codeSnippets[selectedLanguage.language])
+            }
+        }
+    }, [data])
 
 
     function handleEditorDidMount(editor: any) {
@@ -79,7 +93,13 @@ export const CodingQuestion = ({ data, handleNextQuestion, handlePrevQuestion, i
         }
 
         try {
-            const result = await compileMutation.mutateAsync(requestData)
+            const result = await compileMutation.mutateAsync(requestData, {
+                onSuccess: () => {
+                    toast({
+                        title: "Compiled successfully",
+                    });
+                }
+            })
             if (result?.run?.output) {
                 setOutput(result.run.output.split("\n"))
             } else {
@@ -94,9 +114,6 @@ export const CodingQuestion = ({ data, handleNextQuestion, handlePrevQuestion, i
         }
     }
 
-    console.log(data);
-
-
     const handleSave = (
     ) => {
 
@@ -105,16 +122,14 @@ export const CodingQuestion = ({ data, handleNextQuestion, handlePrevQuestion, i
         saveMutation.mutate({
             answer: sourceCode,
             codingQuestionId: data?.id
+        }, {
+            onSuccess: () => {
+                toast({
+                    title: "Saved Successfully",
+                });
+            }
         })
     }
-
-    const handleSubmit = () => { }
-
-    const formatTime = (time: number) => {
-        const minutes = Math.floor(time / 60);
-        const seconds = time % 60;
-        return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
-    };
 
 
     return (
@@ -126,17 +141,23 @@ export const CodingQuestion = ({ data, handleNextQuestion, handlePrevQuestion, i
                             <CardTitle className="text-2xl font-bold flex items-center justify-between text-blue-300">
                                 <div className="flex items-center">
                                     <Code2 className="w-6 h-6 mr-2 text-blue-400" />
-                                    Question {data?.questionNumber || '01'}
+                                    Question {currentIndex + 1}
                                 </div>
-                                {formatTime(timeLeft)}
+                                {timeLeft}
                             </CardTitle>
                         </CardHeader>
 
-                        <CardContent className="p-6 flex-grow">
+                        <CardContent className="p-6 flex-grow flex flex-col gap-y-3.5">
                             <div
                                 className="prose prose-invert max-w-none text-gray-200"
                                 dangerouslySetInnerHTML={{ __html: data?.questionText }}
                             />
+
+                            {data?.haveQuestionCode && <CodeHighlighter
+                                code={data?.questionCode}
+                                language={data?.language}
+                            />}
+
                         </CardContent>
 
                         <CardFooter className="bg-gray-800 p-4 flex justify-between items-center">
@@ -205,12 +226,18 @@ export const CodingQuestion = ({ data, handleNextQuestion, handlePrevQuestion, i
                                         </Button>
                                         <Button onClick={handleSave} className="bg-green-600 h-9 hover:bg-green-700 text-white transition-colors">
                                             <Save className="w-4 h-4 mr-2" />
-                                            Save
+                                            {
+                                                saveMutation.isLoading ? "Saving.." : "Save"}
                                         </Button>
-                                        <Button onClick={handleSubmit} className="bg-purple-600 h-9 hover:bg-purple-700 text-white transition-colors">
-                                            <Send className="w-4 h-4 mr-2" />
-                                            Submit
-                                        </Button>
+                                        <ConfirmSubmitDialog
+                                            timeLeft={timeLeft}
+                                            onConfirm={() => handleSubmit()}
+                                        >
+                                            <Button className="bg-purple-600 h-9 hover:bg-purple-700 text-white transition-colors">
+                                                <Send className="w-4 h-4 mr-2" />
+                                                Submit
+                                            </Button>
+                                        </ConfirmSubmitDialog>
                                     </div>
 
                                 </CardHeader>
@@ -252,10 +279,13 @@ export const CodingQuestion = ({ data, handleNextQuestion, handlePrevQuestion, i
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -20 }}
                                                 transition={{ duration: 0.3 }}
+                                                // @ts-ignore
                                                 className="flex items-center space-x-2 text-red-300 bg-red-900/20 p-4 rounded-md"
                                             >
-                                                <TriangleAlertIcon className="w-5 h-5 flex-shrink-0" />
-                                                <p>An error occurred. Please check your code and try again.</p>
+                                                <>
+                                                    <TriangleAlertIcon className="w-5 h-5 flex-shrink-0" />
+                                                    <p>An error occurred. Please check your code and try again.</p>
+                                                </>
                                             </motion.div>
                                         ) : output.length > 0 ? (
                                             <motion.div
@@ -274,8 +304,10 @@ export const CodingQuestion = ({ data, handleNextQuestion, handlePrevQuestion, i
                                                 initial={{ opacity: 0, y: 20 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 transition={{ duration: 0.3 }}
+                                                // @ts-ignore
                                                 className="text-gray-400 italic"
                                             >
+
                                                 Run your code to see the output here.
                                             </motion.p>
                                         )}

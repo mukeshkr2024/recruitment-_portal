@@ -10,7 +10,24 @@ export const getCodingQuestions = CatchAsyncError(
         try {
             const { examId, assessmentId } = req.params;
 
+            const applicantId = req.id;
+
             console.log(examId, assessmentId);
+
+            const examSubmissionData = await db.query.examSubmission.findFirst({
+                where: and(eq(examSubmission.examId, examId), eq(examSubmission.assessmentId, assessmentId))
+            })
+
+            console.log("examSubmission", examSubmissionData);
+
+            if (!examSubmissionData) {
+                await db.insert(examSubmission).values({
+                    applicantId: applicantId!,
+                    assessmentId: assessmentId,
+                    examId: examId,
+                    status: 'INPROGRESS'
+                }).returning()
+            }
 
             // TODO: add later 
             // const applicantId = req.id; 
@@ -65,25 +82,28 @@ export const saveCodingAnswer = CatchAsyncError(
                 return next(new ErrorHandler("Invalid request", 400));
             }
 
-            let examSubmissionData
 
-            examSubmissionData = await db.query.examSubmission.findFirst({
+            const examSubmissionData = await db.query.examSubmission.findFirst({
                 where: and(eq(examSubmission.examId, examId), eq(examSubmission.assessmentId, assessmentId))
             })
+
+            if (!examSubmissionData) {
+                return next(new ErrorHandler("No submission found ", 404));
+            }
 
             console.log('submission found', examSubmissionData);
 
 
-            if (!examSubmissionData) {
-                examSubmissionData = await db.insert(examSubmission).values({
-                    applicantId: applicantId,
-                    assessmentId: assessmentId,
-                    examId: examId,
-                    status: 'INPROGRESS'
-                })
+            // if (!examSubmissionData) { // TODO: create during iniiial loads
+            //     examSubmissionData = await db.insert(examSubmission).values({
+            //         applicantId: applicantId,
+            //         assessmentId: assessmentId,
+            //         examId: examId,
+            //         status: 'INPROGRESS'
+            //     }).returning()
 
-                console.log("created submission", examSubmissionData);
-            }
+            //     console.log("created submission", examSubmissionData);
+            // }
 
 
             let submissionData;
@@ -108,6 +128,7 @@ export const saveCodingAnswer = CatchAsyncError(
                     applicantId: applicantId,
                     codingQuestionId: codingQuestionId,
                     submittedAnswer: answer,
+                    submissionId: examSubmissionData.id,
                 })
 
                 console.log("submissionData CREATED", submissionData);
@@ -156,3 +177,41 @@ export const saveCodingAnswer = CatchAsyncError(
         }
     }
 )
+
+
+export const submitCodingExam = CatchAsyncError(async (
+    req: Request, res: Response, next: NextFunction
+) => {
+    try {
+        const { examId, assessmentId } = req.params;
+
+        const applicantId = req.id;
+
+        if (!applicantId) {
+            return next(new ErrorHandler("Unauthorized", 401));
+        }
+
+        const examSubmissionData = await db.query.examSubmission.findFirst({
+            where: and(eq(examSubmission.examId, examId), eq(examSubmission.assessmentId, assessmentId), eq(examSubmission.applicantId, applicantId))
+        })
+
+        console.log("submission data: " + examSubmissionData);
+
+        if (!examSubmissionData) {
+            return next(new ErrorHandler("Something went wrong", 404));
+        }
+
+        await db.update(examSubmission).set({
+            status: "COMPLETED"
+        }).where(
+            and(eq(examSubmission.examId, examId), eq(examSubmission.assessmentId, assessmentId))
+        )
+
+        return res.status(200).json({
+            message: "Exam submitted successfully"
+        })
+
+    } catch (error) {
+
+    }
+})
