@@ -121,30 +121,15 @@ export const deleteQuestion = async (req: Request, res: Response, next: NextFunc
 
         const { questionId } = req.params;
 
+        const { type } = req.query;
 
-        const response = await db.delete(question).where(eq(question.id, questionId)).returning()
+        let response;
 
-
-        return res.status(200).json(response)
-
-    } catch (error) {
-        return next(new ErrorHandler(error, 400));
-    }
-}
-
-export const getQuestion = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
-    try {
-
-        const { questionId } = req.params;
-
-        const response = await db.query.question.findFirst({
-            where: eq(question.id, questionId),
-            with: {
-                options: {
-                    orderBy: asc(option.createdAt)
-                }
-            },
-        })
+        if (type === "coding") {
+            response = await db.delete(codingQuestion).where(eq(codingQuestion.id, questionId)).returning()
+        } else {
+            response = await db.delete(question).where(eq(question.id, questionId)).returning()
+        }
 
         if (!response) {
             throw new Error("Question not found")
@@ -155,56 +140,120 @@ export const getQuestion = CatchAsyncError(async (req: Request, res: Response, n
     } catch (error) {
         return next(new ErrorHandler(error, 400));
     }
-})
+}
+export const getQuestion = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { questionId } = req.params;
+        const { type } = req.query;
+
+        console.log("question");
+
+        const fetchQuestion = async (query: any) => {
+            const response = await query;
+            if (!response) throw new Error("Question not found");
+            return response;
+        };
+
+        let response;
+
+        if (type === "coding") {
+            // Fetch coding question
+            response = await fetchQuestion(
+                db.query.codingQuestion.findFirst({
+                    where: eq(codingQuestion.id, questionId),
+                })
+            );
+        } else {
+            // Fetch regular question with options
+            response = await fetchQuestion(
+                db.query.question.findFirst({
+                    where: eq(question.id, questionId),
+                    with: {
+                        options: {
+                            orderBy: asc(option.createdAt),
+                        },
+                    },
+                })
+            );
+        }
+
+        return res.status(200).json(response);
+    } catch (error) {
+        return next(new ErrorHandler(error || "Something went wrong", 400));
+    }
+});
+
 
 
 export const updateQuestion = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
 
         const { questionId } = req.params;
-        const { questionText, answer1, answer2, answer3, answer4 } = req.body;
 
-        const questionExist = await db.query.question.findFirst(
-            {
-                where: eq(question.id, questionId),
-                with: {
-                    options: true
-                }
-            },
-        )
+        const { type } = req.query;
 
-        if (!questionExist) {
-            throw new Error("Question not found")
-        }
+        console.log(type);
 
+        if (type === "coding") {
+            const { questionText, questionCode, haveQuestionCode, language } = req.body;
 
-        const updatedQuestion = await db.update(question).set({
-            questionText: questionText
-        }).where(eq(question.id, questionId)).returning()
+            const updatedQuestion = await db.update(codingQuestion).set({
+                questionText: questionText,
+                questionCode: questionCode,
+                haveQuestionCode: haveQuestionCode,
+                language: language
+            }).where(eq(codingQuestion.id, questionId)).returning()
 
+            if (!updateQuestion) {
+                throw new Error("Question not found")
+            }
 
-        const updatedOptions = [];
-        const answers = [answer1, answer2, answer3, answer4];
+            return res.status(200).json(updatedQuestion)
+        } else {
+            const { questionText, answer1, answer2, answer3, answer4 } = req.body;
 
-        for (let i = 0; i < answers.length; i++) {
-            if (answers[i]) {
-                const optionId = questionExist.options[i]?.id;
-                if (optionId) {
-                    await db.update(option).set({
-                        optionText: answers[i]?.text,
-                        isCorrect: answers[i]?.isCorrect
-                    }).where(eq(option.id, optionId))
-                    updatedOptions.push({ id: optionId, text: answers[i] });
+            const questionExist = await db.query.question.findFirst(
+                {
+                    where: eq(question.id, questionId),
+                    with: {
+                        options: true
+                    }
+                },
+            )
+
+            if (!questionExist) {
+                throw new Error("Question not found")
+            }
+
+            const updatedQuestion = await db.update(question).set({
+                questionText: questionText
+            }).where(eq(question.id, questionId)).returning()
+
+            const updatedOptions = [];
+            const answers = [answer1, answer2, answer3, answer4];
+
+            for (let i = 0; i < answers.length; i++) {
+                if (answers[i]) {
+                    const optionId = questionExist.options[i]?.id;
+                    if (optionId) {
+                        await db.update(option).set({
+                            optionText: answers[i]?.text,
+                            isCorrect: answers[i]?.isCorrect
+                        }).where(eq(option.id, optionId))
+                        updatedOptions.push({ id: optionId, text: answers[i] });
+                    }
                 }
             }
+
+            res.status(200).json(
+                {
+                    question: updatedQuestion[0],
+                    options: updatedOptions
+                }
+            )
+
         }
 
-        res.status(200).json(
-            {
-                question: updatedQuestion[0],
-                options: updatedOptions
-            }
-        )
 
     } catch (error) {
         return next(new ErrorHandler(error, 400));

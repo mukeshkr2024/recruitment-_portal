@@ -29,6 +29,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 type Props = {
     onClose: () => void
     questionId: string;
+    type: "coding" | "mcq"
 }
 
 export const editQuestionSchema = z.object({
@@ -71,10 +72,10 @@ const options = [
     { label: "Text", value: "text" },
 ];
 
-export const EditQuestion = ({ onClose, questionId }: Props) => {
+export const EditQuestion = ({ onClose, questionId, type }: Props) => {
 
-    const { data: question } = useGetQuestion(questionId);
-    const mutation = useUpdateQuestion(questionId);
+    const { data: question } = useGetQuestion(questionId, type);
+    const mutation = useUpdateQuestion(questionId, type);
 
     const form = useForm<z.infer<typeof editQuestionSchema>>({
         resolver: zodResolver(editQuestionSchema),
