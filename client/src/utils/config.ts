@@ -1,7 +1,7 @@
 import { CodeSnippetsProps } from "@/components/coding-exam/editor";
 
-export const API_URL = import.meta.env.VITE_API_URL
-export const SITE_URL = import.meta.env.VITE_SITE_URL
+export const API_URL = import.meta.env.VITE_API_URL;
+export const SITE_URL = import.meta.env.VITE_SITE_URL;
 
 export const languageOptions = [
     {
@@ -11,6 +11,24 @@ export const languageOptions = [
         runtime: "node",
     },
     {
+        language: "python",
+        version: "3.10.0",
+        aliases: ["py", "py3", "python3", "python3.10"],
+    },
+    {
+        language: "c++",
+        version: "10.2.0",
+        aliases: ["cpp", "g++"],
+        runtime: "gcc",
+    },
+    {
+        language: "java",
+        version: "15.0.2",
+        aliases: [],
+    },
+    // Commenting out other languages
+    /*
+    {
         language: "typescript",
         version: "5.0.3",
         aliases: ["ts", "node-ts", "tsc", "typescript5", "ts5"],
@@ -19,11 +37,6 @@ export const languageOptions = [
         language: "php",
         version: "8.2.3",
         aliases: [],
-    },
-    {
-        language: "python",
-        version: "3.10.0",
-        aliases: ["py", "py3", "python3", "python3.10"],
     },
     {
         language: "ruby",
@@ -42,21 +55,11 @@ export const languageOptions = [
         runtime: "mono",
     },
     {
-        language: "c++",
-        version: "10.2.0",
-        aliases: ["cpp", "g++"],
-        runtime: "gcc",
-    },
-    {
         language: "go",
         version: "1.16.2",
         aliases: ["go", "golang"],
     },
-    {
-        language: "java",
-        version: "15.0.2",
-        aliases: [],
-    },
+    */
     {
         language: "c",
         version: "10.2.0",
@@ -71,46 +74,9 @@ export const codeSnippets: CodeSnippetsProps = {
 }
 console.log(sum(3, 4));`, // Output: 7
 
-    typescript: `function sum(a: number, b: number): number {
-  return a + b;
-}
-console.log(sum(3, 4));`, // Output: 7
-
-    php: `function sum($a, $b) {
-  return $a + $b;
-}
-echo sum(3, 4);`, // Output: 7
-
     python: `def sum(a, b):
     return a + b
 print(sum(3, 4))`, // Output: 7
-
-    ruby: `def sum(a, b)
-  a + b
-end
-puts sum(3, 4)`, // Output: 7
-
-    rust: `fn sum(a: i32, b: i32) -> i32 {
-  a + b
-}
-fn main() {
-  println!("{}", sum(3, 4));
-}`, // Output: 7
-
-    "csharp.net": `public class Program
-{
-    public static int Sum(int a, int b)
-    {
-        return a + b;
-    }
-}
-class MainClass
-{
-    public static void Main (string[] args)
-    {
-        Console.WriteLine(Program.Sum(3, 4));
-    }
-}`, // Output: 7
 
     "c++": `int sum(int a, int b) {
   return a + b;
@@ -120,27 +86,67 @@ int main() {
   return 0;
 }`, // Output: 7
 
+    // Commenting out other language snippets
+    /*
+    typescript: `function sum(a: number, b: number): number {
+      return a + b;
+    }
+    console.log(sum(3, 4));`, // Output: 7
+
+    php: `function sum($a, $b) {
+      return $a + $b;
+    }
+    echo sum(3, 4);`, // Output: 7
+
+    ruby: `def sum(a, b)
+      a + b
+    end
+    puts sum(3, 4)`, // Output: 7
+
+    rust: `fn sum(a: i32, b: i32) -> i32 {
+      a + b
+    }
+    fn main() {
+      println!("{}", sum(3, 4));
+    }`, // Output: 7
+
+    "csharp.net": `public class Program
+    {
+        public static int Sum(int a, int b)
+        {
+            return a + b;
+        }
+    }
+    class MainClass
+    {
+        public static void Main (string[] args)
+        {
+            Console.WriteLine(Program.Sum(3, 4));
+        }
+    }`, // Output: 7
+
     go: `func sum(a, b int) int {
-  return a + b
-}
-func main() {
-  fmt.Println(sum(3, 4))
-}`, // Output: 7
+      return a + b
+    }
+    func main() {
+      fmt.Println(sum(3, 4))
+    }`, // Output: 7
 
     java: `public class Main {
-    public static int sum(int a, int b) {
-        return a + b;
-    }
-    public static void main(String[] args) {
-        System.out.println(sum(3, 4));
-    }
-}`, // Output: 7
+        public static int sum(int a, int b) {
+            return a + b;
+        }
+        public static void main(String[] args) {
+            System.out.println(sum(3, 4));
+        }
+    }`, // Output: 7
 
+    */
     c: `int sum(int a, int b) {
-  return a + b;
-}
-int main() {
-  printf("%d", sum(3, 4));
-  return 0;
-}`, // Output: 7
+      return a + b;
+    }
+    int main() {
+      printf("%d", sum(3, 4));
+      return 0;
+    }`, // Output: 7
 };

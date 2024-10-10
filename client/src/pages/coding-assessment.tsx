@@ -24,14 +24,8 @@ export const CodingAssessmentPage = () => {
         });
     };
 
-
-    // Logging important data
-    console.log("Assessment ID:", assesmentId);
-    console.log("Exam ID:", examId);
-    console.log("Coding Questions:", data?.codingQuestions);
-
     const handleNextQuestion = () => {
-        if (currentQuestionIndex < (data?.codingQuestions.length || 0) - 1) {
+        if (currentQuestionIndex < (data?.codingQuestions?.length || 0) - 1) {
             setCurrentQuestionIndex(prev => prev + 1);
         }
     };
@@ -42,7 +36,7 @@ export const CodingAssessmentPage = () => {
         }
     };
 
-    const isNextDisabled = currentQuestionIndex >= (data?.codingQuestions.length || 0) - 1;
+    const isNextDisabled = currentQuestionIndex >= (data?.codingQuestions?.length || 0) - 1;
     const isPrevDisabled = currentQuestionIndex === 0;
 
     const duration = data?.duration;
@@ -105,7 +99,7 @@ export const CodingAssessmentPage = () => {
     useEffect(() => {
         const handleBeforeUnload = (e: BeforeUnloadEvent) => {
             e.preventDefault();
-            e.returnValue = ''; // Chrome requires returnValue to be set
+            e.returnValue = '';
         };
 
         const handleVisibilityChange = () => {
@@ -148,7 +142,7 @@ export const CodingAssessmentPage = () => {
                 isNextDisabled={isNextDisabled}
                 isPrevDisabled={isPrevDisabled}
                 currentIndex={currentQuestionIndex}
-                totalQuestions={data?.codingQuestions.length || 0}
+                totalQuestions={data?.codingQuestions?.length || 0}
                 timeLeft={formatTime(timeLeft)}
                 assesmentId={assesmentId!}
                 examId={examId!}

@@ -48,12 +48,11 @@ export const CodingQuestion = ({ data, handleNextQuestion, handlePrevQuestion, i
         examId
     )
 
-
     console.log(data);
 
     useEffect(() => {
         if (data?.language) {
-            const selectedLanguage = languageOptions.find(option => option.language === data.language)
+            const selectedLanguage = languageOptions.find(option => option?.language === data?.language)
             if (selectedLanguage) {
                 setLanguageOption(selectedLanguage)
                 setSourceCode(codeSnippets[selectedLanguage.language])
@@ -74,7 +73,7 @@ export const CodingQuestion = ({ data, handleNextQuestion, handlePrevQuestion, i
     }
 
     function onSelectLanguage(value: string) {
-        const selectedLanguage = languageOptions.find(option => option.language === value)
+        const selectedLanguage = languageOptions?.find(option => option?.language === value)
         if (selectedLanguage) {
             setLanguageOption(selectedLanguage)
             setSourceCode(codeSnippets[selectedLanguage.language])
@@ -87,8 +86,8 @@ export const CodingQuestion = ({ data, handleNextQuestion, handlePrevQuestion, i
         setOutput([])
 
         const requestData = {
-            language: languageOption.language,
-            version: languageOption.version,
+            language: languageOption?.language,
+            version: languageOption?.version,
             files: [{ content: sourceCode }],
         }
 
@@ -197,9 +196,9 @@ export const CodingQuestion = ({ data, handleNextQuestion, handlePrevQuestion, i
                                         <SelectContent className="bg-gray-700 flex-grow border-gray-600 text-gray-100">
                                             <SelectGroup>
                                                 <SelectLabel className="text-gray-400">Languages</SelectLabel>
-                                                {languageOptions.map(option => (
-                                                    <SelectItem key={option.language} value={option.language} className="hover:bg-gray-600">
-                                                        {option.language}
+                                                {languageOptions?.map(option => (
+                                                    <SelectItem key={option?.language} value={option?.language} className="hover:bg-gray-600">
+                                                        {option?.language}
                                                     </SelectItem>
                                                 ))}
                                             </SelectGroup>
