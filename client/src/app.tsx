@@ -38,7 +38,7 @@ export const App = () => {
               <Route path="/instructions/:assesmentId/exam/:examId" element={<InstructionPage />} />
               <Route path="/coding-instructions/:assesmentId/exam/:examId" element={<CodingInstructionPage />} />
               <Route path="/assesment/:assesmentId/exam/:examId" element={<AssessmentPage />} />
-              <Route path="/coding-assesment/:assesmentId/exam/:examId" element={<CodingAssessmentPage />} />
+              <Route path="/coding-assesment/:assessmentId/exam/:examId" element={<CodingAssessmentPage />} />
               <Route path="/submitted" element={<SubmittedPage />} />
               <Route path="/applicant-dashboard" element={<ApplicantDashboard />} />
             </Route>

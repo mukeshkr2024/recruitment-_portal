@@ -49,7 +49,7 @@ export const CodingSubmissionDetails = () => {
                     <div className="flex w-full justify-between">
                         <h4 className="text-xl font-semibold">Submission Details</h4>
                         <p className="text-lg font-semibold mb-4">
-                            Total Answers {data?.answer?.length} out of 10
+                            {/* Total Answers {data?.answer?.length} out of 10 */}
                         </p>
                     </div>
                 </CardHeader>

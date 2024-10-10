@@ -30,6 +30,9 @@ export const ApplicantDetail = () => {
 
     const { details, result, coding_result } = data;
 
+    console.log(coding_result);
+
+
     useEffect(() => {
         setStatus(data?.details?.status)
     }, [])
@@ -118,7 +121,7 @@ export const ApplicantDetail = () => {
 
             <div className="mt-4">
                 <h2 className="text-3xl font-bold text-gray-800 mb-6">Coding Exam Results</h2>
-                {result?.length > 0 ? (
+                {coding_result?.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {coding_result?.map((examResult: any) => <CodingResult result={examResult}
                             applicantId={applicantId!}

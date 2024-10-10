@@ -2,7 +2,7 @@ import e, { application, NextFunction, Request, Response } from "express";
 import { CatchAsyncError } from "../middleware/catchAsyncError";
 import { ErrorHandler } from "../utils/ErrorHandler";
 import db from "../db";
-import { applicant, assessment, exam, examSubmission, question, submission } from "../db/schema";
+import { applicant, assessment, codingQuestion, exam, examSubmission, question, submission } from "../db/schema";
 import { and, eq } from "drizzle-orm";
 
 export const getCodingQuestions = CatchAsyncError(
@@ -212,6 +212,37 @@ export const submitCodingExam = CatchAsyncError(async (
         })
 
     } catch (error) {
-
+        return next(new ErrorHandler(error, 400));
     }
 })
+
+export const getSavedAnswer = CatchAsyncError(
+    async (
+        req: Request, res: Response, next: NextFunction
+    ) => {
+        try {
+            const { examId, assessmentId, questionId } = req.params;
+
+            const applicantId = req.id!;
+
+            const questionFound = await db.query.codingQuestion.findFirst({
+                where: eq(codingQuestion.id, questionId)
+            })
+
+            console.log("Question found", questionFound);
+
+            const answerFound = await db.query.submission.findFirst({
+                where: and(eq(submission.examId, examId), eq(submission.codingQuestionId, questionId), eq(submission.applicantId, applicantId))
+            })
+
+            console.log("Answer found", answerFound);
+
+
+            return res.status(200).json({
+                code: answerFound?.submittedAnswer || null
+            })
+        } catch (error) {
+            return next(new ErrorHandler(error, 400));
+        }
+    }
+)

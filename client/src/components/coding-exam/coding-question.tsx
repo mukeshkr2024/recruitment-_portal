@@ -1,17 +1,15 @@
-import { useSaveCodingQuestion } from "@/api/applicants/coding-exam/use-save-coding-question"
-import { useCompileCode } from "@/api/editor/use-compile-code"
+'use client'
+
+import { useState, useRef, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { codeSnippets, languageOptions } from "@/utils/config"
+import { languageOptions } from "@/utils/config"
 import MonacoEditor from "@monaco-editor/react"
 import { AnimatePresence, motion } from "framer-motion"
-import { ChevronLeft, ChevronRight, Code2, Loader, Play, Save, Send, Terminal, TriangleAlertIcon } from "lucide-react"
-import * as React from "react"
-import { useEffect } from "react"
+import { ChevronLeft, ChevronRight, Code2, Loader, Play, Save, Send, Terminal, TriangleAlert } from "lucide-react"
 import CodeHighlighter from "../code-highlighter"
-import { toast } from "../ui/use-toast"
 import ConfirmSubmitDialog from "./confirm-submit-dialog"
 
 type LanguageOption = {
@@ -22,42 +20,48 @@ type LanguageOption = {
 }
 
 type CodingQuestionProps = {
-    data: any;
-    handleNextQuestion: () => void;
-    handlePrevQuestion: () => void;
-    isNextDisabled: boolean;
-    isPrevDisabled: boolean;
-    currentIndex: number;
-    totalQuestions: number;
-    timeLeft: string;
-    assesmentId: string
-    examId: string;
-    handleSubmit: () => void;
+    data: any
+    handleNextQuestion: () => void
+    handlePrevQuestion: () => void
+    isNextDisabled: boolean
+    isPrevDisabled: boolean
+    currentIndex: number
+    totalQuestions: number
+    timeLeft: string
+    assessmentId: string
+    examId: string
+    handleSubmit: () => void
+    sourceCode: string
+    setSourceCode: (value: string) => void
+    handleSave: () => void
+    executeCode: (language: string, code: string) => Promise<string[]>
 }
 
-export const CodingQuestion = ({ data, handleNextQuestion, handlePrevQuestion, isNextDisabled, isPrevDisabled, currentIndex, totalQuestions, timeLeft, assesmentId, examId, handleSubmit }: CodingQuestionProps) => {
-    const [sourceCode, setSourceCode] = React.useState(codeSnippets["javascript"])
-    const [languageOption, setLanguageOption] = React.useState<LanguageOption>(languageOptions[0])
-    const [loading, setLoading] = React.useState(false)
-    const [output, setOutput] = React.useState<string[]>([])
-    const [errorOccurred, setErrorOccurred] = React.useState(false)
-    const editorRef = React.useRef(null)
-    const compileMutation = useCompileCode()
-    const saveMutation = useSaveCodingQuestion(
-        assesmentId,
-        examId
-    )
+export function CodingQuestion({
+    data,
+    handleNextQuestion,
+    handlePrevQuestion,
+    isNextDisabled,
+    isPrevDisabled,
+    currentIndex,
+    totalQuestions,
+    sourceCode,
+    setSourceCode,
+    timeLeft,
+    handleSubmit,
+    handleSave,
+    executeCode
+}: CodingQuestionProps) {
+    const [language, setLanguage] = useState<string>("java")
+    const [loading, setLoading] = useState(false)
+    const [output, setOutput] = useState<string[]>([])
+    const [errorOccurred, setErrorOccurred] = useState(false)
+    const editorRef = useRef(null)
 
-    console.log(data);
+    console.log(data?.language);
 
     useEffect(() => {
-        if (data?.language) {
-            const selectedLanguage = languageOptions.find(option => option?.language === data?.language)
-            if (selectedLanguage) {
-                setLanguageOption(selectedLanguage)
-                setSourceCode(codeSnippets[selectedLanguage.language])
-            }
-        }
+        setLanguage(data?.language)
     }, [data])
 
 
@@ -75,35 +79,18 @@ export const CodingQuestion = ({ data, handleNextQuestion, handlePrevQuestion, i
     function onSelectLanguage(value: string) {
         const selectedLanguage = languageOptions?.find(option => option?.language === value)
         if (selectedLanguage) {
-            setLanguageOption(selectedLanguage)
-            setSourceCode(codeSnippets[selectedLanguage.language])
+            setLanguage(selectedLanguage.language)
         }
     }
 
-    const executeCode = async () => {
+    const handleExecuteCode = async () => {
         setLoading(true)
         setErrorOccurred(false)
         setOutput([])
 
-        const requestData = {
-            language: languageOption?.language,
-            version: languageOption?.version,
-            files: [{ content: sourceCode }],
-        }
-
         try {
-            const result = await compileMutation.mutateAsync(requestData, {
-                onSuccess: () => {
-                    toast({
-                        title: "Compiled successfully",
-                    });
-                }
-            })
-            if (result?.run?.output) {
-                setOutput(result.run.output.split("\n"))
-            } else {
-                throw new Error("No output received")
-            }
+            const result = await executeCode(language, sourceCode)
+            setOutput(result)
         } catch (error) {
             setErrorOccurred(true)
             console.error("Error during code execution:", error)
@@ -112,24 +99,6 @@ export const CodingQuestion = ({ data, handleNextQuestion, handlePrevQuestion, i
             setLoading(false)
         }
     }
-
-    const handleSave = (
-    ) => {
-
-        if (!data?.id) return;
-
-        saveMutation.mutate({
-            answer: sourceCode,
-            codingQuestionId: data?.id
-        }, {
-            onSuccess: () => {
-                toast({
-                    title: "Saved Successfully",
-                });
-            }
-        })
-    }
-
 
     return (
         <Card className="h-full w-full overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900 text-gray-100 shadow-xl">
@@ -152,11 +121,12 @@ export const CodingQuestion = ({ data, handleNextQuestion, handlePrevQuestion, i
                                 dangerouslySetInnerHTML={{ __html: data?.questionText }}
                             />
 
-                            {data?.haveQuestionCode && <CodeHighlighter
-                                code={data?.questionCode}
-                                language={data?.language}
-                            />}
-
+                            {data?.haveQuestionCode && (
+                                <CodeHighlighter
+                                    code={data?.questionCode}
+                                    language={data?.language}
+                                />
+                            )}
                         </CardContent>
 
                         <CardFooter className="bg-gray-800 p-4 flex justify-between items-center">
@@ -181,7 +151,6 @@ export const CodingQuestion = ({ data, handleNextQuestion, handlePrevQuestion, i
                             </Button>
                         </CardFooter>
                     </Card>
-
                 </ResizablePanel>
                 <ResizableHandle withHandle className="bg-gray-600 hover:bg-gray-500 transition-colors" />
                 <ResizablePanel defaultSize={60}>
@@ -189,7 +158,7 @@ export const CodingQuestion = ({ data, handleNextQuestion, handlePrevQuestion, i
                         <ResizablePanel defaultSize={70} minSize={30}>
                             <Card className="h-full border-none">
                                 <CardHeader className="py-1.5 bg-gray-800 flex flex-row items-center justify-between">
-                                    <Select onValueChange={onSelectLanguage} value={languageOption.language}>
+                                    <Select onValueChange={onSelectLanguage} value={language}>
                                         <SelectTrigger className="w-[180px] h-9 bg-gray-700 border-gray-600 text-gray-100">
                                             <SelectValue placeholder="Select a language" />
                                         </SelectTrigger>
@@ -205,9 +174,8 @@ export const CodingQuestion = ({ data, handleNextQuestion, handlePrevQuestion, i
                                         </SelectContent>
                                     </Select>
                                     <div className="flex space-x-2">
-
                                         <Button
-                                            onClick={executeCode}
+                                            onClick={handleExecuteCode}
                                             disabled={loading}
                                             className="bg-blue-600 h-9 hover:bg-blue-700 text-white transition-colors"
                                         >
@@ -223,14 +191,13 @@ export const CodingQuestion = ({ data, handleNextQuestion, handlePrevQuestion, i
                                                 </>
                                             )}
                                         </Button>
-                                        <Button onClick={handleSave} className="bg-green-600 h-9 hover:bg-green-700 text-white transition-colors">
+                                        <Button onClick={handleSave} disabled={!sourceCode} className="bg-green-600 h-9 hover:bg-green-700 text-white transition-colors">
                                             <Save className="w-4 h-4 mr-2" />
-                                            {
-                                                saveMutation.isLoading ? "Saving.." : "Save"}
+                                            Save
                                         </Button>
                                         <ConfirmSubmitDialog
                                             timeLeft={timeLeft}
-                                            onConfirm={() => handleSubmit()}
+                                            onConfirm={handleSubmit}
                                         >
                                             <Button className="bg-purple-600 h-9 hover:bg-purple-700 text-white transition-colors">
                                                 <Send className="w-4 h-4 mr-2" />
@@ -238,16 +205,15 @@ export const CodingQuestion = ({ data, handleNextQuestion, handlePrevQuestion, i
                                             </Button>
                                         </ConfirmSubmitDialog>
                                     </div>
-
                                 </CardHeader>
                                 <CardContent className="p-0 h-full">
                                     <MonacoEditor
                                         theme="vs-dark"
-                                        defaultLanguage={languageOption.language}
-                                        defaultValue={sourceCode}
+                                        defaultLanguage={language}
+                                        value={sourceCode}
                                         onMount={handleEditorDidMount}
                                         onChange={handleOnchange}
-                                        language={languageOption.language}
+                                        language={language}
                                         options={{
                                             minimap: { enabled: false },
                                             fontSize: 14,
@@ -282,7 +248,7 @@ export const CodingQuestion = ({ data, handleNextQuestion, handlePrevQuestion, i
                                                 className="flex items-center space-x-2 text-red-300 bg-red-900/20 p-4 rounded-md"
                                             >
                                                 <>
-                                                    <TriangleAlertIcon className="w-5 h-5 flex-shrink-0" />
+                                                    <TriangleAlert className="w-5 h-5 flex-shrink-0" />
                                                     <p>An error occurred. Please check your code and try again.</p>
                                                 </>
                                             </motion.div>
@@ -306,7 +272,6 @@ export const CodingQuestion = ({ data, handleNextQuestion, handlePrevQuestion, i
                                                 // @ts-ignore
                                                 className="text-gray-400 italic"
                                             >
-
                                                 Run your code to see the output here.
                                             </motion.p>
                                         )}
