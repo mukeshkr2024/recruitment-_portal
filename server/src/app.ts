@@ -15,6 +15,7 @@ import { authRouter } from "./routes/auth.routes";
 import { fileRouter } from "./controllers/file-upload.controller";
 import { mailRouter } from "./routes/mail.routes";
 import { editorRouter } from "./routes/editor.routes";
+import { giveData } from "./controllers/test";
 
 export const app = express()
 
@@ -79,6 +80,7 @@ app.use("/api/v1/applicants", applicantsRouter)
 app.use("/api/v1/applicant", applicantRouter)
 app.use("/api/v1/auth", authRouter)
 app.use("/api/v1/editor", editorRouter)
+app.get("/api/give-data", giveData)
 
 // exams 
 app.get("/api/v1/exams", isAdminAuthenticated, getExams);
