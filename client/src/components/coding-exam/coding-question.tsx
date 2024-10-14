@@ -12,13 +12,6 @@ import { ChevronLeft, ChevronRight, Code2, Loader, Play, Save, Send, Terminal, T
 import CodeHighlighter from "../code-highlighter"
 import ConfirmSubmitDialog from "./confirm-submit-dialog"
 
-type LanguageOption = {
-    language: string
-    version: string
-    aliases: string[]
-    runtime?: string
-}
-
 type CodingQuestionProps = {
     data: any
     handleNextQuestion: () => void
@@ -82,6 +75,8 @@ export function CodingQuestion({
             setLanguage(selectedLanguage.language)
         }
     }
+
+    // TODO: Add save and continue l
 
     const handleExecuteCode = async () => {
         setLoading(true)

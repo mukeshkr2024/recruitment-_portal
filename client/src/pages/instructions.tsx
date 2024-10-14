@@ -9,7 +9,8 @@ import { useNavigate, useParams } from "react-router-dom";
 export const InstructionPage = () => {
     const [isChecked, setisChecked] = useState(false)
     const { assesmentId, examId } = useParams();
-    const { data, isLoading } = getInstructions(assesmentId!, examId!,);
+    const examType = "mcq"
+    const { data, isLoading } = getInstructions(assesmentId!, examId!, examType);
     const navigate = useNavigate();
 
     if (isLoading) {

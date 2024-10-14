@@ -7,12 +7,13 @@ import { LoadingSpinner } from "@/components/LoadingSpinner";
 export const Exams = () => {
     const { data, isLoading } = useGetExams();
 
-
     if (isLoading) {
         return <LoadingSpinner />
     }
 
     const { exams } = data;
+
+    console.log(exams);
 
 
     return (

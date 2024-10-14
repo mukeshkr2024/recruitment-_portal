@@ -1,12 +1,12 @@
 import { and, desc, eq, inArray } from "drizzle-orm";
 import { NextFunction, Request, Response } from "express";
+import env from '../config/env';
 import db from "../db";
 import { applicant, assessment, exam, examResult, examSubmission, jobPositionExams, option, position } from "../db/schema";
 import { CatchAsyncError } from "../middleware/catchAsyncError";
 import { generateAccessCode } from "../utils";
 import { ErrorHandler } from "../utils/ErrorHandler";
 import { sendMail } from "../utils/sendMail";
-import env from '../config/env'
 
 export const getApplicantsAssessmentQuestions = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -480,11 +480,16 @@ export const getInstructionsDetails = CatchAsyncError(async (req: Request, res: 
     try {
         const { examId } = req.params;
 
+        const { type } = req.query;
+
+        console.log(type);
+
 
         const examFound = await db.query.exam.findFirst({
             where: eq(exam.id, examId),
             with: {
-                questions: true
+                questions: true,
+                codingQuestions: true
             }
         })
 
@@ -492,9 +497,11 @@ export const getInstructionsDetails = CatchAsyncError(async (req: Request, res: 
             return next(new ErrorHandler("Exam not found", 400));
         }
 
+        const totalQuestions = type === "coding" ? examFound?.codingQuestions?.length : examFound?.questions?.length;
+
         return res.status(200).json({
             exam_name: examFound.name,
-            total_questions: examFound.questions?.length || 0,
+            total_questions: totalQuestions || 0,
             total_time: examFound.duration,
             exam_type: examFound.examType,
             status: "success",

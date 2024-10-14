@@ -29,14 +29,11 @@ export const getCodingQuestions = CatchAsyncError(
                 }).returning()
             }
 
-            // TODO: add later 
-            // const applicantId = req.id; 
-
-            // await db.update(applicant).set({
-            //     status: "INPROGRESS"
-            // }).where(
-            //     eq(applicant.id, applicantId!)
-            // )
+            await db.update(applicant).set({
+                status: "INPROGRESS"
+            }).where(
+                eq(applicant.id, applicantId!)
+            )
 
             const examFound = await db.query.exam.findMany({
                 where: eq(exam.id, examId),

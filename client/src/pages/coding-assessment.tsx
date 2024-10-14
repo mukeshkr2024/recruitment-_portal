@@ -65,46 +65,22 @@ export const CodingAssessmentPage = () => {
         }
     }, [])
 
-    // useEffect(() => {
-    //     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-    //         e.preventDefault();
-    //         e.returnValue = '';
-    //     };
-
-    //     const handleVisibilityChange = () => {
-    //         if (document.visibilityState === 'hidden') {
-    //             let attempts = parseInt(localStorage.getItem('pageSwitchAttempts') || '0', 10);
-    //             attempts += 1;
-    //             localStorage.setItem('pageSwitchAttempts', attempts.toString());
-    //             console.log("Page Switch Attempts:", attempts);
-
-    //             if (attempts >= 3) {
-    //                 handleSubmit();
-    //                 localStorage.removeItem('pageSwitchAttempts');
-    //             } else {
-    //                 alert('You cannot leave this page until the assessment is completed. If you attempt to exit, your assessment will be submitted automatically.');
-    //             }
-    //         }
-    //     };
-
-    //     window.addEventListener('beforeunload', handleBeforeUnload);
-    //     document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    //     return () => {
-    //         window.removeEventListener('beforeunload', handleBeforeUnload);
-    //         document.removeEventListener('visibilitychange', handleVisibilityChange);
-    //     };
-    // }, [handleSubmit]);
 
     useEffect(() => {
         const fetchSavedAnswer = async () => {
             if (!data?.codingQuestions[currentQuestionIndex]?.id) return
 
+            const currentLanguage = data?.codingQuestions[currentQuestionIndex]?.language || 'javascript';
+
             try {
                 const { data: savedData } = await apiClient.get(`/applicant/coding-questions/${assessmentId}/exam/${examId}/save/${data.codingQuestions[currentQuestionIndex].id}`)
+
                 if (savedData?.code) {
-                    setSourceCode(savedData.code)
+                    setSourceCode(savedData?.code);
+                } else {
+                    setSourceCode(codeSnippets[currentLanguage]);
                 }
+
             } catch (error) {
                 console.error('Error fetching saved answer:', error)
             }
@@ -187,6 +163,38 @@ export const CodingAssessmentPage = () => {
             return ['An error occurred while executing the code. Please try again.']
         }
     }
+
+    useEffect(() => {
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            e.preventDefault();
+            e.returnValue = '';
+        };
+
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'hidden') {
+                let attempts = parseInt(localStorage.getItem('pageSwitchAttempts') || '0', 10);
+                attempts += 1;
+                localStorage.setItem('pageSwitchAttempts', attempts.toString());
+                console.log("Page Switch Attempts:", attempts);
+
+                if (attempts >= 3) {
+                    handleSubmit();
+                    localStorage.removeItem('pageSwitchAttempts');
+                } else {
+                    alert('You cannot leave this page until the assessment is completed. If you attempt to exit, your assessment will be submitted automatically.');
+                }
+            }
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
+    }, [handleSubmit]);
+
 
     const formatTime = (seconds: number) => {
         const minutes = Math.floor(seconds / 60)

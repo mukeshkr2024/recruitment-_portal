@@ -13,6 +13,7 @@ export type Exam = {
     createdAt: string;
     duration: number;
     totalQuestions: number;
+    examType: string;
 };
 
 export const ExamColumnData: ColumnDef<Exam>[] = [
@@ -30,6 +31,23 @@ export const ExamColumnData: ColumnDef<Exam>[] = [
         cell: ({ row }) => (
             <div>
                 {row.original.name}
+            </div>
+        ),
+    },
+    {
+        accessorKey: "examType",
+        header: ({ column }) => (
+            <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+                Exam Type
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+        ),
+        cell: ({ row }) => (
+            <div className="uppercase">
+                {row.original?.examType}
             </div>
         ),
     },

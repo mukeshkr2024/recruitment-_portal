@@ -18,6 +18,7 @@ export const getExams = CatchAsyncError(async (req: Request, res: Response, next
                 createdAt: exam.createdAt,
                 duration: exam.duration,
                 totalQuestions: count(question.id),
+                examType: exam.examType
             })
             .from(exam)
             .leftJoin(question, sql`${exam.id} = ${question.examId}`)
