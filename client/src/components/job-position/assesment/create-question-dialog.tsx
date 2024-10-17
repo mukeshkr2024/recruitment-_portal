@@ -75,7 +75,7 @@ export const CreateQuestion = ({ examId, type }: { examId: string, type: string 
             answer2: { text: "", isCorrect: false },
             answer3: { text: "", isCorrect: false },
             answer4: { text: "", isCorrect: false },
-            language: "",
+            language: "text",
             code: "",
         },
     });
@@ -142,7 +142,7 @@ export const CreateQuestion = ({ examId, type }: { examId: string, type: string 
                                     <FormItem>
                                         <FormLabel>Programming Language</FormLabel>
                                         <FormControl>
-                                            <Select onValueChange={field.onChange}>
+                                            <Select onValueChange={field.onChange} value={field.value}>
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Select Language" />
                                                 </SelectTrigger>
