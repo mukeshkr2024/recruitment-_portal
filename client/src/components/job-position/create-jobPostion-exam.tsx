@@ -72,6 +72,7 @@ export const CreateJobPositionExam = ({ positionId }: { positionId: string }) =>
         mutate({ examId: selectedExam },
             {
                 onSuccess: () => {
+                    setSelectedExam(undefined)
                     setIsOpen(false)
                 }
             }

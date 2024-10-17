@@ -13,6 +13,7 @@ export type Exam = {
     createdAt: string;
     duration: number;
     totalQuestions: number;
+    codingQuestions: number;
     examType: string;
 };
 
@@ -62,7 +63,19 @@ export const ExamColumnData: ColumnDef<Exam>[] = [
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
-        cell: ({ row }) => row.original.totalQuestions,
+        cell: ({ row }) => {
+            const type = row.original?.examType;
+
+            console.log(type);
+
+            return (
+                <>
+                    {
+                        type === "mcq" ? <p>{row.original?.totalQuestions}</p> : <p>{row.original?.codingQuestions}</p>
+                    }
+                </>
+            )
+        }
     },
     {
         accessorKey: "duration",
@@ -110,7 +123,7 @@ export const ExamColumnData: ColumnDef<Exam>[] = [
                 deleteMutation.mutate(positionId, {
                     onSuccess: () => {
                         toast({
-                            title: "Job Position deleted Successfully"
+                            title: "Exam deleted Successfully"
                         })
                     }
                 })

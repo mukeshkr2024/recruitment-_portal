@@ -1,8 +1,8 @@
-import { NextFunction, raw, Request, Response } from "express";
+import e, { NextFunction, raw, Request, Response } from "express";
 import db from "../db";
 import { CatchAsyncError } from "../middleware/catchAsyncError";
 import { and, count, eq, sql } from "drizzle-orm";
-import { exam, examResult, jobPositionExams, position, question } from "../db/schema";
+import { codingQuestion, exam, examResult, jobPositionExams, position, question } from "../db/schema";
 import { ErrorHandler } from "../utils/ErrorHandler";
 import path from "path"
 import { Document, Packer, Paragraph, TextRun } from "docx"
@@ -18,10 +18,12 @@ export const getExams = CatchAsyncError(async (req: Request, res: Response, next
                 createdAt: exam.createdAt,
                 duration: exam.duration,
                 totalQuestions: count(question.id),
+                codingQuestions: count(codingQuestion.id),
                 examType: exam.examType
             })
             .from(exam)
             .leftJoin(question, sql`${exam.id} = ${question.examId}`)
+            .leftJoin(codingQuestion, sql`${exam.id} = ${codingQuestion.examId}`)
             .groupBy(exam.id, exam.name)
             .orderBy(exam.name);
         return res.status(200).json({ exams: examsWithQuestionCount });
@@ -156,6 +158,9 @@ export const createPositionExam = CatchAsyncError(async (req: Request, res: Resp
     try {
         const { examId, positionId } = req.params;
 
+        console.log("callled position");
+
+
 
         const examFound = await db.query.exam.findFirst({
             where: eq(exam.id, examId)
@@ -173,12 +178,20 @@ export const createPositionExam = CatchAsyncError(async (req: Request, res: Resp
             throw new Error("Position not found")
         }
 
+        // check if position exam exists already
+        const isPositionExamExists = await db.query.jobPositionExams.findFirst({
+            where: and(eq(jobPositionExams.positionId, positionId), eq(jobPositionExams.examId, examId))
+        })
+
+        if (isPositionExamExists) {
+            throw new Error("This exam already exists")
+        }
+
         const newPositionExam = await db.insert(jobPositionExams).values({
             examId,
             positionId,
             isActive: true
         }).returning()
-
 
 
         return res.status(201).json(newPositionExam);

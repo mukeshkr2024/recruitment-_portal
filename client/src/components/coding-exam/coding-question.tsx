@@ -28,6 +28,8 @@ type CodingQuestionProps = {
     setSourceCode: (value: string) => void
     handleSave: () => void
     executeCode: (language: string, code: string) => Promise<string[]>
+    isChanged: boolean
+    setIsChanged: (value: boolean) => void
 }
 
 export function CodingQuestion({
@@ -43,7 +45,9 @@ export function CodingQuestion({
     timeLeft,
     handleSubmit,
     handleSave,
-    executeCode
+    executeCode,
+    isChanged,
+    setIsChanged
 }: CodingQuestionProps) {
     const [language, setLanguage] = useState<string>("java")
     const [loading, setLoading] = useState(false)
@@ -52,6 +56,12 @@ export function CodingQuestion({
     const editorRef = useRef(null)
 
     console.log(data?.language);
+
+    const [initialSourceCode, setInitialSourceCode] = useState<string>(sourceCode)
+
+    useEffect(() => {
+        setInitialSourceCode(sourceCode)
+    }, [sourceCode])
 
     useEffect(() => {
         setLanguage(data?.language)
@@ -66,6 +76,7 @@ export function CodingQuestion({
     function handleOnchange(value: string | undefined) {
         if (value) {
             setSourceCode(value)
+            setIsChanged(value !== initialSourceCode)
         }
     }
 
@@ -186,7 +197,7 @@ export function CodingQuestion({
                                                 </>
                                             )}
                                         </Button>
-                                        <Button onClick={handleSave} disabled={!sourceCode} className="bg-green-600 h-9 hover:bg-green-700 text-white transition-colors">
+                                        <Button onClick={handleSave} disabled={!isChanged} className="bg-green-600 h-9 hover:bg-green-700 text-white transition-colors">
                                             <Save className="w-4 h-4 mr-2" />
                                             Save
                                         </Button>

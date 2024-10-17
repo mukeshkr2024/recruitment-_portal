@@ -10,15 +10,20 @@ import { useForm } from "react-hook-form"
 import { useParams } from "react-router-dom"
 import { z } from "zod"
 
+export const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\.(com|in)$/;
+
+
 export const registerFormSchema = z.object({
     firstName: z.string().nonempty("First Name is required"),
     lastName: z.string().nonempty("Last Name is required"),
-    email: z.string().email("Invalid email address").nonempty("Email is required"),
+    email: z.string().email("Invalid email address").regex(emailPattern, "Invalid email address").nonempty("Email is required"),
     phone: z
         .string()
         .nonempty("Phone number is required")
         .regex(/^[0-9]{10}$/, "Phone number must be exactly 10 digits"),
 })
+
+
 
 export const RegisterPage = () => {
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);

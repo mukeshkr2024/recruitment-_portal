@@ -2,7 +2,7 @@ import e, { application, NextFunction, Request, Response } from "express";
 import { CatchAsyncError } from "../middleware/catchAsyncError";
 import { ErrorHandler } from "../utils/ErrorHandler";
 import db from "../db";
-import { applicant, assessment, codingQuestion, exam, examSubmission, question, submission } from "../db/schema";
+import { applicant, codingQuestion, exam, examSubmission, question, submission } from "../db/schema";
 import { and, eq } from "drizzle-orm";
 
 export const getCodingQuestions = CatchAsyncError(
@@ -17,8 +17,6 @@ export const getCodingQuestions = CatchAsyncError(
             const examSubmissionData = await db.query.examSubmission.findFirst({
                 where: and(eq(examSubmission.examId, examId), eq(examSubmission.assessmentId, assessmentId))
             })
-
-            console.log("examSubmission", examSubmissionData);
 
             if (!examSubmissionData) {
                 await db.insert(examSubmission).values({
@@ -50,10 +48,12 @@ export const getCodingQuestions = CatchAsyncError(
                 }
             })
 
+            const response = {
+                exam: examFound[0],
+                status: examSubmissionData ? examSubmissionData.status : 'INPROGRESS'
+            };
 
-            console.log("called");
-
-            return res.status(200).json(examFound[0])
+            return res.status(200).json(response)
 
         } catch (error) {
             return next(new ErrorHandler(error, 400));
@@ -64,7 +64,6 @@ export const getCodingQuestions = CatchAsyncError(
 export const saveCodingAnswer = CatchAsyncError(
     async (req: Request, res: Response, next: NextFunction) => {
         try {
-            console.log(req.body);
             const { answer, codingQuestionId } = req.body;
 
             const { examId, assessmentId } = req.params;
@@ -87,8 +86,6 @@ export const saveCodingAnswer = CatchAsyncError(
             if (!examSubmissionData) {
                 return next(new ErrorHandler("No submission found ", 404));
             }
-
-            console.log('submission found', examSubmissionData);
 
 
             // if (!examSubmissionData) { // TODO: create during iniiial loads

@@ -12,7 +12,7 @@ export const exam = pgTable("exam", {
         .$defaultFn(() => crypto.randomUUID()),
     name: text("name").notNull(),
     examType: examTypeEnum("exam_type").default("mcq").notNull(),
-    duration: integer("duration").default(0),
+    duration: integer("duration").default(10),
     createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 

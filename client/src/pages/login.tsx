@@ -104,7 +104,7 @@ bg-[url('/bg_1.png')] bg-cover">
                                             </FormItem>
                                         )}
                                     />
-                                    <p className="text-sm text-[#007AFF]">Check your email for access code</p>
+                                    <p className="text-sm text-muted-foreground">Check your email for access code</p>
                                 </div>
 
                                 <div className="">

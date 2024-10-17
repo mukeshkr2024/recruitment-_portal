@@ -219,7 +219,10 @@ export const SendMail = ({ positions, statusOptions }: SendMailProps) => {
                                 <Button
                                     type="button"
                                     variant="secondary"
-                                    onClick={() => setIsOpen(false)}
+                                    onClick={() => {
+                                        setIsOpen(false)
+                                        form.reset()
+                                    }}
                                     className="w-full"
                                 >
                                     Cancel

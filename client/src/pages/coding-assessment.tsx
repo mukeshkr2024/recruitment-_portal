@@ -15,6 +15,7 @@ export const CodingAssessmentPage = () => {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
     const [sourceCode, setSourceCode] = useState(codeSnippets['javascript'])
     const [timeLeft, setTimeLeft] = useState(0)
+    const [isChanged, setIsChanged] = useState<boolean>(false)
 
     const navigate = useNavigate()
 
@@ -23,10 +24,40 @@ export const CodingAssessmentPage = () => {
     const saveMutation = useSaveCodingQuestion(assessmentId!, examId!)
     const compileMutation = useCompileCode()
 
+    if (isLoading) {
+        return <LoadingSpinner />
+    }
+
+    if (isError) {
+        return (
+            <div className="error">
+                <h2>Error fetching questions</h2>
+                <p>{error instanceof Error ? error.message : 'An unknown error occurred'}</p>
+            </div>
+        )
+    }
+
+    const { exam, status } = data;
+
     useEffect(() => {
-        if (data?.duration) {
+
+        if (status && status === "COMPLETED") {
+            toast({
+                title: "Coding Assessment Already Completed",
+                variant: "destructive"
+            })
+
+            return navigate("/applicant-dashboard")
+        }
+
+    }, [
+        status
+    ])
+
+    useEffect(() => {
+        if (exam?.duration) {
             const savedTime = localStorage.getItem('secondsLeft')
-            const initialTime = savedTime ? parseInt(savedTime, 10) : data.duration * 60
+            const initialTime = savedTime ? parseInt(savedTime, 10) : exam.duration * 60
             setTimeLeft(initialTime)
 
             const countdown = setInterval(() => {
@@ -45,7 +76,7 @@ export const CodingAssessmentPage = () => {
 
             return () => clearInterval(countdown)
         }
-    }, [data?.duration])
+    }, [exam?.duration])
 
     useEffect(() => {
         const handleContextMenu = (e: MouseEvent) => e.preventDefault()
@@ -68,12 +99,12 @@ export const CodingAssessmentPage = () => {
 
     useEffect(() => {
         const fetchSavedAnswer = async () => {
-            if (!data?.codingQuestions[currentQuestionIndex]?.id) return
+            if (!exam?.codingQuestions[currentQuestionIndex]?.id) return
 
-            const currentLanguage = data?.codingQuestions[currentQuestionIndex]?.language || 'javascript';
+            const currentLanguage = exam?.codingQuestions[currentQuestionIndex]?.language || 'javascript';
 
             try {
-                const { data: savedData } = await apiClient.get(`/applicant/coding-questions/${assessmentId}/exam/${examId}/save/${data.codingQuestions[currentQuestionIndex].id}`)
+                const { data: savedData } = await apiClient.get(`/applicant/coding-questions/${assessmentId}/exam/${examId}/save/${exam.codingQuestions[currentQuestionIndex].id}`)
 
                 if (savedData?.code) {
                     setSourceCode(savedData?.code);
@@ -87,20 +118,7 @@ export const CodingAssessmentPage = () => {
         }
 
         fetchSavedAnswer()
-    }, [currentQuestionIndex, assessmentId, examId, data?.codingQuestions])
-
-    if (isLoading) {
-        return <LoadingSpinner />
-    }
-
-    if (isError) {
-        return (
-            <div className="error">
-                <h2>Error fetching questions</h2>
-                <p>{error instanceof Error ? error.message : 'An unknown error occurred'}</p>
-            </div>
-        )
-    }
+    }, [currentQuestionIndex, assessmentId, examId, exam?.codingQuestions])
 
     const handleSubmit = () => {
         if (submitMutation.isLoading) return
@@ -112,7 +130,7 @@ export const CodingAssessmentPage = () => {
     }
 
     const handleNextQuestion = () => {
-        if (currentQuestionIndex < (data?.codingQuestions?.length || 0) - 1) {
+        if (currentQuestionIndex < (exam?.codingQuestions?.length || 0) - 1) {
             setCurrentQuestionIndex((prev) => prev + 1)
         }
     }
@@ -124,7 +142,7 @@ export const CodingAssessmentPage = () => {
     }
 
     const handleSave = () => {
-        const currentQuestion = data?.codingQuestions[currentQuestionIndex]
+        const currentQuestion = exam?.codingQuestions[currentQuestionIndex]
         if (!currentQuestion?.id) return
 
         saveMutation.mutate(
@@ -134,6 +152,7 @@ export const CodingAssessmentPage = () => {
             },
             {
                 onSuccess: () => {
+                    setIsChanged(!isChanged)
                     toast({
                         title: 'Saved Successfully',
                     })
@@ -202,7 +221,7 @@ export const CodingAssessmentPage = () => {
         return `${minutes}:${secs < 10 ? '0' : ''}${secs}`
     }
 
-    const currentQuestion = data?.codingQuestions[currentQuestionIndex] || {}
+    const currentQuestion = exam?.codingQuestions[currentQuestionIndex] || {}
 
     return (
         <div className="h-screen w-full flex items-center justify-center">
@@ -210,10 +229,10 @@ export const CodingAssessmentPage = () => {
                 data={currentQuestion}
                 handleNextQuestion={handleNextQuestion}
                 handlePrevQuestion={handlePrevQuestion}
-                isNextDisabled={currentQuestionIndex >= (data?.codingQuestions?.length || 0) - 1}
+                isNextDisabled={currentQuestionIndex >= (exam?.codingQuestions?.length || 0) - 1}
                 isPrevDisabled={currentQuestionIndex === 0}
                 currentIndex={currentQuestionIndex}
-                totalQuestions={data?.codingQuestions?.length || 0}
+                totalQuestions={exam?.codingQuestions?.length || 0}
                 timeLeft={formatTime(timeLeft)}
                 assessmentId={assessmentId!}
                 examId={examId!}
@@ -222,6 +241,8 @@ export const CodingAssessmentPage = () => {
                 setSourceCode={setSourceCode}
                 handleSave={handleSave}
                 executeCode={executeCode}
+                isChanged={isChanged}
+                setIsChanged={setIsChanged}
             />
         </div>
     )
