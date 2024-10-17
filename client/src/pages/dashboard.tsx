@@ -37,7 +37,6 @@ export const DashboardPage = () => {
                                 date={date}
                                 setDate={setDate}
                             />
-                            <Button>Download</Button>
                         </div>
                     </div>
                 </CardHeader>

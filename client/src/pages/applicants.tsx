@@ -21,7 +21,6 @@ const statusOptions = [
     { id: "pending", name: "Pending" },
 ];
 
-
 export const ApplicantsPage = () => {
     const location = useLocation();
     const navigate = useNavigate();
@@ -152,9 +151,8 @@ export const ApplicantsPage = () => {
     const filteredData = data?.filter((item: any) => {
         const fullName = `${item?.applicant.firstName} ${item?.applicant.lastName}`.toLowerCase();
         const query = searchQuery.toLowerCase();
-        return item?.applicant?.email?.toLowerCase().includes(query) || fullName.includes(query)
-    }
-    );
+        return item?.applicant?.email?.toLowerCase().includes(query) || fullName.includes(query) || item?.applicant?.phone?.includes(query)
+    });
 
     return (
         <div className="px-6 space-y-4 -mt-2">
@@ -182,7 +180,6 @@ export const ApplicantsPage = () => {
                         </SelectContent>
                     </Select>
                 </div>
-
                 <div className="flex-1">
                     <Label htmlFor="status-select">Status</Label>
                     <Select
